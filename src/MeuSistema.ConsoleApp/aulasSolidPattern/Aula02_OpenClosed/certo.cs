@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using static System.Console;
 
-namespace AulasSOLIDpatterns.Aula02_OpenClosed;
+namespace AulasSOLIDpatterns.Aula02_OpenClosed
+{
+
 
 // ===========================================
 // Enumeradores para as propriedades do produto
@@ -140,4 +142,6 @@ public class OpenClosedMain
             WriteLine($" - {p.Name} é verde");
         }
     }
+}
+
 }

@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using static System.Console;
 
-namespace AulasSOLIDpatterns.Aula01_SingleResponsibility;
+namespace AulasSOLIDpatterns.Aula01_SingleResponsibility
+{
+    
+
 
 // !!!!! CLASSE DE JOURNAL !!!!!!!!!!!!!!!!!!!!!!!
 public class JournalCerto
@@ -115,4 +118,5 @@ public class CertoMain
 
         throw new DirectoryNotFoundException("Nao foi possivel localizar a pasta Aula01_SingleResponsibility.");
     }
+}
 }

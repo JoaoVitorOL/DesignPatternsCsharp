@@ -2,7 +2,10 @@ using System;
 using System.Collections.Generic;
 using static System.Console;
 
-namespace AulasSOLIDpatterns.Aula01_SingleResponsibility;
+namespace AulasSOLIDpatterns.Aula01_SingleResponsibility
+{
+
+
 
 // !!! Apenas a classe Journal !!!!!!!!
 public class JournalErrado
@@ -96,4 +99,4 @@ public class ErradoMain
         WriteLine(j);
     }
 }
-
+}
