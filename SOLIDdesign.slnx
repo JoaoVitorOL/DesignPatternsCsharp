@@ -1,9 +1,0 @@
-<Solution>
-  <Folder Name="/src/">
-    <Project Path="src/MeuSistema.ConsoleApp/MeuSistema.ConsoleApp.csproj" />
-    <Project Path="src/MeuSistema.Core/MeuSistema.Core.csproj" />
-  </Folder>
-  <Folder Name="/tests/">
-    <Project Path="tests/MeuSistema.Tests/MeuSistema.Tests.csproj" />
-  </Folder>
-</Solution>
