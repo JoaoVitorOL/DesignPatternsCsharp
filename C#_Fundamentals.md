@@ -843,6 +843,20 @@ p.Email = "novo@email.com";       // ERRO se Email for { get; init; } após cons
 
 **Como interpretar o exemplo:** Properties parecem campos para quem consome a classe, mas se comportam como acessos controlados por `get`, `set` ou `init`. Esse recurso existe para encapsular validacao, calculo e evolucao interna sem mudar o contrato externo.
 
+Em termos de vocabulário, é aqui que entram os **getters** e **setters**:
+
+- `get` é o acessor de **leitura**. Ele define o que acontece quando alguém consulta a propriedade.
+- `set` é o acessor de **escrita**. Ele define o que acontece quando alguém atribui um novo valor.
+- Dentro do `set`, a palavra-chave implícita `value` representa o valor que está sendo atribuído.
+- `init` é uma forma especial de escrita permitida apenas durante a inicialização do objeto.
+- `private set` significa: leitura pública, escrita restrita à própria classe.
+
+Em outras palavras, quando alguém escreve `p.Nome`, o `get` é executado. Quando alguém escreve `p.Nome = "Ana"`, o `set` é executado. Isso é importante porque a propriedade não é apenas um campo exposto; ela é um **ponto de controle**. Você pode validar entrada, impedir estados inválidos, calcular valores dinamicamente ou até trocar a implementação interna sem mudar a forma de uso da API.
+
+Outro conceito importante é o de **backing field** (campo de apoio). No exemplo, `_idade` é o campo real onde o valor fica armazenado, enquanto `Idade` é a propriedade que controla o acesso a esse campo. Já em `public string Nome { get; set; }`, o compilador cria esse campo automaticamente, e por isso chamamos essa forma de **auto-property**.
+
+Essa distinção ajuda muito quem vem de Java. Em Java, normalmente você vê métodos como `getNome()` e `setNome(...)`. Em C#, a linguagem elevou esse padrão para a sintaxe nativa com `Nome { get; set; }`. O efeito arquitetural é parecido, mas a ergonomia é melhor, e várias bibliotecas do ecossistema .NET entendem properties como parte central do modelo de objetos, incluindo serialização, data binding, ORMs e ferramentas de inspeção.
+
 ---
 
 ### 6.2 Expression-bodied members
