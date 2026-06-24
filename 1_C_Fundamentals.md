@@ -2,26 +2,47 @@
 
 > **Nível:** Zero ao Avançado
 > **Linguagem:** C# (C-Sharp)
-> **Fonte de referência:** [docs.microsoft.com/dotnet/csharp](https://docs.microsoft.com/en-us/dotnet/csharp/)
-> **Versão de referência:** C# 12 / .NET 8 (LTS)
+> **Fonte de referência principal:** [Microsoft Learn — C#](https://learn.microsoft.com/en-us/dotnet/csharp/)
+> **Versão de referência:** C# 14 / .NET 10 (LTS), com observações compatíveis com .NET 8+ quando relevante
+> **Atualizado em:** 24/06/2026
 
 ---
 
 ## Prefácio
 
-Este guia nasceu da necessidade de reunir, num lugar só, o caminho do C# do zero até tópicos avançados — sem depender de dezenas de abas abertas ou de explicações picadas em pedaços. A ideia não é substituir a documentação oficial da Microsoft, e sim servir de mapa: do que é o CLR e por que o C# compila para IL, até padrões de projeto aplicados dentro do Unity e do Godot.
+Este guia nasceu para resolver um problema comum: muita gente aprende C# decorando palavras-chave, nomes de tipos e pequenas receitas de código, mas sem construir um modelo mental sólido da linguagem. O resultado é que a pessoa até consegue escrever alguns exemplos, porém trava quando precisa projetar software de verdade, ler código de produção, depurar comportamento inesperado ou decidir entre duas abordagens aparentemente válidas.
 
-A estrutura segue a lógica de um livro técnico: capítulos numerados, sumário clicável e um glossário ao final para consulta rápida de termos. Dá pra ler do início ao fim ou pular direto pro capítulo que precisar — cada seção foi escrita para ser entendida por si só, sem depender demais do que veio antes.
+O objetivo aqui é transformar o arquivo em algo mais próximo de um livro técnico do que de uma folha de cola. Em vez de apenas listar recursos, a ideia é explicar por que cada recurso existe, que problema ele resolve, qual o custo de usá-lo e quais erros aparecem com frequência em code review e manutenção de sistemas reais.
+
+Este material não substitui a documentação oficial da Microsoft. Pelo contrário: ele foi revisado à luz do Microsoft Learn e usa a documentação oficial como fonte primária para consolidar definições, comportamento da linguagem e versão de referência. Pense neste guia como uma ponte entre a teoria oficial e a prática de engenharia.
 
 Bons estudos.
 
 ---
 
+## Como usar este guia
+
+Você pode ler este material de três formas:
+
+1. **Trilha júnior:** leia na ordem, faça os exemplos, e priorize entender o modelo mental antes de memorizar sintaxe.
+2. **Trilha pleno:** use o guia como referência de design e revisão de código; foque em tipos, coleções, interfaces, LINQ, async e tratamento de exceções.
+3. **Trilha sênior:** leia procurando trade-offs, custo de abstração, semântica de execução, efeitos de performance e impacto arquitetural.
+
+Ao longo do texto, pense sempre nestas quatro perguntas:
+
+- **O que isso representa?** Conceito ou contrato.
+- **Quando eu usaria isso?** Cenário prático.
+- **O que isso custa?** Complexidade, alocação, acoplamento ou legibilidade.
+- **Qual erro é comum aqui?** Armadilha de engenharia.
+
+---
+
 ## Sumário
 
+- [Como usar este guia](#como-usar-este-guia)
 - [Parte 1 — Introdução e Contextualização](#parte-1-introdução-e-contextualização)
   - [1.1 O que é C#?](#11-o-que-é-c)
-  - [1.2 Por que aprender C# em 2024/2025?](#12-por-que-aprender-c-em-20242025)
+  - [1.2 Por que aprender C# em 2026?](#12-por-que-aprender-c-em-2026)
   - [1.3 Estrutura de um programa C#](#13-estrutura-de-um-programa-c)
 - [Parte 2 — Namespaces e Using](#parte-2-namespaces-e-using)
   - [2.1 Namespaces](#21-namespaces)
@@ -79,10 +100,14 @@ Bons estudos.
 - [Parte 14 — LINQ (Language Integrated Query)](#parte-14-linq-language-integrated-query)
   - [14.1 O que é LINQ?](#141-o-que-é-linq)
   - [14.2 Operadores LINQ principais](#142-operadores-linq-principais)
+  - [14.3 `IEnumerable<T>` e o contrato fundamental das sequências](#143-ienumerablet-e-o-contrato-fundamental-das-sequências)
+  - [14.4 `IQueryable<T>` e queries traduzíveis para outra fonte](#144-iqueryablet-e-queries-traduzíveis-para-outra-fonte)
+  - [14.5 Execução adiada, materialização e armadilhas](#145-execução-adiada-materialização-e-armadilhas)
 - [Parte 15 — Coleções](#parte-15-coleções)
   - [15.1 Tipos de coleções principais](#151-tipos-de-coleções-principais)
   - [15.2 List\<T\>](#152-listt)
   - [15.3 Dictionary\<TKey, TValue\>](#153-dictionarytkey-tvalue)
+  - [15.4 Como escolher a coleção certa](#154-como-escolher-a-coleção-certa)
 - [Parte 16 — Async/Await e Programação Assíncrona](#parte-16-asyncawait-e-programação-assíncrona)
   - [16.1 O modelo assíncrono do C#](#161-o-modelo-assíncrono-do-c)
   - [16.2 Padrões de uso](#162-padrões-de-uso)
@@ -123,6 +148,7 @@ Bons estudos.
   - [23.9 C# no Godot 4](#239-c-no-godot-4)
   - [23.10 Diferenças entre C# padrão e C# no Unity](#2310-diferenças-entre-c-padrão-e-c-no-unity)
 - [Anexo A — Plataformas de Prática Recomendadas](#anexo-a--plataformas-de-prática-recomendadas)
+- [Anexo B — Referências Oficiais Consultadas](#anexo-b--referências-oficiais-consultadas)
 - [Glossário](#glossário)
 
 ---
@@ -152,9 +178,11 @@ O compilador moderno do C# é chamado **Roslyn** e é open-source. O runtime mod
 
 ---
 
-### 1.2 Por que aprender C# em 2024/2025?
+### 1.2 Por que aprender C# em 2026?
 
-C# é uma linguagem com escopo extremamente amplo:
+Em **24 de junho de 2026**, a Microsoft lista **.NET 10 (LTS)**, **.NET 9** e **.NET 8 (LTS)** como versões suportadas, e a documentação oficial marca o **C# 14** como a versão mais recente da linguagem. Isso importa porque C# não é uma linguagem parada: ela evolui sem perder compatibilidade com os fundamentos. Você investe no núcleo da linguagem e continua aproveitando esse conhecimento por muitos anos.
+
+C# tem um escopo extremamente amplo:
 
 | Contexto | Ferramentas/Frameworks |
 |---|---|
@@ -167,7 +195,7 @@ C# é uma linguagem com escopo extremamente amplo:
 | **Machine Learning** | ML.NET |
 | **IoT** | .NET para dispositivos embarcados |
 
-C# é consistentemente ranqueada entre as 5 linguagens mais usadas no mundo (índice TIOBE, Stack Overflow Survey) e possui uma das comunidades mais ativas no GitHub.
+C# continua sendo uma linguagem excelente para quem quer combinar **fundamentos fortes de engenharia** com **mercado amplo**. Ela tem um sistema de tipos maduro, uma biblioteca padrão extensa, tooling profissional e uma curva de crescimento muito boa: dá para começar com console apps simples e chegar em APIs distribuídas, engines de jogos, processamento assíncrono, tooling, automação e bibliotecas de alta performance.
 
 ---
 
@@ -1214,6 +1242,8 @@ SomarTodos(new int[]{1,2}); // array explícito também funciona
 
 C# permite adicionar métodos a tipos existentes sem herança ou modificação do código original.
 
+> Observação de versão: os exemplos abaixo usam o formato clássico de extension method (`static` + `this` no primeiro parâmetro), que ainda é o mais comum em bases de código. Em C# 14, a linguagem também ganhou **extension members**, uma sintaxe mais moderna para esse mesmo conceito.
+
 ```csharp
 // Métodos de extensão devem estar em uma classe estática
 public static class StringExtensions
@@ -1786,6 +1816,16 @@ var pedido = new Pedido.Builder("Ana", "Teclado")
 
 ### 12.1 Herança em C#
 
+Herança é o mecanismo pelo qual um tipo especializado reutiliza e estende outro tipo mais geral. Em termos de modelagem, herança costuma representar uma relação **"é um"**:
+
+- um `Cachorro` **é um** `Animal`;
+- um `FuncionarioCLT` **é um** `Funcionario`;
+- um `ArquivoCsv` **é um** `ArquivoImportavel`.
+
+Em C#, herança de classes é **simples**: uma classe pode herdar de **uma única classe base**, mas pode implementar **várias interfaces**. Isso é intencional. A linguagem quer evitar hierarquias excessivamente complexas e, ao mesmo tempo, permitir composição de comportamento por contratos.
+
+O motivo mais importante para herdar não é "reaproveitar código", e sim habilitar **polimorfismo**. Ou seja: escrever código que trabalha com a classe base e, em tempo de execução, executa o comportamento especializado da subclasse.
+
 ```csharp
 public class Animal
 {
@@ -1819,18 +1859,42 @@ public class Cachorro : Animal
 }
 ```
 
+Quando você escreve:
+
+```csharp
+Animal animal = new Cachorro("Bolt", 4, "Vira-lata");
+animal.EmitirSom();
+```
+
+o tipo da variável é `Animal`, mas o comportamento executado é o de `Cachorro`, porque `EmitirSom` foi marcado como `virtual` na base e `override` na derivada. Esse é o centro do polimorfismo orientado a objetos em C#.
+
+Regras práticas importantes:
+
+- Use herança quando a subclasse realmente respeita o contrato da classe base.
+- Prefira composição quando o comportamento varia por combinação de capacidades, e não por taxonomia.
+- Mantenha hierarquias rasas; profundidade demais costuma aumentar acoplamento e fragilidade.
+- Uma classe base ruim gera o problema clássico de **base class frágil**: qualquer mudança nela pode quebrar várias subclasses.
+
+Em engenharia de software real, a pergunta não é "posso herdar?", mas sim **"a herança expressa corretamente o domínio?"**. Se a resposta for "mais ou menos", provavelmente uma interface ou composição produzirá um design melhor.
+
 ---
 
 ### 12.2 Interfaces
 
+Se herança responde à pergunta **"o que esse tipo é?"**, interface responde à pergunta **"o que esse tipo sabe fazer?"**.
+
+Uma interface é um **contrato de comportamento**. Ela não existe para modelar identidade, e sim para descrever capacidades consumíveis por outros tipos. Por isso, classes, `record`s e `struct`s que não têm nenhuma relação de parentesco podem implementar a mesma interface e participar do mesmo fluxo de processamento.
+
+Em outras palavras, uma interface permite programar contra uma **abstração estável**, em vez de programar contra uma implementação específica.
+
 ```csharp
 public interface IPagavel
 {
-    double CalcularTotal();
+    decimal CalcularTotal();
     void ProcessarPagamento(string metodo);
 
     // Método default (C# 8+) — implementação padrão
-    string GerarRecibo() => $"Recibo emitido em: {DateTime.Now:dd/MM/yyyy}";
+    string GerarRecibo() => $"Recibo emitido em: {DateTime.UtcNow:dd/MM/yyyy}";
 
     // Método estático em interface (C# 8+)
     static bool ValidarMetodo(string metodo) =>
@@ -1846,12 +1910,12 @@ public interface ICancelavel
 public class Pedido : IPagavel, ICancelavel
 {
     public string Id     { get; } = Guid.NewGuid().ToString("N")[..8];
-    public double Valor  { get; }
+    public decimal Valor { get; }
     private bool  _cancelado;
 
-    public Pedido(double valor) => Valor = valor;
+    public Pedido(decimal valor) => Valor = valor;
 
-    public double CalcularTotal()                     => Valor * 1.1;
+    public decimal CalcularTotal()                    => Valor * 1.10m;
     public void ProcessarPagamento(string metodo)     => Console.WriteLine($"Pedido {Id} pago via {metodo}");
     public bool Cancelar(string motivo)
     {
@@ -1861,6 +1925,93 @@ public class Pedido : IPagavel, ICancelavel
     }
 }
 ```
+
+O detalhe mais importante aqui não é a sintaxe. É o efeito arquitetural:
+
+- qualquer código que precise apenas "processar algo pagável" pode depender de `IPagavel`;
+- esse código não precisa conhecer a classe concreta `Pedido`;
+- amanhã você pode introduzir `Assinatura`, `Fatura`, `CompraInternacional` ou `OrdemDeServico` sem mudar o consumidor, desde que todos implementem o mesmo contrato.
+
+Esse princípio aparece o tempo todo em código profissional: logging, autenticação, persistência, mensageria, notificações, estratégias de cálculo, gateways externos, cache e integração com APIs.
+
+Exemplo de consumo por interface:
+
+```csharp
+public static class CheckoutService
+{
+    public static void Finalizar(IPagavel pagavel, string metodo)
+    {
+        if (!IPagavel.ValidarMetodo(metodo))
+            throw new ArgumentException("Método inválido.", nameof(metodo));
+
+        Console.WriteLine($"Total: {pagavel.CalcularTotal():C}");
+        pagavel.ProcessarPagamento(metodo);
+    }
+}
+
+IPagavel pedido = new Pedido(199.90m);
+CheckoutService.Finalizar(pedido, "PIX");
+```
+
+Perceba o papel da variável `IPagavel pedido`: quando você usa uma referência do tipo interface, o compilador deixa acessível apenas o que faz parte do contrato. Isso reduz acoplamento e força o consumidor a depender somente do que foi prometido pela abstração.
+
+#### O que uma interface pode ter hoje?
+
+Nas versões modernas do C#, interfaces deixaram de ser "apenas assinaturas vazias". Segundo a documentação oficial, elas continuam sendo contratos, mas podem ter recursos avançados:
+
+- membros abstratos tradicionais;
+- implementações padrão (`default interface members`);
+- membros estáticos;
+- membros `static abstract`, úteis para contratos estáticos em generics.
+
+Exemplo conceitual de contrato estático:
+
+```csharp
+public interface IParsableId<TSelf> where TSelf : IParsableId<TSelf>
+{
+    static abstract TSelf Parse(string value);
+}
+```
+
+Esse tipo de recurso aparece em cenários mais avançados, como matemática genérica, factories tipadas e APIs orientadas a constraints. Para júnior e pleno, o mais importante é entender que a ideia central da interface continua sendo: **definir um contrato reutilizável e implementável por múltiplos tipos**.
+
+#### Implementação implícita e explícita
+
+Na forma mais comum, a implementação é **implícita**: os membros são públicos e ficam disponíveis diretamente na classe.
+
+Mas há casos em que duas interfaces possuem membros com a mesma assinatura e semânticas diferentes. Nessa hora, entra a **implementação explícita**:
+
+```csharp
+public interface IMetric
+{
+    double GetDistance(); // metros
+}
+
+public interface IImperial
+{
+    double GetDistance(); // pés
+}
+
+public class Distancia : IMetric, IImperial
+{
+    private readonly double _metros;
+
+    public Distancia(double metros) => _metros = metros;
+
+    double IMetric.GetDistance()   => _metros;
+    double IImperial.GetDistance() => _metros * 3.28084;
+}
+
+var distancia = new Distancia(10);
+Console.WriteLine(((IMetric)distancia).GetDistance());   // 10
+Console.WriteLine(((IImperial)distancia).GetDistance()); // 32.8084
+```
+
+Quando a implementação é explícita:
+
+- o membro não aparece diretamente na API pública da classe;
+- ele só pode ser acessado por uma referência da interface;
+- isso ajuda a resolver conflitos ou a esconder detalhes que só fazem sentido dentro do contrato.
 
 **Classe abstrata vs Interface em C#:**
 
@@ -1872,6 +2023,14 @@ public class Pedido : IPagavel, ICancelavel
 | Métodos com implementação | Sim | Sim (`default`, C# 8+) |
 | Modificadores de acesso | Qualquer | `public` por padrão |
 | Quando usar | Relação "é um", compartilhar estado e comportamento | Contrato de comportamento |
+
+Regras práticas para decidir:
+
+- Use **classe abstrata** quando vários tipos compartilham estado, invariantes e implementação base.
+- Use **interface** quando o foco é capacidade, desacoplamento e composição arquitetural.
+- Evite criar interface "por reflexo" para toda classe. Interface faz sentido quando há mais de uma implementação possível, quando você quer desacoplar consumidores, ou quando a abstração melhora o desenho do sistema.
+
+Em termos de arquitetura, interface é um dos recursos mais importantes do C# para aplicar **DIP (Dependency Inversion Principle)**, testes automatizados e substituição de infraestrutura sem reescrever o domínio.
 
 ---
 
@@ -2018,7 +2177,29 @@ botao.Clicado -= Handler;  // cancela assinatura
 
 ### 14.1 O que é LINQ?
 
-LINQ é um conjunto de funcionalidades que permite escrever queries diretamente em C#, de forma tipada e integrada ao compilador. Funciona sobre qualquer `IEnumerable<T>` ou `IQueryable<T>`.
+LINQ significa **Language Integrated Query**. O nome é importante: não é só uma biblioteca, nem só uma sintaxe. LINQ é a combinação de:
+
+- recursos da linguagem C#;
+- extension methods;
+- lambdas;
+- inferência de tipos;
+- tipos de sequência como `IEnumerable<T>` e `IQueryable<T>`;
+- operadores padrão definidos em `System.Linq`.
+
+Segundo a documentação oficial, LINQ integra capacidades de consulta diretamente à linguagem, em vez de obrigar você a trabalhar com strings soltas sem validação em tempo de compilação. Isso torna consultas mais seguras, refatoráveis e compatíveis com IntelliSense.
+
+O modelo mental mais útil é este:
+
+1. você tem uma **fonte de dados**;
+2. você descreve uma **query**;
+3. a query é **executada** quando seus resultados são realmente necessários.
+
+LINQ funciona tanto para dados em memória quanto para dados remotos:
+
+- com `IEnumerable<T>`, normalmente estamos falando de **LINQ to Objects**;
+- com `IQueryable<T>`, geralmente estamos falando de uma query que pode ser **traduzida** por um provider, como SQL via Entity Framework.
+
+Outro detalhe importante da documentação oficial: a sintaxe de query (`from`, `where`, `select`) é convertida pelo compilador para chamadas equivalentes de método. Ou seja, a linguagem oferece duas formas de expressar a mesma ideia.
 
 ```csharp
 var numeros = new List<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
@@ -2039,11 +2220,30 @@ var resultado2 = (from n in numeros
                   select quadrado).ToList();
 ```
 
+As duas formas acima descrevem um **pipeline de transformação**:
+
+- `Where` filtra;
+- `Select` projeta;
+- `OrderBy` ordena;
+- `ToList` materializa o resultado.
+
+Na prática profissional, a sintaxe de método costuma ser preferida porque compõe melhor com APIs modernas. A sintaxe de query continua sendo muito útil em consultas com múltiplos `from`, `join`, `group` e `let`, onde a legibilidade fica mais próxima de SQL.
+
+Também é essencial entender que LINQ não é apenas "a maneira bonita de iterar listas". Ele é uma das principais ferramentas de modelagem de fluxo de dados em C#:
+
+- transforma coleções;
+- expressa regras de negócio de forma declarativa;
+- reduz loops imperativos repetitivos;
+- pode ser otimizado por provedores externos.
+
 ---
 
 ### 14.2 Operadores LINQ principais
 
+Os operadores do LINQ podem ser entendidos por categoria. Isso ajuda mais do que decorar nomes isolados.
+
 ```csharp
+var numeros = new List<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
 var nomes = new List<string> { "Ana", "Bruno", "Carla", "Diego", "Eva" };
 
 // Filtro e transformação
@@ -2064,9 +2264,9 @@ int minimo       = numeros.Min();
 long contagem    = numeros.Count(n => n > 5); // 5
 
 // Verificação
-bool algum = nomes.Any(n => n.StartsWith("A"));    // true
-bool todos = nomes.All(n => n.Length > 2);          // true
-bool nenhum = nomes.None(n => n.Length > 10);       // (use !Any())
+bool algum  = nomes.Any(n => n.StartsWith("A"));    // true
+bool todos  = nomes.All(n => n.Length > 2);         // true
+bool nenhum = !nomes.Any(n => n.Length > 10);       // true
 
 // Busca
 string? primeira = nomes.FirstOrDefault(n => n.Length == 3); // "Ana"
@@ -2119,6 +2319,247 @@ var flat   = listas.SelectMany(l => l).ToList(); // [1,2,3,4,5]
 | `Distinct` | Conjunto | Remove duplicatas |
 | `Union/Intersect/Except` | Conjunto | Operações de conjunto |
 
+Leitura prática das principais categorias:
+
+- **Filtro:** `Where` responde "quais itens permanecem?"
+- **Projeção:** `Select` responde "em que formato quero cada item?"
+- **Projeção achatada:** `SelectMany` responde "quero uma sequência única a partir de várias internas".
+- **Ordenação:** `OrderBy`, `ThenBy` organizam o resultado.
+- **Agrupamento:** `GroupBy` cria grupos por chave.
+- **Agregação:** `Sum`, `Count`, `Average`, `Max`, `Min` reduzem uma sequência a um valor.
+- **Busca pontual:** `First`, `FirstOrDefault`, `Single`, `SingleOrDefault` procuram um ou poucos elementos.
+- **Conjunto:** `Distinct`, `Union`, `Intersect`, `Except` trabalham com semântica de coleção matemática.
+
+Algumas diferenças críticas que todo engenheiro C# precisa dominar:
+
+- `Any()` costuma ser preferível a `Count() > 0` quando você só quer saber se existe ao menos um elemento.
+- `FirstOrDefault()` aceita zero ou mais resultados; ele só devolve o primeiro.
+- `SingleOrDefault()` exige no máximo um resultado; se houver dois, isso geralmente indica erro de regra de negócio.
+- `OrderBy()` parece barato na escrita, mas frequentemente precisa ler toda a fonte para só então produzir o primeiro item.
+
+Em outras palavras: LINQ deixa o código conciso, mas não elimina o custo computacional. Código declarativo continua tendo custo real.
+
+---
+
+### 14.3 `IEnumerable<T>` e o contrato fundamental das sequências
+
+`IEnumerable<T>` é uma das interfaces mais importantes de todo o ecossistema .NET. A documentação oficial a descreve como a interface base das coleções genéricas que podem ser enumeradas com `foreach`.
+
+O que isso significa, de forma direta?
+
+- `IEnumerable<T>` não diz que a estrutura é lista, array, banco, fila ou conjunto.
+- `IEnumerable<T>` não promete indexação.
+- `IEnumerable<T>` não promete mutabilidade nem imutabilidade.
+- `IEnumerable<T>` promete apenas uma coisa: **"eu consigo fornecer elementos de tipo `T` em sequência"**.
+
+Por baixo dos panos, isso acontece via um enumerador:
+
+- `GetEnumerator()`
+- `MoveNext()`
+- `Current`
+
+É justamente esse contrato que permite que `foreach` funcione.
+
+Exemplo de implementação com `yield return`:
+
+```csharp
+public static IEnumerable<int> NumerosParesAte(int limite)
+{
+    for (int i = 0; i <= limite; i++)
+    {
+        if (i % 2 == 0)
+            yield return i;
+    }
+}
+
+foreach (int numero in NumerosParesAte(10))
+    Console.WriteLine(numero);
+```
+
+O `yield return` é importante porque mostra que uma sequência pode ser **gerada sob demanda**, em vez de completamente construída antes do uso.
+
+#### Quando expor `IEnumerable<T>`?
+
+Use `IEnumerable<T>` como tipo de retorno quando:
+
+- o consumidor só precisa iterar;
+- você quer esconder a estrutura concreta usada internamente;
+- você quer dar flexibilidade para trocar `List<T>`, array, generator ou outra fonte sem quebrar a API.
+
+Exemplo:
+
+```csharp
+public sealed class CatalogoProdutos
+{
+    private readonly List<string> _produtos = new();
+
+    public void Adicionar(string produto) => _produtos.Add(produto);
+
+    public IEnumerable<string> Listar() => _produtos;
+}
+```
+
+Isso é melhor do que retornar `List<string>` quando o chamador não precisa de operações específicas da lista.
+
+#### O que `IEnumerable<T>` não garante
+
+Essa distinção evita muitos bugs de design:
+
+- `IEnumerable<T>` **não é sinônimo de coleção materializada**;
+- `IEnumerable<T>` **não é sinônimo de read-only collection**;
+- `IEnumerable<T>` **não é sinônimo de operação barata**.
+
+Uma mesma sequência pode:
+
+- recalcular resultados a cada enumeração;
+- executar código com efeitos colaterais;
+- representar algo potencialmente infinito;
+- encapsular uma fonte cara de percorrer.
+
+Armadilhas comuns:
+
+- Enumerar a mesma sequência várias vezes sem perceber.
+- Assumir que `Count()` é barato em qualquer `IEnumerable<T>`.
+- Retornar `IEnumerable<T>` quando o consumidor precisa de índice e `Count`; nesses casos, `IReadOnlyList<T>` ou `IReadOnlyCollection<T>` podem comunicar melhor a intenção.
+
+Em resumo: `IEnumerable<T>` é o contrato ideal para **sequência**, não necessariamente para **coleção rica**.
+
+---
+
+### 14.4 `IQueryable<T>` e queries traduzíveis para outra fonte
+
+`IQueryable<T>` herda de `IEnumerable<T>`, mas representa algo conceitualmente diferente.
+
+De acordo com a documentação oficial:
+
+- queries sobre `IEnumerable<T>` são compiladas em **delegates**;
+- queries sobre `IQueryable<T>` são compiladas em **expression trees**;
+- o provider interpreta essa árvore de expressão e decide como executá-la.
+
+Isso significa que `IQueryable<T>` não representa apenas "dados já disponíveis". Ele representa uma **consulta ainda descritiva**, que pode ser traduzida para outra linguagem ou motor de execução, como SQL.
+
+Exemplo típico com Entity Framework:
+
+```csharp
+IQueryable<Usuario> ativos = contexto.Usuarios
+    .Where(u => u.Ativo)
+    .OrderBy(u => u.Nome);
+
+List<Usuario> primeiros10 = ativos
+    .Take(10)
+    .ToList();
+```
+
+Nesse fluxo:
+
+- `contexto.Usuarios` é um provider de query;
+- `Where`, `OrderBy` e `Take` constroem uma árvore de expressão;
+- `ToList()` força a execução;
+- o provider pode traduzir isso para SQL.
+
+#### Por que isso importa?
+
+Porque algumas operações são executadas de forma diferente dependendo da fonte:
+
+- em `IEnumerable<T>`, a filtragem acontece em memória;
+- em `IQueryable<T>`, a filtragem pode acontecer no banco;
+- isso muda performance, volume de dados transferidos e até semântica de comparação.
+
+#### Armadilhas reais com `IQueryable<T>`
+
+- Nem todo método C# pode ser traduzido pelo provider.
+- Chamar `ToList()` cedo demais materializa dados cedo demais e corta a composição da query.
+- Chamar `AsEnumerable()` muda o restante da pipeline para execução local.
+- Retornar `IQueryable<T>` indiscriminadamente de camadas de aplicação pode vazar detalhes de persistência e criar consultas difíceis de controlar.
+
+Exemplo de mudança de fronteira:
+
+```csharp
+var consultaBanco = contexto.Usuarios.Where(u => u.Ativo);   // IQueryable<Usuario>
+var consultaMemoria = consultaBanco.AsEnumerable()           // IEnumerable<Usuario>
+                                 .Where(u => u.Nome.Length > 3);
+```
+
+Depois de `AsEnumerable()`, o restante não é mais traduzido pelo provider; passa a rodar em memória.
+
+Regra prática:
+
+- use `IQueryable<T>` quando você está deliberadamente compondo consultas traduzíveis;
+- use `IEnumerable<T>` quando o dado já foi materializado ou quando o contrato é somente de enumeração;
+- não misture os dois sem saber em que lado da fronteira de execução você está.
+
+---
+
+### 14.5 Execução adiada, materialização e armadilhas
+
+Uma das ideias mais importantes do LINQ é **deferred execution**: a query normalmente não roda quando você a escreve, e sim quando alguém consome seus resultados.
+
+Exemplo:
+
+```csharp
+var origem = new List<int> { 1, 2, 3, 4, 5 };
+
+var consulta = origem.Where(n =>
+{
+    Console.WriteLine($"Filtrando {n}");
+    return n % 2 == 0;
+});
+
+Console.WriteLine("Query criada.");
+
+foreach (int item in consulta)
+    Console.WriteLine($"Resultado: {item}");
+```
+
+A saída mostra que a filtragem só acontece durante a enumeração.
+
+#### Deferred vs immediate
+
+Operadores comuns por comportamento:
+
+| Operador | Execução | Observação |
+|---|---|---|
+| `Where`, `Select`, `Skip`, `Take` | Adiada | Normalmente streaming |
+| `OrderBy`, `GroupBy` | Adiada | Mas costumam precisar bufferizar antes de devolver resultados |
+| `Count`, `Any`, `First`, `Single` | Imediata | Produzem valor escalar ou decisão imediata |
+| `ToList`, `ToArray`, `ToDictionary` | Imediata | Materializam os resultados |
+
+#### O que é materializar?
+
+Materializar é transformar a query em uma estrutura concreta, como:
+
+- `List<T>`
+- `T[]`
+- `Dictionary<TKey, TValue>`
+- `HashSet<T>`
+
+Exemplo:
+
+```csharp
+IEnumerable<int> consulta = numeros.Where(n => n % 2 == 0);
+List<int> lista = consulta.ToList(); // aqui os dados são efetivamente percorridos e copiados
+```
+
+Materializar é útil quando:
+
+- você quer evitar múltiplas enumerações caras;
+- você quer congelar o estado atual do resultado;
+- você precisa de uma estrutura com indexação, contagem rápida ou reuso intensivo.
+
+#### Armadilhas que aparecem em produção
+
+- Criar uma query acreditando que ela já executou.
+- Enumerar a mesma query várias vezes e repetir trabalho sem perceber.
+- Misturar lógica com efeito colateral dentro de `Where` ou `Select`.
+- Em `IQueryable<T>`, chamar métodos não traduzíveis e descobrir o problema só em runtime.
+
+Boas práticas:
+
+- Use LINQ para descrever transformação de dados, não para esconder efeitos colaterais.
+- Materialize conscientemente nas fronteiras certas.
+- Quando a query fica opaca demais, quebre em variáveis intermediárias com nomes bons.
+- Em contexto de banco de dados, sempre pense em **onde** o código está executando: servidor ou memória local.
+
 ---
 
 ## Parte 15 — Coleções
@@ -2130,28 +2571,57 @@ var flat   = listas.SelectMany(l => l).ToList(); // [1,2,3,4,5]
 
 ### 15.1 Tipos de coleções principais
 
-```
-IEnumerable<T> (somente leitura, lazy)
-└── ICollection<T>
-    ├── IList<T>
-    │   ├── List<T>          — lista dinâmica (array redimensionável)
-    │   └── Array            — tamanho fixo
-    ├── ISet<T>
-    │   ├── HashSet<T>       — sem ordem, sem duplicatas, O(1)
-    │   ├── SortedSet<T>     — ordenado, sem duplicatas, O(log n)
-    │   └── LinkedHashSet    — (não existe nativo; use SortedSet ou LinkedList)
-    └── Queue<T>             — fila FIFO
-    └── Stack<T>             — pilha LIFO
+Escolher a coleção certa faz diferença em legibilidade, complexidade algorítmica e custo operacional. Em C#, a melhor escolha quase nunca é "a que eu lembro primeiro", e sim "a que comunica melhor a intenção do domínio e do acesso".
 
-IDictionary<TKey, TValue>
-├── Dictionary<TKey, TValue>  — hash map, O(1)
-├── SortedDictionary<K, V>    — ordenado por chave, O(log n)
-└── ConcurrentDictionary<K,V> — thread-safe
+Antes dos tipos concretos, vale entender os contratos mais importantes:
+
+```text
+IEnumerable<T>            -> consigo enumerar itens em sequência
+ICollection<T>            -> consigo enumerar + contar + adicionar/remover
+IReadOnlyCollection<T>    -> consigo enumerar + Count, sem mutação exposta
+IList<T>                  -> acesso por índice + mutação
+IReadOnlyList<T>          -> acesso por índice sem mutação exposta
+ISet<T>                   -> semântica de conjunto (unicidade)
+IDictionary<TKey, TValue> -> mapeamento chave/valor
 ```
+
+Agora sim, os tipos concretos mais comuns:
+
+| Tipo | Estrutura mental | Pontos fortes | Cuidado principal |
+|---|---|---|---|
+| `T[]` | Array de tamanho fixo | Muito simples, rápido, ótimo para interop | Tamanho imutável |
+| `List<T>` | Array dinâmico | Índice rápido, uso geral excelente | Inserções/remover no meio custam `O(n)` |
+| `LinkedList<T>` | Nós encadeados | Inserções/remoções por nó | Péssimo para acesso por índice; raramente é a melhor escolha |
+| `HashSet<T>` | Conjunto baseado em hash | Teste de pertencimento rápido, unicidade | Não preserva ordem |
+| `SortedSet<T>` | Conjunto ordenado | Unicidade + ordenação | Operações tendem a ser `O(log n)` |
+| `Queue<T>` | Fila FIFO | Processamento em ordem de chegada | Não é para acesso aleatório |
+| `Stack<T>` | Pilha LIFO | Backtracking, undo, parsing | Semântica específica |
+| `Dictionary<TKey,TValue>` | Tabela hash | Busca por chave muito rápida | Chave deve ser estável e bem comparável |
+| `SortedDictionary<TKey,TValue>` | Mapa ordenado | Chaves sempre em ordem | Mais caro que `Dictionary` comum |
+| `ConcurrentDictionary<TKey,TValue>` | Dicionário thread-safe | Concorrência | Não substitui desenho correto de sincronização |
+
+Repare em um ponto sutil, porém crítico:
+
+- `IEnumerable<T>` fala sobre **enumeração**.
+- `List<T>` fala sobre **estrutura concreta**.
+- `IReadOnlyList<T>` fala sobre **capacidade de leitura por índice**.
+
+Confundir essas coisas leva a APIs mal desenhadas.
 
 ---
 
 ### 15.2 List\<T\>
+
+`List<T>` é a coleção "padrão ouro" do C# para a maioria dos cenários em memória. Internamente, ela funciona como um **array redimensionável**.
+
+Isso traz uma combinação excelente para uso geral:
+
+- leitura por índice em `O(1)`;
+- iteração rápida;
+- API conhecida e versátil;
+- crescimento automático da capacidade.
+
+O ponto importante é entender que esse crescimento tem custo eventual. Quando a capacidade interna é estourada, a lista precisa alocar um array maior e copiar os itens.
 
 ```csharp
 var nomes = new List<string> { "Ana", "Bruno", "Carlos" };
@@ -2170,17 +2640,55 @@ nomes.RemoveAt(0);      // remove por índice
 nomes.Sort();           // ordena in-place
 nomes.Sort((a, b) => a.Length.CompareTo(b.Length)); // custom
 
+// Capacidade inicial ajuda quando você já sabe aproximadamente o tamanho
+var ids = new List<int>(capacity: 1000);
+
 // Listas imutáveis
 var imutavel = new List<string> { "A", "B" }.AsReadOnly();
 // imutavel.Add("C"); // NotSupportedException
 ```
 
+Quando `List<T>` é excelente:
+
+- você precisa de uma sequência ordenada por posição;
+- quer adicionar muito ao final;
+- quer percorrer várias vezes;
+- precisa de índice.
+
+Quando `List<T>` não é a melhor escolha:
+
+- você precisa apenas testar pertencimento com frequência: use `HashSet<T>`;
+- você precisa mapear por chave: use `Dictionary<TKey,TValue>`;
+- você precisa garantir imutabilidade compartilhada: considere coleções imutáveis;
+- você expõe a lista só para leitura: talvez `IReadOnlyList<T>` comunique melhor a intenção da API.
+
+Custos clássicos de `List<T>`:
+
+- `Add` no final: amortizado `O(1)`;
+- acesso por índice: `O(1)`;
+- `Insert` no meio: `O(n)`;
+- `RemoveAt` no meio: `O(n)`;
+- busca por valor com `Contains`: `O(n)`.
+
 ---
 
 ### 15.3 Dictionary\<TKey, TValue\>
 
+`Dictionary<TKey, TValue>` é a escolha natural quando você quer recuperar um valor a partir de uma chave.
+
+Mentalmente, ele responde a perguntas como:
+
+- "qual o usuário com este id?"
+- "qual a configuração para esta feature?"
+- "qual a quantidade em estoque deste SKU?"
+
+Na maioria dos casos, a busca por chave é próxima de `O(1)`, porque a estrutura é baseada em hash. Mas esse desempenho depende de dois fatores:
+
+- uma boa função de hash para a chave;
+- uma regra de igualdade coerente.
+
 ```csharp
-var estoque = new Dictionary<string, int>
+var estoque = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase)
 {
     ["Teclado"]  = 15,
     ["Mouse"]    = 30,
@@ -2207,6 +2715,50 @@ foreach (var (chave, valor) in estoque) // desestruturação
 var caros = estoque.Where(kv => kv.Value > 10)
                    .ToDictionary(kv => kv.Key, kv => kv.Value);
 ```
+
+O `StringComparer.OrdinalIgnoreCase` do exemplo é um detalhe de engenharia muito útil: ele faz o dicionário tratar `"mouse"` e `"Mouse"` como a mesma chave, com comparação ordinal e sem depender de cultura.
+
+Boas práticas com `Dictionary<TKey, TValue>`:
+
+- Prefira `TryGetValue` quando a chave pode não existir.
+- Evite usar o indexador para leitura se a ausência da chave for esperada.
+- Não use chaves mutáveis cujo valor lógico possa mudar enquanto elas estão no dicionário.
+- Se a chave for um tipo customizado, garanta que `Equals` e `GetHashCode` sejam coerentes.
+
+Armadilhas comuns:
+
+- Tratar `Dictionary` como se fosse ordenado. Ele não é um tipo de ordenação semântica.
+- Usar `ContainsKey` seguido de indexador em vez de um único `TryGetValue`.
+- Expor `Dictionary` mutável para qualquer camada e perder controle sobre invariantes.
+
+---
+
+### 15.4 Como escolher a coleção certa
+
+Se você decorar só uma parte deste capítulo, que seja esta tabela:
+
+| Se você precisa... | Prefira... | Porque comunica melhor |
+|---|---|---|
+| Sequência simples para iteração | `IEnumerable<T>` | O consumidor só percorre |
+| Sequência com `Count` garantido | `IReadOnlyCollection<T>` | Expõe cardinalidade sem mutação |
+| Sequência com índice | `IReadOnlyList<T>` ou `List<T>` | Expõe acesso posicional |
+| Estrutura de uso geral em memória | `List<T>` | Melhor custo/benefício geral |
+| Pertencimento rápido sem duplicatas | `HashSet<T>` | Semântica de conjunto |
+| Chave para valor | `Dictionary<TKey, TValue>` | Busca direta por chave |
+| Ordem de processamento FIFO | `Queue<T>` | Semântica de fila |
+| Ordem de processamento LIFO | `Stack<T>` | Semântica de pilha |
+| Concorrência com chave/valor | `ConcurrentDictionary<TKey,TValue>` | API pensada para múltiplas threads |
+
+Além da coleção concreta, pense no **tipo que sua API expõe**:
+
+- Retorne `List<T>` quando o chamador realmente precisa dos comportamentos de lista.
+- Retorne `IReadOnlyList<T>` quando ele só precisa ler por índice.
+- Retorne `IEnumerable<T>` quando ele só precisa enumerar.
+- Retorne `IQueryable<T>` apenas quando você quer compor uma query traduzível deliberadamente.
+
+Essa distinção melhora encapsulamento e deixa o contrato mais honesto.
+
+Em código maduro, escolher coleção não é detalhe. É parte do design.
 
 ---
 
@@ -2833,10 +3385,13 @@ unsafe
 | **`internal`** | Visível apenas dentro do mesmo assembly (≈ package-private do Java) |
 | **`protected internal`** | Visível no assembly + subclasses de qualquer assembly |
 | **`private protected`** | Visível apenas em subclasses dentro do mesmo assembly |
+| **Interface** | Contrato de comportamento desacoplado da implementação concreta |
 | **Delegate** | Tipo que representa referência a método com assinatura específica |
 | **Event** | Delegate encapsulado para padrão publisher/subscriber |
 | **Lambda** | Implementação compacta inline de delegate / interface funcional |
-| **LINQ** | API de queries integrada à linguagem sobre `IEnumerable<T>` |
+| **`IEnumerable<T>`** | Contrato básico de sequência enumerável, ideal para iteração |
+| **`IQueryable<T>`** | Contrato de query traduzível por um provider externo |
+| **LINQ** | Modelo de consulta integrada à linguagem sobre sequências e providers |
 | **`async`/`await`** | Programação assíncrona não-bloqueante nativa |
 | **`Task<T>`** | Representa operação assíncrona com resultado |
 | **Record** | Tipo imutável com igualdade por valor, `ToString` e `with` automáticos |
@@ -3535,7 +4090,7 @@ public partial class Inimigo : Node2D
 
 | Aspecto | C# Padrão (.NET) | C# no Unity |
 |---|---|---|
-| Runtime | .NET 6/7/8 | Mono ou IL2CPP |
+| Runtime | .NET 8/9/10 | Mono ou IL2CPP |
 | `async`/`await` | Totalmente suportado | Suportado, mas prefira Coroutines para lógica de jogo |
 | Coleções genéricas | System.Collections.Generic | Mesmas + `NativeArray<T>` (Jobs) |
 | `Span<T>` | Totalmente suportado | Suportado em Mono; pleno no IL2CPP |
@@ -3569,6 +4124,28 @@ Plataformas externas para praticar C# e lógica de programação, cada uma com u
 
 ---
 
+## Anexo B — Referências Oficiais Consultadas
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+As definições, distinções conceituais e atualizações de versão deste guia foram revisadas com base principalmente no **Microsoft Learn**:
+
+- [C# documentation](https://learn.microsoft.com/en-us/dotnet/csharp/)
+- [A tour of C#](https://learn.microsoft.com/en-us/dotnet/csharp/tour-of-csharp/)
+- [What's new in C# 14](https://learn.microsoft.com/en-us/dotnet/csharp/whats-new/csharp-14)
+- [.NET releases and support](https://learn.microsoft.com/en-us/dotnet/core/releases-and-support)
+- [Interfaces - define behavior for multiple types](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/types/interfaces)
+- [Language Integrated Query (LINQ)](https://learn.microsoft.com/en-us/dotnet/csharp/linq/)
+- [Standard query operators overview](https://learn.microsoft.com/en-us/dotnet/csharp/linq/standard-query-operators/)
+- [`IEnumerable<T>` Interface](https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1?view=net-10.0)
+- [`IQueryable<T>` Interface](https://learn.microsoft.com/en-us/dotnet/api/system.linq.iqueryable-1?view=net-10.0)
+- [Introduction to LINQ queries](https://learn.microsoft.com/en-us/dotnet/csharp/linq/get-started/introduction-to-linq-queries)
+- [Explicit Interface Implementation](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/interfaces/explicit-interface-implementation)
+
+Sugestão de estudo: use este guia para construir o modelo mental e a documentação oficial para validar detalhes de comportamento, APIs e mudanças de versão.
+
+---
+
 ## Glossário
 
 > Termos-chave usados ao longo do guia, em ordem alfabética. Cada item linka direto para a seção onde o assunto é explicado em detalhe.
@@ -3590,9 +4167,11 @@ Plataformas externas para praticar C# e lógica de programação, cada uma com u
 - **Generics** — recurso que permite escrever tipos e métodos parametrizados por tipo, mantendo segurança de tipos. → [17.1 Tipos parametrizados](#171-tipos-parametrizados)
 - **IL / CIL (Intermediate Language)** — formato intermediário para o qual o C# é compilado antes de ser executado pelo CLR. → [1.1 O que é C#?](#11-o-que-é-c)
 - **Interface** — contrato que define quais membros uma classe deve implementar, sem fornecer implementação própria. → [12.2 Interfaces](#122-interfaces)
+- **`IEnumerable<T>`** — contrato fundamental de sequência enumerável; diz que um tipo pode fornecer elementos em ordem de iteração, sem prometer índice ou materialização. → [14.3 `IEnumerable<T>`](#143-ienumerablet-e-o-contrato-fundamental-das-sequências)
+- **`IQueryable<T>`** — contrato de consulta traduzível por um provider, geralmente usado para fontes remotas como bancos de dados. → [14.4 `IQueryable<T>`](#144-iqueryablet-e-queries-traduzíveis-para-outra-fonte)
 - **Jobs System** — sistema da Unity para distribuir cálculos entre múltiplas threads de forma segura. → [23.7 Boas práticas de performance no Unity](#237-boas-práticas-de-performance-no-unity)
 - **Lambda (expressão lambda)** — função anônima e compacta, geralmente usada com delegates e LINQ. → [13.3 Expressões Lambda](#133-expressões-lambda)
-- **LINQ (Language Integrated Query)** — conjunto de operadores para consultar coleções de forma declarativa, similar a SQL. → [14.1 O que é LINQ?](#141-o-que-é-linq)
+- **LINQ (Language Integrated Query)** — conjunto de recursos da linguagem e da biblioteca para consultar e transformar dados de forma tipada e declarativa. → [14.1 O que é LINQ?](#141-o-que-é-linq)
 - **MonoBehaviour** — classe base da qual todo script que vive numa GameObject do Unity deriva. → [23.2 MonoBehaviour](#232-monobehaviour-a-classe-base-dos-scripts-unity)
 - **Namespace** — contêiner lógico que agrupa tipos relacionados, evitando colisão de nomes. → [2.1 Namespaces](#21-namespaces)
 - **Nullable Type** — tipo de valor que pode aceitar `null` além do seu valor normal (ex: `int?`). → [3.3 Nullable Types](#33-nullable-types-tipos-que-aceitam-null)

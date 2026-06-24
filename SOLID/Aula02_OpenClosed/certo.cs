@@ -121,6 +121,10 @@ public class ColorSpecification : ISpecification<Product>
     }
 }
 
+
+
+
+
 public class OpenClosedMain
 {
     public static void RunDemo()
