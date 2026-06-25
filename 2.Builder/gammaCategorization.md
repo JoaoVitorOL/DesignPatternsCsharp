@@ -1,10 +1,10 @@
-# Gamma Categorization
+# Capítulo 2 - Gamma Categorization e Builder
 
 **por Erich Gamma, Richard Helm, Ralph Johnson e John Vlissides (Gang of Four - GoF)**
 
 > **Livro de referência principal:** *Design Patterns: Elements of Reusable Object-Oriented Software*
 > **Autores da obra-base:** Erich Gamma, Richard Helm, Ralph Johnson e John Vlissides
-> **Objetivo deste capítulo:** introduzir a categorização clássica dos Design Patterns e posicionar o padrão `Builder` dentro desse mapa conceitual, aprofundando depois o próprio `Builder` com base nos exemplos da aula
+> **Objetivo deste capítulo:** explicar a categorização clássica dos Design Patterns com profundidade conceitual, posicionar o padrão `Builder` dentro desse mapa e conectar a teoria aos exemplos desta pasta
 
 ---
 
@@ -12,23 +12,25 @@
 
 [⬆️ Voltar ao Sumário](#sumário)
 
-Quando alguém começa a estudar Design Patterns, é comum sentir que está diante de uma coleção de nomes soltos. `Singleton`, `Factory Method`, `Adapter`, `Observer`, `Strategy`, `Builder` e tantos outros aparecem em livros, cursos e entrevistas, mas sem um mapa mental claro tudo isso pode parecer apenas uma lista para decorar.
+Muita gente aprende Design Patterns em camadas superficiais. Primeiro descobre nomes como `Singleton`, `Factory Method`, `Adapter`, `Observer`, `Strategy` e `Builder`. Depois tenta memorizar diagramas, exemplos e definições curtas. O problema é que, sem um critério de organização, todo esse conhecimento vira apenas uma prateleira de técnicas soltas.
 
-É exatamente por isso que a chamada **Gamma Categorization** é tão importante.
+É exatamente nesse ponto que a **Gamma Categorization** se torna importante.
 
-Os padrões clássicos do livro do GoF não foram apresentados como um conjunto aleatório. Eles foram organizados em **três grandes categorias**, cada uma destacando um tipo diferente de problema de design:
+Ela não surgiu para “embelezar índice de livro” nem para dar um rótulo acadêmico aos padrões. Ela existe porque os problemas de design orientado a objetos **não são todos do mesmo tipo**. Alguns nascem na criação de objetos. Outros aparecem na forma como classes e objetos se conectam. Outros emergem da distribuição de responsabilidades e do fluxo de comportamento.
+
+Por isso, os padrões clássicos do livro do GoF foram organizados em **três grandes categorias**, cada uma destacando uma família diferente de problemas:
 
 - **Creational Patterns**, voltados à criação de objetos;
 - **Structural Patterns**, voltados à composição de classes e objetos;
 - **Behavioral Patterns**, voltados à distribuição de responsabilidades e ao fluxo de comunicação.
 
-Essa divisão não existe só para organizar capítulos. Ela existe para responder uma pergunta muito prática:
+Essa divisão não existe só para organizar capítulos. Ela existe para responder uma pergunta muito prática e muito útil em engenharia:
 
 **“Que tipo de problema de design estou tentando resolver?”**
 
-Se o problema está na forma como objetos nascem, o raciocínio tende para padrões criacionais. Se está na forma como eles se conectam, o foco tende a ser estrutural. Se está na forma como colaboram, decidem e trocam mensagens, o problema costuma ser comportamental.
+Se o problema está na forma como objetos nascem, o raciocínio tende para padrões criacionais. Se está na forma como eles se conectam, o foco tende para padrões estruturais. Se está na forma como colaboram, decidem e trocam mensagens, o problema costuma ser comportamental.
 
-Este capítulo começa por esse panorama porque o padrão `Builder` só fica realmente claro quando o leitor entende o lugar que ele ocupa no ecossistema dos padrões. Depois desse mapa, o texto entra numa seção específica sobre o próprio `Builder`, para conectar a teoria ao exemplo atual da aula.
+Este capítulo foi escrito para evitar o estudo “decoreba” de padrões. A proposta aqui é tratar `Gamma Categorization` e `Builder` como assuntos de design e engenharia, e não apenas como nomes famosos de entrevista.
 
 ---
 
@@ -36,19 +38,19 @@ Este capítulo começa por esse panorama porque o padrão `Builder` só fica rea
 
 [⬆️ Voltar ao Sumário](#sumário)
 
-Este material foi escrito com duas intenções ao mesmo tempo:
+Este material foi escrito em duas camadas ao mesmo tempo:
 
-1. **Dar visão de mapa:** mostrar como os padrões GoF foram agrupados.
-2. **Preparar o terreno para o Builder:** explicar por que ele pertence aos padrões criacionais e qual tipo de problema ele resolve.
+1. **Camada conceitual:** explica por que os padrões foram agrupados e que tipo de problema cada grupo tenta resolver.
+2. **Camada prática:** conecta esse mapa ao padrão `Builder` e aos arquivos reais desta pasta.
 
-Se você está começando, leia em ordem. Se já conhece alguns padrões, use este texto como uma introdução conceitual para alinhar terminologia e contexto antes de mergulhar em implementações.
+Se você está começando, a melhor leitura é sequencial. Se você já conhece alguns padrões, use o texto como guia para alinhar o modelo mental antes de mergulhar nas implementações.
 
-Ao longo do texto, pense sempre nestas quatro perguntas:
+Ao longo do capítulo, pense sempre nestas quatro perguntas:
 
-- **O que isso representa?** Conceito ou contrato.
-- **Quando eu usaria isso?** Cenário prático.
+- **O que isso representa?** Conceito, papel ou contrato de design.
+- **Quando eu usaria isso?** Cenário prático em que essa ideia realmente ajuda.
 - **O que isso custa?** Complexidade, abstração, acoplamento ou manutenção.
-- **Qual erro é comum aqui?** Armadilha conceitual ou de implementação.
+- **Qual erro é comum aqui?** Armadilha conceitual, abuso de padrão ou leitura equivocada do problema.
 
 Ao longo do texto, quando aparecerem expressões como **GoF**, **Gamma Categorization** ou **padrões clássicos**, a referência principal é sempre o livro:
 
@@ -87,6 +89,61 @@ Em outras palavras:
 
 Essa distinção não é matemática nem rígida. Alguns padrões tocam mais de uma dimensão ao mesmo tempo. Ainda assim, essa classificação continua extremamente útil porque dá direção intelectual ao estudo.
 
+É importante perceber a diferença entre duas situações:
+
+- conhecer nomes de padrões;
+- saber em que família de problema seu design está tropeçando.
+
+A primeira situação produz repertório. A segunda produz critério. E, em software real, critério costuma valer mais do que coleção de nomes.
+
+### 1.1 O valor de um mapa conceitual
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+Quem estuda padrões sem um mapa costuma cair em dois erros:
+
+- tratar cada padrão como uma receita isolada;
+- tentar escolher padrão por familiaridade, e não pelo tipo real do problema.
+
+É por isso que a categorização importa tanto. Ela não serve apenas para “organizar capítulos”. Ela serve para **organizar o raciocínio de design**.
+
+Quando você pensa em categorias antes de pensar em nomes, a pergunta muda de nível:
+
+- em vez de “será que aqui cabe `Builder`?”;
+- você começa com “meu problema é de criação, estrutura ou comportamento?”.
+
+Esse deslocamento é pequeno na aparência, mas muito importante na prática. Ele reduz o impulso de aplicar padrão por modismo e aumenta a chance de escolher uma solução coerente com a natureza do problema.
+
+Na prática, isso significa que a categorização ajuda você a evitar perguntas ruins como:
+
+- “qual padrão eu consigo encaixar aqui?”;
+- “qual padrão parece mais sofisticado?”;
+- “qual padrão eu lembro mais rápido?”.
+
+E ajuda a fazer perguntas melhores como:
+
+- “meu problema é de criação, estrutura ou comportamento?”;
+- “onde está o atrito principal do design?”;
+- “o cliente está sofrendo com montagem, composição ou colaboração?”.
+
+### 1.2 O que a Gamma Categorization evita
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+A classificação de Gamma ajuda a combater alguns hábitos ruins muito comuns:
+
+- decorar nomes sem entender intenção;
+- usar padrões como ornamento arquitetural;
+- misturar problemas de construção com problemas de colaboração;
+- confundir dificuldade de implementação com importância conceitual.
+
+Por exemplo:
+
+- se o problema real é “como montar um objeto complexo”, olhar primeiro para padrões estruturais tende a dispersar o raciocínio;
+- se o problema real é “como objetos se notificam sem forte acoplamento”, pensar em padrões criacionais como primeira opção também costuma ser desvio.
+
+**Como interpretar essa seção:** a Gamma Categorization não responde tudo, mas cria um primeiro filtro extremamente valioso. Ela não escolhe o padrão por você; ela impede que você comece a análise no lugar errado.
+
 ---
 
 ## 2. Creational Patterns
@@ -104,6 +161,8 @@ Em vez de simplesmente espalhar `new` por toda parte sem critério, esses padrõ
 
 Essa categoria é especialmente importante porque a criação de objetos parece trivial no início, mas rapidamente se torna um ponto de acoplamento forte em sistemas reais.
 
+É comum subestimar esse tipo de problema porque `new` parece simples. Mas “instanciar” e “desenhar bem o nascimento de um objeto” são coisas diferentes. Um sistema pode compilar com dezenas de `new` espalhados e ainda assim ter um design frágil, rígido e difícil de evoluir.
+
 Os cinco padrões criacionais clássicos são:
 
 - **Singleton:** garante que uma classe tenha apenas uma instância e oferece um ponto global de acesso a ela.
@@ -112,7 +171,47 @@ Os cinco padrões criacionais clássicos são:
 - **Builder:** separa a construção de um objeto complexo de sua representação.
 - **Prototype:** define os tipos de objetos a serem criados a partir de uma instância prototípica e gera novos objetos por cópia desse protótipo.
 
-### 2.1 O papel especial do Builder entre os criacionais
+### 2.1 O que problemas criacionais têm em comum
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+Os padrões criacionais parecem diferentes entre si, mas compartilham uma ansiedade comum de design:
+
+**deixar a criação explícita demais no cliente costuma aumentar acoplamento e reduzir flexibilidade.**
+
+Isso pode acontecer de várias formas:
+
+- o cliente conhece classes concretas demais;
+- o processo de criação se espalha por muitos pontos do sistema;
+- a montagem do objeto fica longa e confusa;
+- famílias de objetos relacionados precisam nascer de forma consistente;
+- copiar um objeto pronto fica melhor do que reconstruí-lo do zero.
+
+Cada padrão criacional ataca esse problema por um ângulo específico:
+
+- `Singleton` controla quantidade e acesso;
+- `Factory Method` desloca a decisão da classe concreta;
+- `Abstract Factory` organiza famílias de objetos;
+- `Builder` organiza o processo de montagem;
+- `Prototype` desloca a criação para cópia de instâncias existentes.
+
+### 2.2 Como estudar a família criacional sem decorar
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+Em vez de decorar definições, vale usar estas perguntas:
+
+- o cliente sabe demais sobre a classe concreta?
+- o problema é escolher o tipo certo ou montar o objeto certo?
+- existe uma família de objetos que precisa nascer de forma coerente?
+- copiar um objeto seria mais natural do que recriá-lo?
+- a criação tem etapas demais para ficar clara em construtores simples?
+
+Esse tipo de pergunta é mais útil do que tentar memorizar “assinaturas típicas” dos padrões.
+
+**Como interpretar esta parte:** estudar padrões criacionais do jeito certo não é treinar a memória para repetir definições. É treinar o olhar para reconhecer quando o problema é realmente de criação e qual aspecto dessa criação está causando atrito.
+
+### 2.3 O papel especial do Builder entre os criacionais
 
 [⬆️ Voltar ao Sumário](#sumário)
 
@@ -128,6 +227,8 @@ Esse detalhe faz do `Builder` um padrão extremamente útil quando:
 - há combinações opcionais de configuração;
 - o construtor tradicional ficaria grande, ambíguo ou difícil de ler;
 - a montagem do objeto precisa ser separada de sua representação final.
+
+**Como interpretar essa diferença:** `Builder` não compete diretamente com todos os outros criacionais o tempo todo. Muitas vezes ele entra depois que você já percebeu que o problema não é apenas “qual classe instanciar”, mas sim “como organizar um processo de construção que ficou grande demais para o cliente carregar sozinho”.
 
 ---
 
@@ -159,6 +260,48 @@ Os padrões estruturais clássicos são:
 
 Uma observação importante: muitos padrões estruturais parecem “invisíveis” para iniciantes porque não estão focados em algoritmos chamativos, e sim em desenho de interface e composição. Mas é justamente aí que boa parte da qualidade arquitetural se decide.
 
+É nessa família que muita gente percebe que design orientado a objetos não é só “ter classes”. É também decidir:
+
+- como uma abstração se apresenta;
+- como um objeto pode ser envolvido sem ser reescrito;
+- como duas peças incompatíveis podem colaborar;
+- como uma estrutura maior pode continuar legível em vez de virar emaranhado.
+
+### 3.1 O que torna um problema estrutural
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+Um problema estrutural normalmente aparece quando os objetos até existem, mas sua **forma de encaixe** está ruim.
+
+Sinais comuns:
+
+- interfaces incompatíveis impedem colaboração;
+- uma API concreta está vazando complexidade demais;
+- você quer compor comportamentos sem explodir herança;
+- a estrutura parte-todo precisa ser representada com consistência;
+- o acesso ao objeto real precisa de mediação, controle ou laziness.
+
+Perceba que a pergunta muda bastante em relação aos criacionais.
+
+Nos estruturais, a preocupação já não é principalmente “como o objeto nasceu?”, e sim:
+
+**“como os objetos se conectam, se apresentam e se organizam?”**
+
+### 3.2 Por que padrões estruturais costumam parecer menos óbvios
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+Muita gente acha padrões estruturais mais difíceis de perceber porque eles nem sempre aparecem como “grandes mecanismos”. Às vezes o ganho deles é silencioso:
+
+- uma interface fica mais limpa;
+- um acoplamento desaparece;
+- uma composição substitui uma herança ruim;
+- uma biblioteca difícil ganha uma fachada mais clara.
+
+Isso pode parecer menos impressionante do que um padrão com mais passos de execução, mas arquiteturalmente costuma ser decisivo.
+
+**Como interpretar essa seção:** problemas estruturais raramente pedem “mais lógica”. Eles pedem melhor organização de fronteiras, composição e relações entre partes.
+
 ---
 
 ## 4. Behavioral Patterns
@@ -176,6 +319,10 @@ Em vez de perguntar apenas “como criar” ou “como montar”, esses padrões
 
 Essa categoria é a mais diversa do catálogo GoF, mas o núcleo comum está na coordenação do comportamento do sistema.
 
+Se os criacionais perguntam “como nasce?” e os estruturais perguntam “como se encaixa?”, os comportamentais costumam perguntar algo como:
+
+**“como decide, quem reage e por onde o comportamento circula?”**
+
 Os padrões comportamentais clássicos são:
 
 - **Chain of Responsibility:** passa requisições ao longo de uma cadeia de tratadores.
@@ -191,6 +338,39 @@ Os padrões comportamentais clássicos são:
 - **Visitor:** separa algoritmos dos objetos sobre os quais eles operam.
 
 Ao estudar essa categoria, o leitor normalmente percebe um ponto importante: orientação a objetos não trata apenas de modelar dados, mas também de organizar decisões, mensagens e variações de comportamento.
+
+### 4.1 O que torna um problema comportamental
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+Um problema comportamental aparece quando o núcleo da dificuldade não está na criação do objeto nem na sua forma estrutural, mas na forma como responsabilidades e decisões circulam.
+
+Exemplos de sinais:
+
+- lógica condicional demais para escolher comportamento;
+- excesso de acoplamento entre quem emite e quem reage;
+- algoritmos intercambiáveis tratados como ifs espalhados;
+- estados internos alterando o comportamento de maneira confusa;
+- necessidade de representar comandos, roteamento ou cadeias de decisão.
+
+Em outras palavras, a pergunta central muda para algo como:
+
+**“quem deve decidir, quando deve decidir e como essa decisão deve viajar pelo sistema?”**
+
+### 4.2 O que essa categoria ensina sobre OO
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+A família comportamental lembra uma lição importante: orientação a objetos não é só encapsular dados em classes. É também distribuir comportamento de forma que o sistema:
+
+- mude com menos atrito;
+- exponha menos condicionais espalhadas;
+- desacople emissor e receptor quando necessário;
+- trate variação de comportamento de maneira explícita.
+
+Esse grupo costuma ser o mais diverso justamente porque comportamento pode variar por estratégia, estado, comando, observação, visita, mediação e outros mecanismos.
+
+**Como interpretar essa seção:** quando o problema central é “como objetos colaboram, decidem e reagem”, o raciocínio comportamental geralmente é o melhor ponto de partida.
 
 ---
 
@@ -237,6 +417,50 @@ Em termos didáticos, uma forma simples de memorizar é esta:
 - **Builder** costuma responder melhor a “como esse objeto complexo deve ser montado?”.
 
 Essa diferença parece sutil, mas é decisiva.
+
+Muita gente olha o `Builder` pela primeira vez e pensa: “isso é só um construtor mais elaborado”. Essa leitura perde o ponto principal. O `Builder` não existe para decorar criação com mais métodos; ele existe para retirar do cliente uma responsabilidade de montagem que começou a ficar pesada demais, frágil demais ou verbosa demais.
+
+### 5.1 O que o Builder não está tentando resolver
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+Uma boa forma de entender o `Builder` é olhar também para o que ele **não** está tentando resolver.
+
+Ele não existe, primariamente, para:
+
+- adaptar interfaces incompatíveis;
+- controlar comunicação entre observadores;
+- encapsular algoritmos intercambiáveis;
+- representar estados dinâmicos;
+- proteger acesso a objetos reais.
+
+Tudo isso pode ser importante em outros contextos, mas não é o coração do problema do `Builder`.
+
+O foco dele é outro:
+
+**criação complexa demais para continuar confortável, legível e segura no código cliente.**
+
+### 5.2 Por que o Builder costuma ser subestimado
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+No começo, muita gente subestima o `Builder` porque pensa:
+
+- “isso eu resolveria com um construtor”;
+- “isso é só criar objeto com método”;
+- “isso parece exagero”.
+
+E às vezes realmente seria exagero. Mas o padrão passa a fazer sentido quando a montagem começa a ter:
+
+- muitos passos;
+- combinações opcionais;
+- ordem relevante;
+- risco de leitura ruim;
+- repetição em múltiplos clientes.
+
+Nessa hora, o `Builder` deixa de ser “ornamento” e vira uma ferramenta para reduzir atrito cognitivo e estrutural.
+
+**Como interpretar essa seção:** o `Builder` entra no mapa dos criacionais porque seu problema central é de criação. Mas ele só mostra seu valor total quando criação deixa de significar apenas “instanciar” e passa a significar “montar corretamente algo mais complexo do que um simples `new` comunica bem”. 
 
 ---
 
@@ -437,6 +661,178 @@ No seu caso atual, a linha mais importante para fixar é esta:
 - `Builder.cs` mostra encapsulamento do processo de construção.
 
 Se essa comparação estiver clara, o restante das variações do capítulo fica muito mais natural.
+
+### 6.9 Mapa das próximas variações de Builder
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+Ao avançar na trilha, você vai perceber que o curso fala em “vários tipos de builder”. É importante interpretar isso corretamente:
+
+- não são novos grupos da **Gamma Categorization**;
+- não são padrões GoF independentes no mesmo nível de `Builder`, `Factory` ou `Adapter`;
+- são **variações de implementação e uso do mesmo núcleo conceitual do Builder**.
+
+Ou seja: a ideia central continua a mesma.
+
+**o cliente não deve carregar sozinho o peso de montar um objeto complexo.**
+
+O que muda de uma variação para outra é:
+
+- a forma da API;
+- o grau de segurança na ordem dos passos;
+- o uso ou não de fluência;
+- a forma como a construção é dividida em aspectos;
+- o custo de abstração para conseguir essas garantias.
+
+#### 6.9.1 Fluent Builder
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+No **Fluent Builder**, os métodos do builder passam a retornar o próprio builder, permitindo encadeamento:
+
+```csharp
+builder.AddChildFluent("li", "hello")
+       .AddChildFluent("li", "world");
+```
+
+O objetivo aqui não é mudar o padrão, e sim mudar a ergonomia da API.
+
+O que ele enfatiza:
+
+- leitura mais fluida;
+- sensação de “frase de construção”;
+- menos repetição do nome da variável.
+
+O que observar quando essa aula chegar:
+
+- a diferença entre builder comum e builder fluente;
+- por que retornar `this` já muda bastante a experiência de uso;
+- onde a fluência melhora a leitura e onde pode começar a esconder complexidade.
+
+**Como interpretar essa variação:** o `Fluent Builder` não cria um novo conceito de design. Ele pega o `Builder` básico e o torna mais expressivo para o cliente.
+
+#### 6.9.2 Fluent Builder Inheritance with Recursive Generics
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+Essa variante aparece quando você quer **fluência + herança** ao mesmo tempo.
+
+O problema é sutil: quando um builder base retorna `this`, a herança pode atrapalhar o tipo concreto retornado nos métodos encadeados. A solução clássica em C# é usar **recursive generics** ou **CRTP-like pattern**.
+
+Em linguagem prática:
+
+- você quer reaproveitar builder por herança;
+- quer manter encadeamento fluente;
+- mas não quer perder o tipo concreto no retorno.
+
+O que observar quando essa aula chegar:
+
+- por que a herança quebra a fluência ingênua;
+- por que generics autorreferentes aparecem;
+- como preservar o tipo concreto nos métodos encadeados.
+
+**Custo dessa abordagem:** ela é poderosa, mas aumenta bastante a dificuldade de leitura. É uma das variações em que o ganho de API precisa justificar o peso extra da tipagem genérica.
+
+#### 6.9.3 Stepwise Builder
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+O **Stepwise Builder** tenta resolver outro problema: impedir que o cliente monte o objeto em uma ordem inválida ou esqueça passos obrigatórios.
+
+Em vez de apenas oferecer uma API fluente, ele guia o cliente por etapas:
+
+- primeiro passo;
+- segundo passo permitido;
+- terceiro passo liberado só depois;
+- finalização apenas quando o objeto estiver num estado válido.
+
+O que ele enfatiza:
+
+- segurança de construção;
+- restrição de ordem;
+- modelagem explícita de passos obrigatórios.
+
+O que observar quando essa aula chegar:
+
+- como interfaces ou tipos intermediários limitam o que pode ser chamado;
+- como o compilador passa a ajudar na sequência correta;
+- quando isso vale a pena e quando vira burocracia demais.
+
+**Como interpretar essa variação:** o `Stepwise Builder` troca liberdade por segurança. Ele é especialmente útil quando a ordem da construção faz parte do contrato do domínio.
+
+#### 6.9.4 Functional Builder
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+O **Functional Builder** muda o estilo interno da construção. Em vez de pensar apenas em métodos mutando um objeto em andamento, ele tende a compor funções, ações ou transformações.
+
+Em termos intuitivos:
+
+- cada passo descreve uma mutação ou transformação;
+- essas transformações são acumuladas;
+- no final, o objeto é materializado com base nessa composição.
+
+O que ele enfatiza:
+
+- composição de comportamento;
+- reaproveitamento de passos menores;
+- estilo mais funcional dentro de uma linguagem orientada a objetos.
+
+O que observar quando essa aula chegar:
+
+- como a construção passa a ser vista como composição de operações;
+- o que muda mentalmente em relação ao builder clássico;
+- onde isso ajuda e onde pode ficar abstrato demais para quem ainda está fixando o padrão base.
+
+**Regra prática:** o `Functional Builder` costuma ser interessante quando você quer modularidade fina na construção, mas pode custar mais clareza para iniciantes.
+
+#### 6.9.5 Faceted Builder
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+O **Faceted Builder** aparece quando o objeto é tão grande que uma única interface de builder começa a ficar inchada.
+
+Nesse caso, a construção é dividida em **facetas** ou **aspectos** do mesmo objeto.
+
+Exemplo mental:
+
+- faceta de endereço;
+- faceta profissional;
+- faceta financeira;
+- faceta de configuração técnica.
+
+O que ele enfatiza:
+
+- separação por responsabilidade dentro da construção;
+- organização de APIs muito grandes;
+- visão do mesmo produto por perspectivas diferentes.
+
+O que observar quando essa aula chegar:
+
+- como um único produto pode ser construído por builders especializados;
+- como esses builders colaboram sem virar objetos totalmente independentes;
+- por que isso ajuda quando o produto tem muitos grupos de propriedades.
+
+**Como interpretar essa variação:** o `Faceted Builder` não divide o produto em vários produtos. Ele divide a **experiência de construção** do mesmo produto em áreas mais administráveis.
+
+#### 6.9.6 Como olhar para todas essas variações sem se perder
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+Uma boa forma de não se confundir nas próximas aulas é usar este mapa mental:
+
+| Variação | Pergunta principal que ela tenta responder |
+| --- | --- |
+| Builder básico | Como tirar do cliente os detalhes de montagem? |
+| Fluent Builder | Como tornar a API de construção mais legível e encadeável? |
+| Recursive Generics Builder | Como manter fluência mesmo com herança? |
+| Stepwise Builder | Como forçar ordem e passos obrigatórios? |
+| Functional Builder | Como compor a construção como transformações reutilizáveis? |
+| Faceted Builder | Como dividir a construção de um objeto grande por áreas de responsabilidade? |
+
+Se você guardar isso, cada nova aula entra como uma extensão natural, e não como “mais um padrão para decorar”.
+
+**Ponto central:** todas essas variações continuam orbitando a mesma ideia do GoF: separar o processo de construção da representação final do objeto.
 
 ---
 

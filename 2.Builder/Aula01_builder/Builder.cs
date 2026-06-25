@@ -5,14 +5,31 @@ using static System.Console;
 
 namespace Aula01_builder
 {
-
-    // Agora a ideia muda:
-    // em vez de montar HTML direto como texto,
-    // vamos modelar a estrutura HTML como objetos.
+    // LEITURA OBRIGATÓRIA DESTA AULA:
     //
-    // O ganho didático aqui é enorme:
-    // o código cliente para de pensar em "abre tag / fecha tag"
-    // e passa a pensar em "crie uma lista e adicione itens".
+    // Este arquivo mostra o BUILDER NORMAL.
+    //
+    // Comparação com o SemBuilder.cs:
+    // - lá o cliente monta o HTML manualmente como texto;
+    // - aqui o cliente usa um objeto construtor para montar a estrutura.
+    //
+    // Comparação com o fluentBuilder.cs:
+    // - aqui cada passo é chamado separadamente;
+    // - os métodos de construção NÃO devolvem o próprio builder;
+    // - por isso a API não encadeia.
+    //
+    // Builder normal:
+    // builder.AddChild(...);
+    // builder.AddChild(...);
+    // builder.AddChild(...);
+    //
+    // Fluent Builder:
+    // builder.AddChildFluent(...)
+    //        .AddChildFluent(...)
+    //        .AddChildFluent(...);
+    //
+    // Resumo em uma frase:
+    // este arquivo mostra o Builder básico, com passos separados.
 
 
     // ========================
@@ -179,6 +196,7 @@ namespace Aula01_builder
                 // "quero outro item com texto world"
                 builder.AddChild("li","hello");
                 builder.AddChild("li","world");
+                builder.AddChild("p","Ser ou não ser, eis a questão");
                 // Só no final pedimos a representação em string.
                 // Ou seja: primeiro construímos a estrutura, depois renderizamos.
                 WriteLine(builder.ToString());
