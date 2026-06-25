@@ -60,14 +60,38 @@ Ao longo do texto, quando aparecerem expressões como **GoF**, **Gamma Categoriz
 
 ## Sumário
 
-1. [Por que os padrões são agrupados](#1-por-que-os-padrões-são-agrupados)
-2. [Creational Patterns](#2-creational-patterns)
-3. [Structural Patterns](#3-structural-patterns)
-4. [Behavioral Patterns](#4-behavioral-patterns)
-5. [Onde o Builder entra nesse mapa](#5-onde-o-builder-entra-nesse-mapa)
-6. [O Builder em Profundidade](#6-o-builder-em-profundidade)
-7. [Conclusão](#7-conclusão)
-8. [Referências bibliográficas](#8-referências-bibliográficas)
+- [Como ler este capítulo](#como-ler-este-capítulo)
+- Parte 1 — Gamma Categorization
+  - [1. Por que os padrões são agrupados](#1-por-que-os-padrões-são-agrupados)
+    - [1.1 O valor de um mapa conceitual](#11-o-valor-de-um-mapa-conceitual)
+    - [1.2 O que a Gamma Categorization evita](#12-o-que-a-gamma-categorization-evita)
+  - [2. Creational Patterns](#2-creational-patterns)
+    - [2.1 O que problemas criacionais têm em comum](#21-o-que-problemas-criacionais-têm-em-comum)
+    - [2.2 Como estudar a família criacional sem decorar](#22-como-estudar-a-família-criacional-sem-decorar)
+    - [2.3 O papel especial do Builder entre os criacionais](#23-o-papel-especial-do-builder-entre-os-criacionais)
+  - [3. Structural Patterns](#3-structural-patterns)
+    - [3.1 O que torna um problema estrutural](#31-o-que-torna-um-problema-estrutural)
+    - [3.2 Por que padrões estruturais costumam parecer menos óbvios](#32-por-que-padrões-estruturais-costumam-parecer-menos-óbvios)
+  - [4. Behavioral Patterns](#4-behavioral-patterns)
+    - [4.1 O que torna um problema comportamental](#41-o-que-torna-um-problema-comportamental)
+    - [4.2 O que essa categoria ensina sobre OO](#42-o-que-essa-categoria-ensina-sobre-oo)
+  - [5. Onde o Builder entra nesse mapa](#5-onde-o-builder-entra-nesse-mapa)
+    - [5.1 O que o Builder não está tentando resolver](#51-o-que-o-builder-não-está-tentando-resolver)
+    - [5.2 Por que o Builder costuma ser subestimado](#52-por-que-o-builder-costuma-ser-subestimado)
+- Parte 2 — Builder em Profundidade
+  - [6. O Builder em Profundidade](#6-o-builder-em-profundidade)
+    - [6.1 O que o Builder representa](#61-o-que-o-builder-representa)
+    - [6.2 O problema que ele resolve](#62-o-problema-que-ele-resolve)
+    - [6.3 Participantes clássicos do padrão](#63-participantes-clássicos-do-padrão)
+    - [6.4 Como isso aparece no exemplo da aula](#64-como-isso-aparece-no-exemplo-da-aula)
+    - [6.5 Life Without Builder vs Builder](#65-life-without-builder-vs-builder)
+    - [6.6 Builder Pattern não é StringBuilder](#66-builder-pattern-não-é-stringbuilder)
+    - [6.7 Quando usar e quando não usar](#67-quando-usar-e-quando-não-usar)
+    - [6.8 Erros comuns](#68-erros-comuns)
+    - [6.9 Mapa das próximas variações de Builder](#69-mapa-das-próximas-variações-de-builder)
+- Parte 3 — Fechamento
+  - [7. Conclusão](#7-conclusão)
+  - [8. Referências bibliográficas](#8-referências-bibliográficas)
 
 ---
 
