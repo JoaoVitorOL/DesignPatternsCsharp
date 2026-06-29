@@ -41,8 +41,10 @@ Arquivos já presentes no repositório:
 - `2.Builder/Aula02_FluentBuilder/fluentBuilder.cs`
 - `2.Builder/Aula02_FluentBuilder/ErradoFluentBuilderWithRecursiveGenerics.cs`
 - `2.Builder/Aula02_FluentBuilder/CertoFluentBuilderWithRecursiveGenerics.cs`
+- `2.Builder/Aula03_StepWiseBuilder/StepWiseBuilder.cs`
+- `2.Builder/Aula04_FunctionalBuilder/FunctionalBuilder.cs`
 
-As seções de `Stepwise Builder`, `Functional Builder`, `Faceted Builder` e `Coding Exercise` foram mantidas porque fazem parte da trilha da imagem, mesmo que ainda não exista um arquivo local para cada uma delas.
+As seções de `Faceted Builder` e `Coding Exercise` foram mantidas porque fazem parte da trilha da imagem, mesmo que ainda não exista um arquivo local para cada uma delas.
 
 ---
 
@@ -657,27 +659,168 @@ Em troca, a leitura da API passa a ensinar a ordem correta de construcao.
 
 [⬆️ Voltar ao Sumário](#sumário)
 
-Esta seção também foi mantida para seguir a trilha do curso.
+Esta parte corresponde ao arquivo `2.Builder/Aula04_FunctionalBuilder/FunctionalBuilder.cs`.
 
-O **Functional Builder** muda o estilo interno da construção. Em vez de pensar apenas em um objeto sendo mutado passo a passo, a construção passa a ser modelada como composição de operações.
+O **Functional Builder** continua sendo uma variação de `Builder`, mas muda o modelo mental da construção por dentro.
 
-### 16.1 O que ele enfatiza
+Em vez de pensar apenas:
 
-- composição de comportamento;
-- reaproveitamento de passos menores;
-- construção vista como sequência de transformações.
+- "tenho um objeto e vou preenchendo ele agora"
 
-### 16.2 Quando ele ajuda
+o exemplo passa a pensar:
+
+- "vou acumulando operações de construção e só no final vou materializar o objeto"
+
+No arquivo atual, isso aparece nesta leitura:
+
+```csharp
+var person = new PersonBuilder()
+    .Called("Sara")
+    .WorksAsA("Professor")
+    .Build();
+```
+
+Por fora, a cadeia lembra um fluent builder comum. A diferença importante está por dentro:
+
+- `Called()` registra uma operação;
+- `WorksAsA()` registra outra operação;
+- `Build()` cria o objeto base e aplica todas as operações acumuladas.
+
+### 16.1 O que muda em relação ao Stepwise Builder
+
+Esta é a comparação mais importante com a aula anterior.
+
+No **Stepwise Builder**, a pergunta central era:
+
+**"qual é o próximo passo válido?"**
+
+Por isso o exemplo do carro usava interfaces diferentes para cada etapa:
+
+- `ISpecifyCarType`
+- `ISpecifyWheelSize`
+- `IBuildCar`
+
+Cada retorno restringia o que o cliente podia chamar em seguida.
+
+No **Functional Builder**, a pergunta central muda para:
+
+**"quais operações de construção eu quero compor?"**
+
+Aqui o objetivo principal já não é travar a ordem pelo tipo devolvido. O objetivo passa a ser acumular comportamento de forma modular.
+
+Resumo da virada:
+
+- `Stepwise Builder`: enfatiza ordem obrigatória.
+- `Functional Builder`: enfatiza composição de passos.
+
+### 16.2 Como isso aparece na anatomia do código
+
+No arquivo da aula, a base genérica é esta:
+
+```csharp
+public abstract class FunctionalBuilder<TSubject, TSelf>
+```
+
+Esses dois parâmetros significam:
+
+- `TSubject`: qual é o objeto final sendo construído.
+- `TSelf`: qual é o tipo concreto do builder que está encadeando.
+
+Isso permite reaproveitar a mecânica do builder funcional sem perder a API fluent correta no tipo concreto.
+
+Dentro dessa classe, a variável central é:
+
+```csharp
+private readonly List<Func<TSubject, TSubject>> actions
+```
+
+Essa lista guarda a receita da construção.
+
+Cada `Func<TSubject, TSubject>` representa uma operação que:
+
+1. recebe o objeto em construção;
+2. aplica alguma mudança;
+3. devolve o mesmo objeto para a próxima operação.
+
+### 16.3 O papel de `Do()`, `AddAction()` e `Build()`
+
+O método:
+
+```csharp
+public TSelf Do(Action<TSubject> action)
+```
+
+recebe uma `Action<TSubject>`, isto é, uma operação que mexe no objeto mas não devolve valor.
+
+Já a lista interna guarda `Func<TSubject, TSubject>`, porque o pipeline precisa devolver o objeto para a etapa seguinte.
+
+Então `AddAction()` faz a ponte entre essas duas ideias:
+
+- recebe uma `Action<TSubject>`;
+- empacota essa action dentro de uma função;
+- essa função muta o objeto e depois devolve esse mesmo objeto.
+
+Depois, `Build()` aplica a receita acumulada:
+
+```csharp
+return actions.Aggregate(new TSubject(), (subject, action) => action(subject));
+```
+
+Leitura passo a passo:
+
+1. `new TSubject()` cria uma instância vazia.
+2. `Aggregate()` percorre a lista de operações.
+3. cada operação recebe o mesmo objeto e devolve esse objeto já alterado.
+4. o resultado da última operação vira o produto construído.
+
+Em outras palavras: no functional builder, o objeto final só nasce "de verdade" no `Build()`.
+
+### 16.4 Onde a extensibilidade aparece
+
+No exemplo atual, `Called(string name)` fica dentro de `PersonBuilder`, mas `WorksAsA(string position)` aparece em `PersonBuilderExtensions`.
+
+Esse detalhe mostra um ganho comum desse estilo:
+
+- novos passos podem ser plugados por fora;
+- a classe principal do builder não precisa concentrar tudo;
+- a construção fica mais modular.
+
+Isso conversa diretamente com a ideia de compor pequenas operações independentes.
+
+### 16.5 Diferença direta para a aula anterior
+
+Uma tabela mental simples ajuda:
+
+| Aula | Pergunta principal | Técnica central | Ganho principal |
+| --- | --- | --- | --- |
+| `Stepwise Builder` | "qual é o próximo passo válido?" | interfaces diferentes por etapa | segurança de ordem em tempo de compilação |
+| `Functional Builder` | "quais operações quero acumular?" | lista de funções aplicadas no `Build()` | composição flexível de comportamento |
+
+Outra forma curta de guardar:
+
+- no stepwise, o tipo devolvido controla o fluxo;
+- no functional, a lista de operações controla a construção.
+
+### 16.6 Quando ele ajuda
 
 Ele pode ser interessante quando:
 
 - você quer montar objetos com passos bem modulares;
 - faz sentido acumular ações antes de materializar o resultado final;
-- a equipe já está confortável com um estilo mais funcional.
+- você quer adicionar novos passos sem inchar tanto a classe principal;
+- a equipe está confortável com delegates, lambdas e uma leitura mais abstrata.
 
-### 16.3 Cuidado didático
+### 16.7 Cuidado didático
 
-Para iniciantes, esse estilo pode ficar mais abstrato do que o builder clássico. Por isso, ele costuma fazer mais sentido depois que a base do padrão já está firme.
+Para iniciantes, este estilo costuma parecer mais abstrato do que o builder tradicional e do que o stepwise builder.
+
+Isso acontece porque parte da construção fica indireta:
+
+- o objeto não está sendo mostrado como mutado o tempo todo;
+- o código está guardando operações para depois;
+- `Action`, `Func`, extension methods e `Aggregate()` exigem mais maturidade de leitura.
+
+Por isso, este modelo costuma fazer mais sentido depois que a base de `Builder`, `Fluent Builder` e `Stepwise Builder` já ficou firme.
 
 ---
 
@@ -794,6 +937,8 @@ Arquivos desta pasta usados como base prática:
 - `2.Builder/Aula02_FluentBuilder/fluentBuilder.cs`
 - `2.Builder/Aula02_FluentBuilder/ErradoFluentBuilderWithRecursiveGenerics.cs`
 - `2.Builder/Aula02_FluentBuilder/CertoFluentBuilderWithRecursiveGenerics.cs`
+- `2.Builder/Aula03_StepWiseBuilder/StepWiseBuilder.cs`
+- `2.Builder/Aula04_FunctionalBuilder/FunctionalBuilder.cs`
 
 Observação importante:
 
