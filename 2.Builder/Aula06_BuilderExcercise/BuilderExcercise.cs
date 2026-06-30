@@ -107,7 +107,8 @@ namespace Aula06_BuilderExcercise
             // 10º O cliente usa o builder descrevendo o que quer montar.
             var cb = new CodeBuilder("Person")
             .AddField("Name", "string")
-            .AddField("Age", "int");
+            .AddField("Age", "int")
+            .AddField("Job", "string");
 
          Console.WriteLine(cb);
         }
