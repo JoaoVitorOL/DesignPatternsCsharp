@@ -967,7 +967,65 @@ public class Calculadora
 }
 ```
 
+Antes de avançar, vale fixar uma leitura mental importante do operador `=>` em C#.
+
+Ele aparece em dois contextos muito comuns:
+
+1. **Expression-bodied member:** quando `=>` aparece em método, propriedade, construtor ou outro membro da classe, ele significa algo como **"este membro devolve ou executa diretamente esta expressão"**.
+2. **Lambda expression:** quando `=>` aparece entre parâmetros e um corpo inline, ele significa algo como **"receba isto e faça aquilo"**.
+
+Neste trecho atual, todos os usos são do primeiro tipo.
+
+Exemplo:
+
+```csharp
+public int Somar(int a, int b) => a + b;
+```
+
+é equivalente a:
+
+```csharp
+public int Somar(int a, int b)
+{
+    return a + b;
+}
+```
+
+Da mesma forma:
+
+```csharp
+public string Descricao => "Calculadora simples";
+```
+
+é equivalente a:
+
+```csharp
+public string Descricao
+{
+    get { return "Calculadora simples"; }
+}
+```
+
+E:
+
+```csharp
+public Calculadora(string nome) => _nome = nome;
+```
+
+é equivalente a:
+
+```csharp
+public Calculadora(string nome)
+{
+    _nome = nome;
+}
+```
+
+Perceba a ideia central: o `=>` não cria uma regra mágica nova; ele apenas substitui um bloco mais verboso quando a lógica cabe em uma única expressão ou ação direta.
+
 **Como interpretar o exemplo:** Essa sintaxe faz sentido quando a intencao inteira cabe em uma unica expressao. O ganho nao e apenas escrever menos, e sim tornar obvio que aquele membro tem logica direta e nao precisa de um bloco completo.
+
+**Regra prática:** se o membro cabe naturalmente em uma linha e continua claro, `=>` melhora a leitura. Se a lógica começa a exigir várias decisões, validações ou efeitos colaterais, normalmente um bloco com `{ ... }` volta a ser mais legível.
 
 ---
 
@@ -2090,6 +2148,26 @@ var pedido = new Pedido.Builder("Ana", "Teclado")
     .Build();
 ```
 
+Leitura guiada do trecho mais importante:
+
+- `ComQuantidade(...)`, `ComEndereco(...)` e `ComEntregaExpressa()` retornam o próprio `Builder`.
+- Esse `return this` permite continuar a chamada na mesma expressão.
+- `Build()` é o ponto em que o objeto final `Pedido` é materializado.
+
+Ou seja, esta linha:
+
+```csharp
+public Pedido Build() => new Pedido(this);
+```
+
+deve ser lida assim:
+
+- crie um novo `Pedido`;
+- passe o builder atual (`this`) para o construtor privado;
+- o construtor do `Pedido` copia do builder os valores acumulados.
+
+Em outras palavras, o builder funciona como uma "área de montagem temporária". O produto final só nasce no `Build()`.
+
 > Em C# moderno, o padrão builder frequentemente é substituído por **object initializers** e **init-only properties**, que oferecem sintaxe mais limpa sem classe auxiliar.
 
 ---
@@ -2434,7 +2512,81 @@ Func<int, int, int> somar = (a, b) => a + b;
 Func<DateTime> agora = () => DateTime.Now;
 ```
 
+Aqui o `=>` já está no segundo sentido importante de C#: **lambda expression**.
+
+Agora a leitura mental não é mais "este método devolve isto". A leitura passa a ser:
+
+- o lado esquerdo diz **quais entradas a função recebe**
+- o lado direito diz **o que essa função faz ou devolve**
+
+Exemplos:
+
+```csharp
+x => x * 2
+```
+
+significa:
+
+- receba um valor chamado `x`
+- devolva `x * 2`
+
+Já:
+
+```csharp
+(a, b) => a + b
+```
+
+significa:
+
+- receba `a` e `b`
+- devolva a soma
+
+E:
+
+```csharp
+() => DateTime.Now
+```
+
+significa:
+
+- não receba parâmetro nenhum
+- devolva a data/hora atual
+
+Uma equivalência útil:
+
+```csharp
+Func<int, int> dobrar = x => x * 2;
+```
+
+é conceitualmente parecido com:
+
+```csharp
+int Dobrar(int x)
+{
+    return x * 2;
+}
+```
+
+mas, na lambda, essa função fica inline, no próprio ponto de uso.
+
+Quando a lógica não cabe bem em uma expressão curta, você pode usar lambda com bloco:
+
+```csharp
+Func<string, string> formatar = texto =>
+{
+    string limpo = texto.Trim();
+    return limpo.ToUpperInvariant();
+};
+```
+
+Essa forma ajuda a enxergar outra diferença importante:
+
+- em **expression-bodied members**, o `=>` pertence à definição de um membro da classe
+- em **lambdas**, o `=>` pertence à definição de uma função anônima inline
+
 **Como interpretar o exemplo:** Lambda e a forma compacta de escrever uma funcao anonima no ponto em que ela e usada. O valor real aparece quando voce percebe que ela aproxima o codigo da intencao, sem obrigar a nomear um metodo auxiliar para algo muito local.
+
+**Regra prática:** use lambda quando o comportamento é pequeno, local e faz mais sentido perto do uso. Se a lógica cresce, ganha nome próprio ou precisa ser reutilizada em muitos lugares, transformar aquilo em método normal costuma melhorar a manutenção.
 
 ---
 

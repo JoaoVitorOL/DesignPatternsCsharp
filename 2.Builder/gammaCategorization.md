@@ -43,8 +43,9 @@ Arquivos já presentes no repositório:
 - `2.Builder/Aula02_FluentBuilder/CertoFluentBuilderWithRecursiveGenerics.cs`
 - `2.Builder/Aula03_StepWiseBuilder/StepWiseBuilder.cs`
 - `2.Builder/Aula04_FunctionalBuilder/FunctionalBuilder.cs`
+- `2.Builder/Aula05_FacetedBuilder/FacetedBuilder.cs`
 
-As seções de `Faceted Builder` e `Coding Exercise` foram mantidas porque fazem parte da trilha da imagem, mesmo que ainda não exista um arquivo local para cada uma delas.
+A seção de `Coding Exercise` foi mantida porque faz parte da trilha da imagem, mesmo sem um arquivo local específico no estado atual do repositório.
 
 ---
 
@@ -888,6 +889,8 @@ Por isso, este modelo costuma fazer mais sentido depois que a base de `Builder`,
 
 [⬆️ Voltar ao Sumário](#sumário)
 
+Esta parte corresponde ao arquivo `2.Builder/Aula05_FacetedBuilder/FacetedBuilder.cs`.
+
 O **Faceted Builder** aparece quando um único builder começa a ficar grande demais.
 
 Nesse caso, a experiência de construção do mesmo produto é dividida por aspectos ou facetas.
@@ -910,6 +913,55 @@ Um objeto grande pode ter facetas como:
 ### 17.3 Leitura correta
 
 O `Faceted Builder` não divide o produto em produtos diferentes. Ele divide a **interface de construção** do mesmo produto em partes mais administráveis.
+
+No arquivo atual, isso aparece assim:
+
+- `Person` continua sendo um único produto final.
+- `PersonBuilder` funciona como builder raiz.
+- `Lives` abre a faceta de endereço.
+- `Works` abre a faceta profissional.
+- `PersonAddressBuilder` e `PersonJobBuilder` recebem a mesma instância de `Person`.
+
+Ou seja: o cliente muda de "área" da API, mas continua montando o mesmo objeto.
+
+### 17.4 O que o torna diferente das aulas anteriores
+
+Essa é a comparação mais importante para não misturar as variações:
+
+- no **Builder tradicional**, a API ainda é uma superfície única de construção;
+- no **Fluent Builder**, o ganho principal é o encadeamento com `return this`;
+- no **Stepwise Builder**, o ganho principal é forçar ordem e passos obrigatórios;
+- no **Functional Builder**, o ganho principal é acumular operações para aplicar no `Build()`;
+- no **Faceted Builder**, o ganho principal é dividir um builder grande em sub-builders especializados.
+
+Então a pergunta central desta aula não é:
+
+- "como encadear melhor?"
+- "como forçar ordem?"
+- "como adiar a materialização?"
+
+A pergunta central passa a ser:
+
+**"como organizar a construção de um objeto grande sem transformar um único builder em uma classe inchada?"**
+
+### 17.5 O mecanismo técnico do exemplo
+
+O ponto técnico mais importante do arquivo `FacetedBuilder.cs` é este:
+
+- existe uma `Person` compartilhada;
+- cada faceta recebe essa mesma instância no construtor;
+- cada faceta altera apenas sua própria área de responsabilidade;
+- ao final, a cadeia continua representando o mesmo produto.
+
+Isso também ajuda a enxergar uma diferença sutil para o Stepwise Builder:
+
+- no Stepwise, o tipo devolvido controla **qual passo é permitido agora**;
+- no Faceted, o tipo devolvido controla **qual área do mesmo produto estou configurando agora**.
+
+E também ajuda a enxergar a diferença para o Functional Builder:
+
+- no Functional Builder, o builder guarda instruções;
+- no Faceted Builder, os sub-builders mexem no produto compartilhado imediatamente.
 
 ---
 
@@ -952,7 +1004,7 @@ O mapa deste capítulo fica assim:
 | 14. Fluent Builder Inheritance with Recursive Generics | Como manter a fluência mesmo com herança? |
 | 15. Stepwise Builder | Como forçar ordem e passos obrigatórios? |
 | 16. Functional Builder | Como pensar a construção como composição de operações? |
-| 17. Faceted Builder | Como dividir um builder grande por facetas? |
+| 17. Faceted Builder | Como dividir um builder grande por facetas sem trocar de produto? |
 | Coding Exercise 1 | Como aplicar o padrão em um problema prático? |
 | 18. Summary | Como consolidar o mapa mental do capítulo? |
 
@@ -999,6 +1051,7 @@ Arquivos desta pasta usados como base prática:
 - `2.Builder/Aula02_FluentBuilder/CertoFluentBuilderWithRecursiveGenerics.cs`
 - `2.Builder/Aula03_StepWiseBuilder/StepWiseBuilder.cs`
 - `2.Builder/Aula04_FunctionalBuilder/FunctionalBuilder.cs`
+- `2.Builder/Aula05_FacetedBuilder/FacetedBuilder.cs`
 
 Observação importante:
 
