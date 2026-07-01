@@ -8,16 +8,21 @@ namespace Aula05_FacetedBuilder
     // Produto final com dados de facetas diferentes.
     // Neste exemplo, a mesma Person tem uma faceta de endereco
     // e outra faceta profissional.
+
+    // ===== Classe =====
     public class Person
     {
+        // ===== Campos =====
         public string StreetAddress = string.Empty,
             PostCode = string.Empty,
             City = string.Empty;
 
         public string CompanyName = string.Empty,
             Position = string.Empty;
+
         public int AnnualIncome;
 
+        // ===== Metodos =====
         public override string ToString()
         {
             return $"{nameof(StreetAddress)}: {StreetAddress}, {nameof(PostCode)}: {PostCode},{nameof(City)}: {City}";
@@ -46,8 +51,11 @@ namespace Aula05_FacetedBuilder
     // Diferenca para o Functional Builder:
     // aqui nao acumulamos acoes para aplicar depois.
     // Cada faceta altera a mesma Person compartilhada imediatamente.
+
+    // ===== Builder =====
     public class PersonBuilder
     {
+        // ===== Campos =====
         protected Person person = new Person();
 
         // Cada propriedade abre uma "porta" para uma area da construcao.
@@ -56,22 +64,29 @@ namespace Aula05_FacetedBuilder
 
         // Permite encerrar a cadeia devolvendo o mesmo produto compartilhado,
         // independentemente de qual faceta foi a ultima usada.
+
+        // ===== Metodos =====
         public static implicit operator Person(PersonBuilder builder)
         {
             return builder.person;
         }
     }
 
+    // ===== Builder =====
     public class PersonAddressBuilder : PersonBuilder
     {
         // Recebemos a instancia ja existente para continuar montando
         // o MESMO objeto, e nao criar uma Person nova.
+
+        // ===== Construtores =====
         public PersonAddressBuilder(Person person)
         {
             this.person = person;
         }
 
         // Esta faceta sabe apenas de endereco.
+
+        // ===== Metodos =====
         public PersonAddressBuilder At(string streetAddress)
         {
             person.StreetAddress = streetAddress;
@@ -92,16 +107,21 @@ namespace Aula05_FacetedBuilder
         }
     }
 
+    // ===== Builder =====
     public class PersonJobBuilder : PersonBuilder
     {
         // O mesmo padrao da faceta de endereco:
         // reaproveitamos a mesma Person compartilhada.
+
+        // ===== Construtores =====
         public PersonJobBuilder(Person person)
         {
             this.person = person;
         }
 
         // Esta faceta cuida apenas da parte profissional.
+
+        // ===== Metodos =====
         public PersonJobBuilder At(string companyName)
         {
             person.CompanyName = companyName;
@@ -123,8 +143,10 @@ namespace Aula05_FacetedBuilder
     }
 
 
+    // ===== Classe =====
     public class Demo
     {
+        // ===== Metodos =====
         static void Main(string[] args)
         {
             var pb = new PersonBuilder();

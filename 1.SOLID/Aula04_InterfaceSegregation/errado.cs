@@ -23,6 +23,8 @@ namespace AulasSOLIDpatterns.Aula04_InterfaceSegregation
     // ================================================
     //  Classe Documento
     // ================================================
+
+    // ===== Classe =====
     public class Document2
     {
         
@@ -32,6 +34,8 @@ namespace AulasSOLIDpatterns.Aula04_InterfaceSegregation
 // ================================================
 //  Interface da maquina impressora multifuncional
 // ================================================
+
+    // ===== Interface =====
     public interface IMachine2
     {
         // Aqui esta o problema central do exemplo errado:
@@ -40,6 +44,8 @@ namespace AulasSOLIDpatterns.Aula04_InterfaceSegregation
         // Isso significa que QUALQUER classe que implemente IMachine2
         // sera obrigada a oferecer os 3 comportamentos,
         // mesmo quando ela so deveria imprimir.
+
+        // ===== Metodos =====
         void Print(Document2 d);
         void Scan(Document2 d);
         void Fax(Document2 d);
@@ -49,6 +55,8 @@ namespace AulasSOLIDpatterns.Aula04_InterfaceSegregation
 // ================================================
 //  Classe da impressora multifuncional
 // ================================================
+
+    // ===== Classe =====
     public class MultiFunctionPrinter2: IMachine2
     {
         // Neste caso, uma multifuncional de verdade ate poderia implementar tudo.
@@ -56,6 +64,8 @@ namespace AulasSOLIDpatterns.Aula04_InterfaceSegregation
         //
         // O problema real aparece quando tentamos reutilizar a MESMA interface
         // em dispositivos mais simples.
+
+        // ===== Metodos =====
         public void Print(Document2 d)
         {
             throw new NotImplementedException();
@@ -76,6 +86,8 @@ namespace AulasSOLIDpatterns.Aula04_InterfaceSegregation
 // ================================================
 // Classe da impressora antiga (nao multifuncional)
 // ================================================
+
+    // ===== Classe =====
     public class OldFashionedPrinter: IMachine2
     {
         // Por que errado.cs e errado?
@@ -87,6 +99,8 @@ namespace AulasSOLIDpatterns.Aula04_InterfaceSegregation
         //
         // Isso viola Interface Segregation porque a classe passa a depender
         // de metodos que nao fazem parte da sua responsabilidade real.
+
+        // ===== Metodos =====
         public void Print(Document2 d)
         {
             throw new NotImplementedException();

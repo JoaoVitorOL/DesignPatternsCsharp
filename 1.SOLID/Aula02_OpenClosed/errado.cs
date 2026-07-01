@@ -9,11 +9,14 @@ namespace AulasSOLIDpatterns.Aula02_OpenClosed
 // ===========================================
 // Enumeradores para as propriedades do produto
 // ===========================================
+
+// ===== Enum =====
 public enum Color1
 {
     Red, Green, Blue, Black, White
 }
 
+// ===== Enum =====
 public enum Size1
 {
     Small, Medium, Large, ExtraLarge
@@ -22,13 +25,18 @@ public enum Size1
 // ===========================================
 // !!!!! CLASSE DE PRODUTO !!!!!!!!!!!!!!!!!!!!!!!
 // ===========================================
+
+// ===== Classe =====
 public class Product1
 {
+    // ===== Propriedades =====
     public string Name { get; set; }
     public Color1 Color { get; set; }
     public Size1 Size { get; set; }
 
     // Construtor da classe Product
+
+    // ===== Construtores =====
     public Product1(string name, Color1 color, Size1 size)
     {
         if (name == null)
@@ -47,9 +55,13 @@ public class Product1
 // Da forma que esta, toda vez que quisermos adicionar um novo criterio de filtragem
 // ou uma nova propriedade do produto, teremos que modificar a classe "ProductFilter".
 // Isso viola o principio Open/Closed, pois a classe nao esta fechada para modificacoes.
+
+// ===== Classe =====
 public class ProductFilter
 {
     // Cada regra nova exige mais um metodo dentro desta mesma classe.
+
+    // ===== Metodos =====
     public static IEnumerable<Product1> FilterBySize(IEnumerable<Product1> products, Size1 size)
     {
         foreach (var p in products)
@@ -93,8 +105,11 @@ public class ProductFilter
 // ===========================================
 // Main
 // ===========================================
+
+// ===== Classe =====
 public class OpenClosedMain1
 {
+    // ===== Metodos =====
     public static void RunDemo()
     {
         var apple = new Product1("Apple", Color1.Green, Size1.Small);

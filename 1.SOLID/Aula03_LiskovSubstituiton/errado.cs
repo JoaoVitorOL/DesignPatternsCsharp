@@ -16,6 +16,8 @@ namespace AulasSOLIDpatterns.Aula03_LiskovSubstituiton
     // ====================================
     //   Classe de Retangulo
     // ====================================
+
+    // ===== Classe =====
     public class Rectangle
     {
         // O contrato implicito desta classe e:
@@ -25,9 +27,12 @@ namespace AulasSOLIDpatterns.Aula03_LiskovSubstituiton
         // rect.Width = 4;
         // rect.Height = 5;
         // Resultado esperado: um retangulo 4 x 5.
+
+        // ===== Propriedades =====
         public int Width {get; set;}
         public int Height {get; set;}
 
+        // ===== Construtores =====
         public Rectangle()
         {
              
@@ -39,6 +44,7 @@ namespace AulasSOLIDpatterns.Aula03_LiskovSubstituiton
             Height = height;
         }
 
+        // ===== Metodos =====
         public override string ToString()
         {
             return $"{nameof(Width)}: {Width}, {nameof(Height)}: {Height}";
@@ -50,6 +56,8 @@ namespace AulasSOLIDpatterns.Aula03_LiskovSubstituiton
     // ==============================================
     //   Classe de Quadrado (herda de Retangulo)
     // ==============================================
+
+    // ===== Classe =====
     public class Square : Rectangle
     {
         // Aqui esta o problema.
@@ -73,6 +81,8 @@ namespace AulasSOLIDpatterns.Aula03_LiskovSubstituiton
         // ao definir Width, ele tambem muda Height;
         // ao definir Height, ele tambem muda Width.
         // Isso quebra a expectativa de quem usa Rectangle.
+
+        // ===== Campos =====
         public new int Width
         {
             set { base.Width = base.Height = value;}
@@ -90,8 +100,10 @@ namespace AulasSOLIDpatterns.Aula03_LiskovSubstituiton
 
 
 
+    // ===== Classe =====
     public class Demo
         {
+            // ===== Metodos =====
             static public int Area(Rectangle r)=> r.Width * r.Height;
 
             public static void Main(string[] args)

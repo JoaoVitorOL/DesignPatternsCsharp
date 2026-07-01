@@ -3,8 +3,10 @@ using static System.Console;
 
 namespace Aula02_FactoryMethod
 {
+    // ===== Classe =====
     public class Point
     {
+        // ===== Campos =====
         private readonly double x;
         private readonly double y;
 
@@ -12,6 +14,8 @@ namespace Aula02_FactoryMethod
         // em vez de um construtor ambiguo como no Point Example,
         // usamos um metodo nomeado para deixar explicito que
         // estes valores ja representam coordenadas cartesianas.
+
+        // ===== Metodos =====
         public static Point NewCartesianPoint(double x, double y)
         {
             return new Point(x, y);
@@ -28,6 +32,8 @@ namespace Aula02_FactoryMethod
         // O construtor fica privado para impedir criacao "generica".
         // Assim, quem usa a classe e conduzido a escolher um caminho
         // de criacao com nome semantico.
+
+        // ===== Construtores =====
         private Point(double x, double y)
         {
             this.x = x;
@@ -40,8 +46,10 @@ namespace Aula02_FactoryMethod
         }
     }
 
+    // ===== Classe =====
     public class Demo
     {
+        // ===== Metodos =====
         static void Main(string[] args)
         {
             // O cliente nao precisa mais passar enum, flag ou parametro opcional.

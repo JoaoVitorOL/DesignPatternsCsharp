@@ -16,15 +16,20 @@ namespace Aula02_FluentBuilder
     // gera o mesmo HTML do builder tradicional.
     // A diferenca principal esta na API:
     // o metodo de construcao retorna o proprio builder com "this" e permite encadeamento.
+
+    // ===== Classe =====
     public class HtmlElement
     {
         // Produto final igual ao exemplo anterior.
+
+        // ===== Campos =====
         public string Name = string.Empty, Text = string.Empty;
         public List<HtmlElement> Elements = new List<HtmlElement>();
 
         // Apenas formata a saida do gerador de HTML.
         private const int indentSize = 2;
 
+        // ===== Construtores =====
         public HtmlElement()
         {
         }
@@ -45,6 +50,7 @@ namespace Aula02_FluentBuilder
             Text = text;
         }
 
+        // ===== Metodos =====
         private string ToStringImpl(int indent)
         {
             var sb = new StringBuilder();
@@ -73,11 +79,14 @@ namespace Aula02_FluentBuilder
         }
     }
 
+    // ===== Builder =====
     public class HtmlBuilder
     {
+        // ===== Campos =====
         private readonly string rootName;
         private HtmlElement root = new HtmlElement();
 
+        // ===== Construtores =====
         public HtmlBuilder(string rootName)
         {
             this.rootName = rootName;
@@ -86,6 +95,8 @@ namespace Aula02_FluentBuilder
 
         // Este trecho ainda e builder normal:
         // constroi o filho, mas retorna `void`.
+
+        // ===== Metodos =====
         public void AddChild(string childName, string childText)
         {
             var e = new HtmlElement(childName, childText);
@@ -116,8 +127,10 @@ namespace Aula02_FluentBuilder
         }
     }
 
+    // ===== Classe =====
     public class Demo
     {
+        // ===== Metodos =====
         static void Main(string[] args)
         {
             var builder = new HtmlBuilder("ul");

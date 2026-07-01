@@ -9,25 +9,32 @@ using static System.Console;
 
 namespace Aula02_FluentBuilder
 {
+    // ===== Classe =====
     public class Person
     {
+        // ===== Campos =====
         public string Name;
         public string Position;
 
+        // ===== Metodos =====
         public override string ToString()
         {
             return $"{nameof(Name)}: {Name}, {nameof(Position)}: {Position}";
         }
     }
 
+    // ===== Builder =====
     public class PersonInfoBuilder
     {
+        // ===== Campos =====
         protected Person person = new Person();
 
         // Aqui nasce o problema:
         // `Called()` retorna `PersonInfoBuilder`.
         // Se a cadeia comecou em `PersonJobBuilder`, esse retorno
         // rebaixa a expressao para o tipo base.
+
+        // ===== Metodos =====
         public PersonInfoBuilder Called(string name)
         {
             person.Name = name;
@@ -37,8 +44,11 @@ namespace Aula02_FluentBuilder
 
     // Herdar da classe base reaproveita os metodos dela,
     // mas nao muda o tipo de retorno que ela ja definiu.
+
+    // ===== Builder =====
     public class PersonJobBuilder : PersonInfoBuilder
     {
+        // ===== Metodos =====
         public PersonJobBuilder workAsA(string position)
         {
             person.Position = position;
@@ -46,8 +56,10 @@ namespace Aula02_FluentBuilder
         }
     }
 
+    // ===== Classe =====
     internal class Program
     {
+        // ===== Metodos =====
         public static void Main(string[] args)
         {
             var builder = new PersonJobBuilder();

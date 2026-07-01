@@ -22,6 +22,8 @@ namespace AulasSOLIDpatterns.Aula04_InterfaceSegregation
     // ================================================
     //  Classe Documento
     // ================================================
+
+    // ===== Classe =====
     public class Document
     {
         
@@ -37,27 +39,38 @@ namespace AulasSOLIDpatterns.Aula04_InterfaceSegregation
     //
     // Isso permite montar apenas os contratos necessarios para cada maquina.
 
+    // ===== Interface =====
     public interface IPrinter
     {
         // Interface pequena: apenas imprimir.
+
+        // ===== Metodos =====
         void Print(Document2 d);
     }
 
+    // ===== Interface =====
     public interface IScanner
     {
         // Interface pequena: apenas escanear.
+
+        // ===== Metodos =====
         void Scan(Document2 d);
     }
 
+    // ===== Interface =====
     public interface IFax
     {
         // Interface pequena: apenas enviar fax.
+
+        // ===== Metodos =====
         void Fax(Document2 d);
     }
 
 // ==========================================================================================
 //  Interface especifica para maquinas multifuncionais (Usam todas as interfaces acima)
 // ==========================================================================================
+
+    // ===== Interface =====
     public interface IMultiFunctionDevice: IPrinter,IScanner,IFax
     {
         // Esta interface nao cria novos metodos.
@@ -72,6 +85,8 @@ namespace AulasSOLIDpatterns.Aula04_InterfaceSegregation
 // ================================================
 //  Classe de PhotoCopier 
 // ================================================
+
+    // ===== Classe =====
     public class PhotoCopier: IPrinter, IScanner // Implementando mais de uma interface
     {
         // Por que certo.cs e certo?
@@ -81,6 +96,8 @@ namespace AulasSOLIDpatterns.Aula04_InterfaceSegregation
         //
         // Ela NAO e obrigada a implementar fax,
         // porque o contrato foi segregado em interfaces menores.
+
+        // ===== Metodos =====
         public void Print(Document2 d)
         {
             // implementa do seu jeito
@@ -96,6 +113,8 @@ namespace AulasSOLIDpatterns.Aula04_InterfaceSegregation
 // ================================================
 // Classe da impressora multifuncional
 // ================================================
+
+    // ===== Classe =====
     public class MultiFunctionPrinter: IMultiFunctionDevice
     {
         // Aqui aparece outro efeito positivo da mudanca:
@@ -107,11 +126,14 @@ namespace AulasSOLIDpatterns.Aula04_InterfaceSegregation
         //
         // Assim, a classe depende de capacidades especificas,
         // nao de uma implementacao gigante e fixa.
+
+        // ===== Campos =====
         private IPrinter printer;
         private IScanner scanner;
         private IFax fax;
 
 
+        // ===== Construtores =====
         public MultiFunctionPrinter(IPrinter printer, IScanner scanner, IFax fax)
         {
             if (printer == null)
@@ -134,6 +156,7 @@ namespace AulasSOLIDpatterns.Aula04_InterfaceSegregation
             this.fax = fax;
         }
 
+        // ===== Metodos =====
         public void Print(Document2 d)
         {
             printer.Print(d);

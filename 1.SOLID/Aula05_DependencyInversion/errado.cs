@@ -16,6 +16,7 @@ namespace AulasSOLIDpatterns.Aula05_DependencyInversion
     // "Abstracao" aqui normalmente significa interface ou contrato.
     // A ideia e depender de "o que eu preciso" e nao de "como isso esta implementado".
 
+    // ===== Enum =====
     public enum RelationshipType
     {
         Parent,
@@ -24,8 +25,10 @@ namespace AulasSOLIDpatterns.Aula05_DependencyInversion
   
     }
 
+    // ===== Classe =====
     public class Person2
     {
+        // ===== Propriedades =====
         public string Name {get; set;} = string.Empty;
         // public dateTime DateOfBirth {get; set;}
     }
@@ -34,10 +37,14 @@ namespace AulasSOLIDpatterns.Aula05_DependencyInversion
     // Esta classe e um modulo de baixo nivel.
     // Ela cuida do armazenamento concreto dos relacionamentos.
     // Repare que ela decidiu guardar os dados em uma List de tuplas.
+
+    // ===== Classe =====
     public class Relationships2
     {
         // A tupla tem nomes melhores do que Item1/Item2/Item3,
         // mas continua sendo um detalhe interno de armazenamento.
+
+        // ===== Campos =====
         private readonly List<(Person2 From, RelationshipType Type, Person2 To)> relations
             = new List<(Person2 From, RelationshipType Type, Person2 To)>();
 
@@ -50,6 +57,7 @@ namespace AulasSOLIDpatterns.Aula05_DependencyInversion
         // o alto nivel vai consumir dados crus, e nao um contrato de negocio.
         public List<(Person2 From, RelationshipType Type, Person2 To)> RawRelations => relations;
 
+        // ===== Metodos =====
         public void AddParentAndChild(Person2 parent, Person2 child)
         {
             relations.Add((parent, RelationshipType.Parent, child));
@@ -57,6 +65,7 @@ namespace AulasSOLIDpatterns.Aula05_DependencyInversion
         }
     }
 
+    // ===== Classe =====
     public class Research2
     {
         // Research2 e o modulo de alto nivel.
@@ -69,6 +78,8 @@ namespace AulasSOLIDpatterns.Aula05_DependencyInversion
         // Em vez de depender de uma interface como:
         // "algo que sabe buscar filhos de uma pessoa",
         // ele depende da implementacao concreta inteira.
+
+        // ===== Construtores =====
         public Research2(Relationships2 relationships)
         {
             // Aqui o acoplamento fica explicito:
@@ -106,6 +117,7 @@ namespace AulasSOLIDpatterns.Aula05_DependencyInversion
             }
         }
 
+        // ===== Metodos =====
         static void Main(string[] args)
         {
             var parent = new Person2 { Name = "John" };

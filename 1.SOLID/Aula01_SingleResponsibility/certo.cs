@@ -9,8 +9,11 @@ namespace AulasSOLIDpatterns.Aula01_SingleResponsibility
 
 
 // !!!!! CLASSE DE JOURNAL !!!!!!!!!!!!!!!!!!!!!!!
+
+// ===== Classe =====
 public class JournalCerto
 {
+    // ===== Campos =====
     private readonly List<string> entries = new List<string>();
 
     private static int count = 0;
@@ -18,6 +21,8 @@ public class JournalCerto
 // =================================
 // Escrever no Journal
 // =================================
+
+    // ===== Metodos =====
     public int AddEntry(string text)
     {
         entries.Add($"{++count}: {text}");
@@ -52,11 +57,15 @@ public class JournalCerto
 
 
 //!!! CLASSE DE PERSISTÊNCIA !!!!!!!!!!!!!!!!!!!!!!!
+
+// ===== Classe =====
 public class Persistence
 {
     // ===================================================================================================
     // Salvar Journal na classe Persistance
     // ===================================================================================================
+
+    // ===== Metodos =====
     public void SavetoFile(JournalCerto journal, string filename, bool overwrite = false)
     {
         if (overwrite || !File.Exists(filename))
@@ -78,8 +87,10 @@ public class Persistence
 // enquanto a classe Persistence é responsável por salvar e carregar essas entradas de um arquivo.
 // Isso separa as responsabilidades e torna o código mais modular e fácil de manter.
 
+// ===== Classe =====
 public class CertoMain
 {
+    // ===== Metodos =====
     public static void RunDemo()
     {
         var j = new JournalCerto();

@@ -8,8 +8,11 @@ namespace AulasSOLIDpatterns.Aula01_SingleResponsibility
 
 
 // !!! Apenas a classe Journal !!!!!!!!
+
+// ===== Classe =====
 public class JournalErrado
 {
+    // ===== Campos =====
     private readonly List<string> entries = new List<string>();
 
     private static int count = 0;
@@ -17,6 +20,8 @@ public class JournalErrado
 // =================================
 // Escrever no Journal
 // =================================
+
+    // ===== Metodos =====
     public int AddEntry(string text)
     {
         entries.Add($"{++count}: {text}");
@@ -88,8 +93,10 @@ public class JournalErrado
 
 }
 
+// ===== Classe =====
 public class ErradoMain
 {
+    // ===== Metodos =====
     public static void RunDemo()
     {
         var j = new JournalErrado();

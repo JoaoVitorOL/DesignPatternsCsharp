@@ -20,6 +20,8 @@ namespace AulasSOLIDpatterns.Aula03_LiskovSubstituiton
     // ====================================
     //   Classe de Retangulo
     // ====================================
+
+    // ===== Classe =====
     public class Rectangle2
     {
         // "virtual" diz:
@@ -31,9 +33,12 @@ namespace AulasSOLIDpatterns.Aula03_LiskovSubstituiton
         // Diferenca para o arquivo errado:
         // la a decisao dependia do tipo da variavel.
         // aqui a decisao pode considerar o tipo real do objeto.
+
+        // ===== Propriedades =====
         public virtual int Width {get; set;}  // VIRTUAL habilita polimorfismo real para essa propriedade
         public virtual int Height {get; set;}  // VIRTUAL habilita polimorfismo real para essa propriedade
 
+        // ===== Construtores =====
         public Rectangle2()
         {
              
@@ -45,6 +50,7 @@ namespace AulasSOLIDpatterns.Aula03_LiskovSubstituiton
             Height = height;
         }
 
+        // ===== Metodos =====
         public override string ToString()
         {
             return $"{nameof(Width)}: {Width}, {nameof(Height)}: {Height}";
@@ -56,6 +62,8 @@ namespace AulasSOLIDpatterns.Aula03_LiskovSubstituiton
     // ==============================================
     //   Classe de Quadrado (herda de Retangulo)
     // ==============================================
+
+    // ===== Classe =====
     public class Square2 : Rectangle2
     {
         // "override" significa:
@@ -65,6 +73,8 @@ namespace AulasSOLIDpatterns.Aula03_LiskovSubstituiton
         //
         // Isso quer dizer que, se o objeto real for Square2,
         // mesmo uma variavel do tipo Rectangle2 podera executar este codigo.
+
+        // ===== Campos =====
         public override int Width // OVERRIDE e a palavra chave para substituir a implementacao do membro virtual
         {
             set { base.Width = base.Height = value;}
@@ -82,8 +92,10 @@ namespace AulasSOLIDpatterns.Aula03_LiskovSubstituiton
 
 
 
+    // ===== Classe =====
     public class Demoliskov
         {
+            // ===== Metodos =====
             static public int Area(Rectangle2 r)=> r.Width * r.Height;
 
             public static void Main(string[] args)

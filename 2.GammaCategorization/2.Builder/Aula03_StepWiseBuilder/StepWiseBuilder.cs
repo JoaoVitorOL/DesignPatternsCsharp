@@ -9,6 +9,7 @@ using static System.Console;
 
 namespace Aula03_StepWiseBuilder
 {
+    // ===== Enum =====
     public enum CarType
     {
         Sedan,
@@ -16,23 +17,33 @@ namespace Aula03_StepWiseBuilder
     }
 
     // Primeiro passo permitido: escolher o tipo do carro.
+
+    // ===== Interface =====
     public interface ISpecifyCarType
     {
+        // ===== Metodos =====
         ISpecifyWheelSize OfType(CarType type);
     }
 
     // Depois do tipo, a API libera apenas a escolha das rodas.
+
+    // ===== Interface =====
     public interface ISpecifyWheelSize
     {
+        // ===== Metodos =====
         IBuildCar WithWheels(int size);
     }
 
     // Etapa final: depois dos dados obrigatorios, o carro pode ser construido.
+
+    // ===== Interface =====
     public interface IBuildCar
     {
+        // ===== Metodos =====
         Car Build();
     }
 
+    // ===== Builder =====
     public class CarBuilder
     {
         // Um unico objeto implementa todas as etapas internamente.
@@ -45,8 +56,11 @@ namespace Aula03_StepWiseBuilder
         //
         // E no Stepwise Builder o que controla a ordem nao e "qual objeto foi criado",
         // e sim "qual interface foi devolvida ao cliente neste momento".
+
+        // ===== Classe =====
         private class Impl : ISpecifyCarType, ISpecifyWheelSize, IBuildCar
         {
+            // ===== Campos =====
             private readonly Car car = new Car();
 
             // Ao escolher o tipo, a API avanca para a etapa de rodas.
@@ -56,6 +70,8 @@ namespace Aula03_StepWiseBuilder
             // O objeto continua sendo o mesmo `Impl`,
             // mas a referencia que volta para o cliente agora so enxerga
             // o que existe em `ISpecifyWheelSize`.
+
+            // ===== Metodos =====
             public ISpecifyWheelSize OfType(CarType type)
             {
                 car.Type = type;
@@ -95,25 +111,32 @@ namespace Aula03_StepWiseBuilder
         // - tipo da referencia entregue ao cliente: `ISpecifyCarType`
         //
         // E e esse tipo da referencia que decide o que o cliente pode chamar.
+
+        // ===== Metodos =====
         public static ISpecifyCarType Create()
         {
             return new Impl();
         }
     }
 
+    // ===== Classe =====
     public class Car
     {
+        // ===== Campos =====
         public CarType Type;
         public int WheelSize;
 
+        // ===== Metodos =====
         public override string ToString()
         {
             return $"{nameof(Type)}: {Type}, {nameof(WheelSize)}: {WheelSize}";
         }
     }
 
+    // ===== Classe =====
     public class Demo
     {
+        // ===== Metodos =====
         static void Main(string[] args)
         {
             // A ordem fica guiada pelo tipo de retorno de cada etapa:

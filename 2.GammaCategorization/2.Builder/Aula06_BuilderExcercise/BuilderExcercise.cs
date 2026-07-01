@@ -44,10 +44,14 @@ using static System.Console;
 namespace Aula06_BuilderExcercise
 {
     // 1º Defina as pecas simples que o produto final vai conter.
+
+    // ===== Classe =====
     public class CodeField
     {
+        // ===== Campos =====
         public string Type, Name;
 
+        // ===== Metodos =====
         public override string ToString()
         {
             return $"public {Type} {Name}";
@@ -55,11 +59,15 @@ namespace Aula06_BuilderExcercise
     }
 
     // 2º Defina o produto completo que sera montado pelo builder.
+
+    // ===== Classe =====
     public class CodeClass
     {
+        // ===== Campos =====
         public string Name;
         public List<CodeField> Fields = new List<CodeField>();
 
+        // ===== Metodos =====
         public override string ToString()
         {
             // 8º Internamente, alguem precisa saber renderizar o resultado final.
@@ -73,17 +81,23 @@ namespace Aula06_BuilderExcercise
     }
 
     // 3º Crie o builder que vai guardar e preencher esse produto.
+
+    // ===== Builder =====
     public class CodeBuilder
     {
         // 4º Todo builder precisa manter internamente o objeto em construcao.
+
+        // ===== Campos =====
         private CodeClass codeClass = new CodeClass(); //Instância vazia do objeto que será construído
 
+        // ===== Construtores =====
         public CodeBuilder(string rootName)
         {
             // 5º No construtor, receba os dados iniciais obrigatorios.
             codeClass.Name = rootName;
         }
 
+        // ===== Metodos =====
         public CodeBuilder AddField(string name, string type)
         {
             // 6º Cada metodo de configuracao altera o produto em construcao.
@@ -101,7 +115,10 @@ namespace Aula06_BuilderExcercise
     }
 
 
+    // ===== Classe =====
     public class Program{
+
+        // ===== Metodos =====
         static void Main(string[] args)
         {
             // 10º O cliente usa o builder descrevendo o que quer montar.

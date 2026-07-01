@@ -3,14 +3,17 @@ using static System.Console;
 
 namespace Aula01_PointExample
 {
+    // ===== Enum =====
     public enum CoordinateSystem
     {
         Cartesian,
         Polar
     }
 
+    // ===== Classe =====
     public class Point
     {
+        // ===== Campos =====
         private readonly double x;
         private readonly double y;
 
@@ -22,6 +25,8 @@ namespace Aula01_PointExample
         // O problema e que `a` e `b` nao tem significado fixo.
         // O chamador so entende a chamada se lembrar de uma regra externa:
         // qual CoordinateSystem foi passado, ou pior, qual ficou no default.
+
+        // ===== Construtores =====
         public Point(double a, double b,
             CoordinateSystem system = CoordinateSystem.Cartesian)
         {
@@ -40,6 +45,7 @@ namespace Aula01_PointExample
             }
         }
 
+        // ===== Metodos =====
         public override string ToString()
         {
             return $"({x:0.##}, {y:0.##})";
@@ -58,8 +64,11 @@ namespace Aula01_PointExample
     // Point.NewPolar(3, 4)
     //
     // Os nomes dos metodos tornam explicito o caminho de criacao e evitam ambiguidade.
+
+    // ===== Classe =====
     public class Demo
     {
+        // ===== Metodos =====
         static void Main(string[] args)
         {
             var cartesian = new Point(3, 4);

@@ -9,11 +9,14 @@ namespace AulasSOLIDpatterns.Aula02_OpenClosed
 // ===========================================
 // Enumeradores para as propriedades do produto
 // ===========================================
+
+// ===== Enum =====
 public enum Color
 {
     Red, Green, Blue, Black, White
 }
 
+// ===== Enum =====
 public enum Size
 {
     Small, Medium, Large, ExtraLarge
@@ -23,13 +26,18 @@ public enum Size
 // ===========================================
 //  Classe de Produto
 // ===========================================
+
+// ===== Classe =====
 public class Product
 {
+    // ===== Propriedades =====
     public string Name { get; set; }
     public Color Color { get; set; }
     public Size Size { get; set; }
 
     // O construtor garante que o produto ja nasca com seus dados principais.
+
+    // ===== Construtores =====
     public Product(string name, Color color, Size size)
     {
         if (name == null)
@@ -51,9 +59,13 @@ public class Product
 // e aberta para extensoes por meio de novas especificacoes.
 // BetterFilter implementa o contrato IFilter<Product>.
 // Ou seja: ela promete saber filtrar produtos usando qualquer regra valida.
+
+// ===== Classe =====
 public class BetterFilter : IFilter<Product>
 {
     // IEnumerable<Product> significa "uma sequencia de produtos percorrivel com foreach".
+
+    // ===== Metodos =====
     public IEnumerable<Product> Filter(IEnumerable<Product> items, ISpecification<Product> spec)
     {
         foreach (var i in items)
@@ -73,8 +85,11 @@ public class BetterFilter : IFilter<Product>
 // ISpecification<T> esta dizendo:
 // "qualquer classe que entrar aqui precisa ter um metodo
 // capaz de dizer se um item satisfaz ou nao uma regra".
+
+// ===== Interface =====
 public interface ISpecification<T>
 {
+    // ===== Metodos =====
     bool IsSatisfied(T item);
 }
 
@@ -82,22 +97,30 @@ public interface ISpecification<T>
 // IFilter<T> esta dizendo:
 // "qualquer classe que entrar aqui precisa receber itens + uma regra
 // e devolver so os itens aprovados por essa regra".
+
+// ===== Interface =====
 public interface IFilter<T>
 {
+    // ===== Metodos =====
     IEnumerable<T> Filter(IEnumerable<T> items, ISpecification<T> spec);
 }
 
 // Esta classe cumpre o contrato ISpecification<Product>.
 // A regra concreta aqui e: "o produto tem este tamanho?"
+
+// ===== Classe =====
 public class SizeSpecification : ISpecification<Product>
 {
+    // ===== Campos =====
     private Size size;
 
+    // ===== Construtores =====
     public SizeSpecification(Size size)
     {
         this.size = size;
     }
 
+    // ===== Metodos =====
     public bool IsSatisfied(Product item)
     {
         return item.Size == size;
@@ -106,15 +129,20 @@ public class SizeSpecification : ISpecification<Product>
 
 // Esta classe tambem cumpre o contrato ISpecification<Product>.
 // A regra concreta aqui e: "o produto tem esta cor?"
+
+// ===== Classe =====
 public class ColorSpecification : ISpecification<Product>
 {
+    // ===== Campos =====
     private Color color;
 
+    // ===== Construtores =====
     public ColorSpecification(Color color)
     {
         this.color = color;
     }
 
+    // ===== Metodos =====
     public bool IsSatisfied(Product item)
     {
         // Retorna true quando o produto atende a regra atual; senao, false.
@@ -126,8 +154,10 @@ public class ColorSpecification : ISpecification<Product>
 
 
 
+// ===== Classe =====
 public class OpenClosedMain
 {
+    // ===== Metodos =====
     public static void RunDemo()
     {
         // Criamos alguns produtos para testar.

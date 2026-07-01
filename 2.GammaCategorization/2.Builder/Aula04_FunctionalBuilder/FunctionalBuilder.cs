@@ -27,11 +27,14 @@ using static System.Console;
 
 namespace Aula04_FunctionalBuilder
 {
+    // ===== Classe =====
     public class Person
     {
+        // ===== Campos =====
         public string Name;
         public string Position;
 
+        // ===== Metodos =====
         public override string ToString()
         {
             return $"{nameof(Name)}: {Name}, {nameof(Position)}: {Position}";
@@ -45,6 +48,8 @@ namespace Aula04_FunctionalBuilder
     //
     // O mesmo padrao de "SELF" apareceu na aula de recursive generics:
     // ele serve para manter o tipo concreto correto na API fluent.
+
+    // ===== Builder =====
     public abstract class FunctionalBuilder<TSubject, TSelf>
         where TSubject : new()
         where TSelf : FunctionalBuilder<TSubject, TSelf>
@@ -58,6 +63,8 @@ namespace Aula04_FunctionalBuilder
         //
         // Cada item da lista recebe um `TSubject`, aplica alguma mudanca
         // e devolve o mesmo objeto para a proxima etapa.
+
+        // ===== Campos =====
         private readonly List<Func<TSubject, TSubject>> actions =
             new List<Func<TSubject, TSubject>>();
 
@@ -67,6 +74,8 @@ namespace Aula04_FunctionalBuilder
         // la, o retorno mudava de interface para limitar o que o cliente podia chamar.
         // aqui, o retorno continua sendo o builder, porque o objetivo nao e restringir ordem;
         // o objetivo e acumular comportamento.
+
+        // ===== Metodos =====
         public TSelf Do(Action<TSubject> action)
         {
             return AddAction(action);
@@ -124,9 +133,12 @@ namespace Aula04_FunctionalBuilder
     // Aqui a ideia e simples:
     // cada metodo nao constroi a pessoa imediatamente.
     // Ele apenas registra mais uma operacao na lista interna.
+
+    // ===== Builder =====
     public sealed class PersonBuilder
         : FunctionalBuilder<Person, PersonBuilder>
     {
+        // ===== Metodos =====
         public PersonBuilder Called(string name)
         {
             return Do(person => person.Name = name);
@@ -139,8 +151,11 @@ namespace Aula04_FunctionalBuilder
     // Isso combina bem com o espirito "compor pequenas operacoes".
     // Em vez de concentrar tudo dentro de `PersonBuilder`,
     // podemos pluggar novos comportamentos por fora.
+
+    // ===== Builder =====
     public static class PersonBuilderExtensions
     {
+        // ===== Metodos =====
         public static PersonBuilder WorksAsA(
             this PersonBuilder builder,
             string position)
@@ -149,8 +164,10 @@ namespace Aula04_FunctionalBuilder
         }
     }
 
+    // ===== Classe =====
     public class Demo
     {
+        // ===== Metodos =====
         public static void Main(string[] args)
         {
             // Repare na leitura da cadeia:

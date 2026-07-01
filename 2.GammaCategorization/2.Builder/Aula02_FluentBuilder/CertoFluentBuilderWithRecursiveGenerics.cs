@@ -8,29 +8,37 @@ using static System.Console;
 
 namespace Aula02_FluentBuilder
 {
+    // ===== Classe =====
     public class Person
     {
+        // ===== Campos =====
         public string Name;
         public string Position;
 
         // Fecha o ciclo da hierarquia:
         // o builder concreto final desta cadeia sera `Builder`.
+
+        // ===== Builder =====
         public class Builder : PersonJobBuilder<Builder>
         {
         }
 
         public static Builder New => new Builder();
 
+        // ===== Metodos =====
         public override string ToString()
         {
             return $"{nameof(Name)}: {Name}, {nameof(Position)}: {Position}";
         }
     }
 
+    // ===== Builder =====
     public abstract class PersonBuilder
     {
+        // ===== Campos =====
         protected Person person = new Person();
 
+        // ===== Metodos =====
         public Person Build()
         {
             return person;
@@ -39,11 +47,15 @@ namespace Aula02_FluentBuilder
 
     // `SELF` significa: "qual e o tipo concreto do builder nesta cadeia?"
     // A restricao garante que o tipo usado realmente pertence a esta familia de builders.
+
+    // ===== Builder =====
     public class PersonInfoBuilder<SELF> : PersonBuilder
         where SELF : PersonInfoBuilder<SELF>
     {
         // Aqui o retorno ja nao e mais a classe base fixa.
         // O metodo devolve o tipo concreto esperado pela cadeia.
+
+        // ===== Metodos =====
         public SELF Called(string name)
         {
             person.Name = name;
@@ -62,11 +74,15 @@ namespace Aula02_FluentBuilder
     // `where SELF : PersonJobBuilder<SELF>` garante que o tipo final
     // tambem pertence a esta camada da hierarquia.
     // No nosso caso, esse `SELF` sera `Person.Builder`.
+
+    // ===== Builder =====
     public class PersonJobBuilder<SELF>
         : PersonInfoBuilder<PersonJobBuilder<SELF>>
         where SELF : PersonJobBuilder<SELF>
     {
         // Depois de configurar o cargo, devolvemos o tipo concreto final.
+
+        // ===== Metodos =====
         public SELF workAsA(string position)
         {
             person.Position = position;
@@ -74,8 +90,10 @@ namespace Aula02_FluentBuilder
         }
     }
 
+    // ===== Classe =====
     internal class Program
     {
+        // ===== Metodos =====
         public static void Main(string[] args)
         {
             // Agora `Called()` nao degrada a cadeia para a classe base.

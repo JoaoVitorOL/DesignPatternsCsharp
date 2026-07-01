@@ -16,6 +16,7 @@ namespace AulasSOLIDpatterns.Aula05_DependencyInversion
     // a classe Research nao depende mais da classe concreta Relationships.
     // Agora ela depende de uma abstracao.
 
+    // ===== Enum =====
     public enum RelationshipType2
     {
         Parent,
@@ -23,8 +24,10 @@ namespace AulasSOLIDpatterns.Aula05_DependencyInversion
         Sibling,
     }
 
+    // ===== Classe =====
     public class Person
     {
+        // ===== Propriedades =====
         public string Name { get; set; } = string.Empty;
         // public dateTime DateOfBirth {get; set;}
     }
@@ -33,11 +36,15 @@ namespace AulasSOLIDpatterns.Aula05_DependencyInversion
     // E um contrato que diz apenas o que o modulo de alto nivel precisa.
     // Neste caso, Research so precisa saber buscar filhos de uma pessoa.
     // Ele nao precisa saber se os dados estao em lista, banco, arquivo ou API.
+
+    // ===== Interface =====
     public interface IRelationshipReader
     {
         // O nome do metodo ja expressa a pergunta de negocio.
         // Quem consome este contrato nao precisa saber nada
         // sobre List, tupla, banco, SQL ou qualquer estrutura interna.
+
+        // ===== Metodos =====
         IEnumerable<Person> FindChildrenOf(string parentName);
     }
 
@@ -46,13 +53,18 @@ namespace AulasSOLIDpatterns.Aula05_DependencyInversion
     // Ela ainda decide como guardar os dados internamente.
     // A diferenca e que agora ela tambem implementa a abstracao
     // que o modulo de alto nivel entende.
+
+    // ===== Classe =====
     public class Relationships : IRelationshipReader
     {
         // O formato interno continua existindo.
         // A diferenca e que agora ele fica escondido dentro do modulo de baixo nivel.
+
+        // ===== Campos =====
         private readonly List<(Person From, RelationshipType2 Type, Person To)> relations
             = new List<(Person From, RelationshipType2 Type, Person To)>();
 
+        // ===== Metodos =====
         public void AddParentAndChild(Person parent, Person child)
         {
             relations.Add((parent, RelationshipType2.Parent, child));
@@ -83,6 +95,8 @@ namespace AulasSOLIDpatterns.Aula05_DependencyInversion
     // High-level
     // Esta e a parte da regra de negocio.
     // Ela quer pesquisar informacoes, nao quer saber como os dados foram guardados.
+
+    // ===== Classe =====
     public class Research
     {
         // Por que certo.cs e certo?
@@ -94,6 +108,8 @@ namespace AulasSOLIDpatterns.Aula05_DependencyInversion
         // o modulo de alto nivel depende de uma abstracao.
         // E o modulo de baixo nivel tambem depende dessa mesma abstracao,
         // ao implementa-la.
+
+        // ===== Construtores =====
         public Research(IRelationshipReader relationshipReader)
         {
             // Research faz a pergunta de negocio diretamente.
@@ -104,6 +120,7 @@ namespace AulasSOLIDpatterns.Aula05_DependencyInversion
             }
         }
 
+        // ===== Metodos =====
         public static void RunDemo()
         {
             var parent = new Person { Name = "John" };

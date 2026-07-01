@@ -13,15 +13,20 @@ namespace Aula01_builder
     // monta a arvore HTML passo a passo.
     // A diferenca para o fluent builder esta na API:
     // aqui cada chamada termina em `void`, sem encadeamento.
+
+    // ===== Classe =====
     public class HtmlElement
     {
         // Produto final do exemplo: um no da arvore HTML.
+
+        // ===== Campos =====
         public string Name = string.Empty, Text = string.Empty;
         public List<HtmlElement> Elements = new List<HtmlElement>();
 
         // Apenas formata a saida do gerador de HTML.
         private const int identSize = 2;
 
+        // ===== Construtores =====
         public HtmlElement()
         {
         }
@@ -42,6 +47,7 @@ namespace Aula01_builder
             Text = text;
         }
 
+        // ===== Metodos =====
         private string ToStringImpl(int ident)
         {
             var sb = new StringBuilder();
@@ -70,11 +76,14 @@ namespace Aula01_builder
             return ToStringImpl(0);
         }
 
+        // ===== Builder =====
         public class HtmlBuilder
         {
+            // ===== Campos =====
             private readonly string rootName;
             private HtmlElement root = new HtmlElement();
 
+            // ===== Construtores =====
             public HtmlBuilder(string rootName)
             {
                 this.rootName = rootName;
@@ -84,6 +93,8 @@ namespace Aula01_builder
             // Aqui ele continua sendo builder normal:
             // o metodo constroi, mas retorna `void`.
             // Sem retorno do proprio builder, nao existe encadeamento.
+
+            // ===== Metodos =====
             public void AddChild(string childName, string childText)
             {
                 var e = new HtmlElement(childName, childText);
@@ -101,8 +112,10 @@ namespace Aula01_builder
             }
         }
 
+        // ===== Classe =====
         public class Demo
         {
+            // ===== Metodos =====
             static void Main(string[] args)
             {
                 var builder = new HtmlBuilder("ul");

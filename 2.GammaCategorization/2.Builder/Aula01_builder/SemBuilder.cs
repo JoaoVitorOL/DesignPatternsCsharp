@@ -4,6 +4,7 @@ using static System.Console;
 
 namespace Aula01_builder
 {
+    // ===== Builder =====
     public class SemBuilder
     {
         // "SemBuilder" aqui significa: sem um Builder do padrão de projeto.
@@ -11,6 +12,7 @@ namespace Aula01_builder
         // StringBuilder resolve montagem eficiente de texto.
         // O padrão Builder resolve organização da construção de um objeto complexo.
 
+        // ===== Metodos =====
         static void Main(string[] args)
         {
             // Caso 1: montar um parágrafo simples "na mão".
