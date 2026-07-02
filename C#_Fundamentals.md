@@ -59,6 +59,7 @@ Ao longo do texto, pense sempre nestas quatro perguntas:
   - [3.3 Nullable Types — tipos que aceitam null](#33-nullable-types-tipos-que-aceitam-null)
   - [3.4 `var` — inferência de tipo](#34-var-inferência-de-tipo)
   - [3.5 `const` e `readonly`](#35-const-e-readonly)
+  - [3.6 Referências diretas, indiretas e fracas](#36-referências-diretas-indiretas-e-fracas)
 - **Parte 4 — String e suas Peculiaridades**
   - [4.1 String é um tipo de referência imutável](#41-string-é-um-tipo-de-referência-imutável)
   - [4.2 Imutabilidade e StringBuilder](#42-imutabilidade-e-stringbuilder)
@@ -548,6 +549,168 @@ private readonly List<string> _itens = new();
 | Pode ser `static` | Sempre é `static` implicitamente | Pode ser `static` ou de instância |
 
 **Como interpretar o exemplo:** A diferenca entre os dois nao e so sintatica; ela muda tempo de resolucao, flexibilidade e evolucao da API. `const` representa valor totalmente fixo e embutido pelo compilador, enquanto `readonly` protege o campo ou referencia depois da construcao do objeto.
+
+---
+
+### 3.6 Referências diretas, indiretas e fracas
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+Quando esse assunto aparece em exemplos como `ITheme` e `Ref<ITheme>`, é fácil misturar ideias que, tecnicamente, pertencem a eixos diferentes.
+
+O jeito mais claro de organizar isso é separar duas perguntas:
+
+1. **Como eu chego até o objeto?**
+2. **Essa referência impede o GC de coletar o objeto?**
+
+Essas perguntas produzem duas distinções diferentes:
+
+- **direta vs indireta** descreve o caminho de acesso ao objeto;
+- **forte vs fraca** descreve a relação da referência com o Garbage Collector.
+
+> Observação importante: "referência direta" e "referência indireta" são rótulos didáticos úteis, mas o termo formal do runtime para a referência comum do dia a dia é **referência forte**.
+
+```csharp
+public interface ITheme
+{
+    string Name { get; }
+}
+
+public sealed class DarkTheme : ITheme
+{
+    public string Name => "DarkTheme";
+}
+
+public sealed class Ref<T> where T : class
+{
+    public T Value { get; set; }
+    public Ref(T value) => Value = value;
+}
+
+ITheme directTheme = new DarkTheme();
+var handle = new Ref<ITheme>(new DarkTheme());
+var weak = new WeakReference<ITheme>(directTheme);
+```
+
+#### 3.6.1 Referência direta
+
+Quando você escreve:
+
+```csharp
+ITheme directTheme = new DarkTheme();
+```
+
+o código cliente segura o próprio objeto de domínio diretamente.
+
+Leitura mental:
+
+- a variável `directTheme` aponta direto para o tema;
+- não existe uma caixa intermediária;
+- esse acesso é **direto**;
+- e, no uso normal, também é uma **referência forte**.
+
+Em forma de seta:
+
+`cliente -> directTheme -> DarkTheme`
+
+#### 3.6.2 Referência indireta
+
+Quando você escreve:
+
+```csharp
+var handle = new Ref<ITheme>(new DarkTheme());
+```
+
+o cliente já não segura o tema diretamente. Ele segura um objeto intermediário.
+
+Leitura mental:
+
+- `handle` aponta para a caixa `Ref<ITheme>`;
+- o tema real está dentro de `handle.Value`;
+- para chegar ao tema, o cliente passa pelo handle;
+- então o acesso ao tema é **indireto**.
+
+Em forma de seta:
+
+`cliente -> handle -> Value -> DarkTheme`
+
+Essa é exatamente a ideia do exemplo do projeto:
+
+- cada cliente não recebe `ITheme` diretamente;
+- cada cliente recebe um `Ref<ITheme>`;
+- a factory pode trocar `handle.Value` depois;
+- o cliente continua com o mesmo handle, mas passa a ver outro tema.
+
+Ponto crucial: **indireta não significa fraca**.
+
+No exemplo acima, `handle` é uma referência forte para a caixa, e a caixa mantém uma referência forte para o tema em `Value`.
+
+#### 3.6.3 Referência fraca
+
+Quando você escreve:
+
+```csharp
+var weak = new WeakReference<ITheme>(directTheme);
+```
+
+você não está dizendo "quero usar esse objeto normalmente". Você está dizendo:
+
+"quero tentar observá-lo depois, sem ser o responsável por mantê-lo vivo".
+
+Leitura mental:
+
+- `weak` sabe qual era o objeto;
+- mas não conta como posse forte;
+- se só restarem weak references, o GC pode coletar o objeto;
+- por isso o acesso posterior precisa usar `TryGetTarget(...)`.
+
+```csharp
+if (weak.TryGetTarget(out var aliveTheme))
+{
+    Console.WriteLine(aliveTheme.Name);
+}
+else
+{
+    Console.WriteLine("O objeto já foi coletado.");
+}
+```
+
+#### 3.6.4 A diferença certa: não confunda os eixos
+
+O ponto mais importante desta seção é este:
+
+- **direta vs indireta** fala sobre o **caminho** até o objeto;
+- **forte vs fraca** fala sobre **tempo de vida e GC**.
+
+Isso significa que:
+
+- uma referência pode ser **direta e forte**;
+- um acesso pode ser **indireto e ainda assim forte**;
+- uma `WeakReference<T>` é **fraca**, mesmo que a variável que a guarda seja uma referência comum para o wrapper `WeakReference<T>`.
+
+Tabela mental rápida:
+
+| Caso | Como o cliente chega ao objeto | Impede coleta pelo GC? |
+|---|---|---|
+| `ITheme theme = new DarkTheme();` | Direto | Sim, enquanto essa referência forte existir |
+| `Ref<ITheme> handle = new Ref<ITheme>(...)` | Indireto, via `handle.Value` | Sim, enquanto `handle` e `Value` mantiverem o objeto alcançável |
+| `WeakReference<ITheme> weak = new WeakReference<ITheme>(theme);` | Indireto, via `TryGetTarget(...)` | Não |
+
+#### 3.6.5 Ligando isso ao projeto
+
+Na aula `Object Tracking and Bulk Replacement`, os três conceitos aparecem juntos, mas com papéis diferentes:
+
+- em **Object Tracking**, a factory guarda `WeakReference<ITheme>` para observar temas sem mantê-los vivos artificialmente;
+- em **Bulk Replacement**, o cliente recebe `Ref<ITheme>` para que a factory possa trocar o `Value` depois;
+- nesses dois casos, a centralização da criação pela factory é a base, mas tracking e bulk replacement continuam sendo capacidades opcionais.
+
+Se você guardar só uma frase desta seção, guarde esta:
+
+**`Ref<ITheme>` é indireção controlada; `WeakReference<ITheme>` é observação sem posse forte.**
+
+**Como interpretar o exemplo:** O erro mais comum é tratar `handle`, `weak reference` e `referência normal` como se fossem apenas versões diferentes da mesma coisa. Não são. `Ref<ITheme>` resolve um problema de indireção e substituição; `WeakReference<T>` resolve um problema de observação sem estender tempo de vida; e a referência direta comum continua sendo a forma padrão de usar objetos no dia a dia.
+
+> **Referências oficiais:** [WeakReference<T>](https://learn.microsoft.com/en-us/dotnet/api/system.weakreference-1?view=net-10.0), [Weak references](https://learn.microsoft.com/en-us/dotnet/standard/garbage-collection/weak-references)
 
 ---
 
@@ -3977,6 +4140,8 @@ Para entender `WeakReference<T>`, primeiro vale separar dois conceitos:
 
 - **referência forte**: a referência comum do dia a dia em C#; enquanto o objeto continua alcançável por referências fortes, ele não deve ser coletado;
 - **referência fraca**: uma referência que aponta para o objeto, mas não impede o Garbage Collector de recuperá-lo quando não restarem referências fortes.
+
+Se a sua dúvida também envolver `Ref<ITheme>` e handles, consulte a seção [3.6 Referências diretas, indiretas e fracas](#36-referências-diretas-indiretas-e-fracas). Lá o foco é o caminho de acesso ao objeto; aqui, o foco é a relação da referência com o GC.
 
 Em linguagem simples:
 
