@@ -2,6 +2,29 @@ using System;
 using System.Collections.Generic;
 using static System.Console;
 
+// ==============================================================
+// ATENCAO DIDATICA
+// ==============================================================
+// Este arquivo foi deixado propositalmente com uma violacao de OCP
+// (Open/Closed Principle) para comparacao com a correcao da aula
+// seguinte.
+//
+// O ponto quebrado nao e a existencia de `IHotDrink` nem de
+// `IHotDrinkFactory`.
+//
+// O problema esta na `HotDrinkMachine` depender de um catalogo
+// fechado (`AvailableDrink`).
+// Se entrar uma nova bebida, como `Chocolate`, nao basta criar
+// `Chocolate` e `ChocolateFactory`.
+// Tambem sera preciso reabrir a maquina e editar codigo existente
+// para cadastrar a nova opcao.
+//
+// Isso fere OCP porque a classe central precisa ser modificada
+// sempre que o sistema cresce nesse eixo.
+//
+// A versao corrigida desta ideia esta em:
+// `3.Factories/Aula08_AbstractFactoryOCP/AbstractFactoryOCP.cs`
+// ==============================================================
 namespace Aula07_AbstractFactory
 {
     // A aula mostra uma versao simplificada de Abstract Factory.
@@ -113,9 +136,14 @@ namespace Aula07_AbstractFactory
         // Em vez de o cliente dar new em TeaFactory ou CoffeeFactory,
         // ele conversa com uma maquina que localiza a factory correta.
 
+        // Aqui fica a causa mais concreta da quebra de OCP:
+        // a maquina centraliza as opcoes em um conjunto fechado.
+        // Se surgir outra bebida, este tipo precisara ser editado.
         public enum AvailableDrink
         {
             Coffee, Tea
+// Este Enum é uma das causas da quebra do Open/Closed/Principle (OCP).
+// Se quisermos adicionar uma nova bebida, teremos que alterar este Enum.
         }
 
         // Mapeia cada opcao de bebida para sua factory concreta.
@@ -129,6 +157,10 @@ namespace Aula07_AbstractFactory
             // O ponto pedagogico aqui nao e reflection em si.
             // O ponto pedagogico e que a selecao continua acontecendo
             // por meio da abstracao `IHotDrinkFactory`.
+            //
+            // Repare na sutileza:
+            // usar reflection aqui nao resolve o problema de OCP,
+            // porque a fonte principal das opcoes continua sendo o enum.
             foreach (AvailableDrink drink in Enum.GetValues(typeof(AvailableDrink)))
             {
                 var factory = (IHotDrinkFactory)Activator.CreateInstance(
