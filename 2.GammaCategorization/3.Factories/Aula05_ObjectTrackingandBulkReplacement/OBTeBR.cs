@@ -42,6 +42,7 @@ namespace Aula05_ObjectTrackingandBulkReplacement
         public string BackgroundColor => "Black";
     }
 
+//xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
     // ===== Factory Object Tracking =====
     public class TrackingThemeFactory
     {
@@ -105,6 +106,11 @@ namespace Aula05_ObjectTrackingandBulkReplacement
             }
         }
     }
+
+
+
+//xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ 
     // ===== Factory Bulk Replacement =====
     public class ReplaceableThemeFactory
     {
