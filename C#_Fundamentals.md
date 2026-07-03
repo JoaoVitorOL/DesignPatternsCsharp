@@ -82,6 +82,12 @@ Ao longo do texto, pense sempre nestas quatro perguntas:
   - [7.7 `using` para gerenciamento de recursos](#77-using-para-gerenciamento-de-recursos)
   - [7.8 `ref`, `out` e `in`](#78-ref-out-e-in)
   - [7.9 Conversões definidas pelo usuário (`implicit` e `explicit`)](#79-conversões-definidas-pelo-usuário-implicit-e-explicit)
+  - [7.10 `nameof`, `typeof` e `default`](#710-nameof-typeof-e-default)
+  - [7.11 `partial` e `file`](#711-partial-e-file)
+  - [7.12 `yield`](#712-yield)
+  - [7.13 `lock`](#713-lock)
+  - [7.14 `async` e `await`](#714-async-e-await)
+  - [7.15 `required` e `init`](#715-required-e-init)
 - **Parte 8 — Controle de Fluxo**
   - [8.1 `if / else if / else`](#81-if-else-if-else)
   - [8.2 `switch` e switch expressions](#82-switch-e-switch-expressions)
@@ -1774,6 +1780,230 @@ Em termos práticos:
 **Como interpretar o exemplo:** Esse recurso permite criar APIs mais fluentes, mas também pode esconder trabalho demais se usado sem critério. A documentação oficial recomenda que conversões implícitas sempre sejam bem-comportadas; se a conversão puder falhar, lançar exceção ou perder significado, prefira `explicit`.
 
 > **Referência oficial:** [Microsoft Learn — User-defined explicit and implicit conversion operators](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/user-defined-conversion-operators)
+
+---
+
+### 7.10 `nameof`, `typeof` e `default`
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+```csharp
+public class Usuario
+{
+    public string Nome { get; init; } = string.Empty;
+}
+
+void ValidarNome(string nome)
+{
+    if (string.IsNullOrWhiteSpace(nome))
+        throw new ArgumentException("Nome inválido.", nameof(nome));
+}
+
+Type tipoUsuario = typeof(Usuario);
+
+static T PrimeiroOuPadrao<T>(IEnumerable<T> itens)
+{
+    foreach (var item in itens)
+        return item;
+
+    return default!;
+}
+```
+
+Essas três palavras aparecem o tempo todo em código profissional, mas com papéis bem diferentes:
+
+- `nameof(...)` devolve o **nome textual** de um símbolo com segurança de refatoração;
+- `typeof(...)` devolve o **objeto `Type`** correspondente ao tipo;
+- `default` representa o **valor padrão** de um tipo.
+
+Quando isso aparece na prática:
+
+- `nameof` é muito usado em exceções, validação, logging, atributos e mensagens de erro;
+- `typeof` aparece em reflexão, DI, serializers, registradores de handlers, ORMs e metaprogramação;
+- `default` aparece bastante em genéricos, retorno padrão e inicialização neutra.
+
+**Como interpretar o exemplo:** essas palavras ajudam o código a conversar melhor com o compilador e com o runtime. Em vez de espalhar strings mágicas e valores "neutros" manuais, você pede informação estrutural da linguagem de forma segura e expressiva.
+
+> **Referências oficiais:** [The `nameof` expression](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/nameof), [Type-testing operators and cast expressions](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/type-testing-and-cast), [Default values of C# types](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/default-values)
+
+---
+
+### 7.11 `partial` e `file`
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+```csharp
+// Pedido.Entidade.cs
+public partial class Pedido
+{
+    public int Id { get; set; }
+}
+
+// Pedido.Regras.cs
+public partial class Pedido
+{
+    public bool EstaValido() => Id > 0;
+}
+
+file sealed class PedidoMapper
+{
+    public static string ParaTexto(Pedido pedido) => $"Pedido #{pedido.Id}";
+}
+```
+
+Essas duas palavras ajudam a organizar código real:
+
+- `partial` divide o mesmo tipo em mais de um arquivo;
+- `file` limita um tipo ao arquivo atual.
+
+Quando isso aparece na prática:
+
+- `partial` é muito comum com **source generators**, `JsonSerializerContext`, WinForms, Razor, Entity Framework e código gerado em geral;
+- `file` é excelente para helpers que só fazem sentido naquele arquivo e não deveriam "vazar" para o resto do assembly.
+
+**Como interpretar o exemplo:** `partial` existe para composição e expansão controlada de tipos. `file` existe para contenção máxima de helpers locais. Os dois têm muito valor profissional porque ajudam a manter código grande mais organizado sem abrir API desnecessária.
+
+> **Referências oficiais:** [Partial Classes and Members](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/partial-classes-and-methods), [Partial members](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/partial-member), [File keyword](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/file)
+
+---
+
+### 7.12 `yield`
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+```csharp
+public static IEnumerable<int> GerarPares(int max)
+{
+    for (int i = 0; i <= max; i += 2)
+        yield return i;
+}
+
+foreach (var n in GerarPares(6))
+    Console.WriteLine(n);
+```
+
+`yield return` permite gerar uma sequência **sob demanda**, sem construir a coleção inteira antes.
+
+Quando isso aparece na prática:
+
+- iteradores customizados;
+- pipelines de dados;
+- leitura progressiva de resultados;
+- integração com LINQ e `IEnumerable<T>`.
+
+**Como interpretar o exemplo:** `yield` é uma das chaves para entender o modelo de execução adiada do C#. Ele faz muita diferença para leitura de código profissional, porque várias APIs parecem "devolver uma coleção", mas na verdade devolvem uma sequência produzida aos poucos.
+
+> **Referência oficial:** [The `yield` statement](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/statements/yield)
+
+---
+
+### 7.13 `lock`
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+```csharp
+public class ContadorSeguro
+{
+    private readonly object _lock = new();
+    private int _valor;
+
+    public void Incrementar()
+    {
+        lock (_lock)
+        {
+            _valor++;
+        }
+    }
+
+    public int Ler()
+    {
+        lock (_lock)
+        {
+            return _valor;
+        }
+    }
+}
+```
+
+`lock` cria uma região de exclusão mútua: enquanto uma thread está dentro do bloco, outra não entra no mesmo lock.
+
+Quando isso aparece na prática:
+
+- proteger estado compartilhado mutável;
+- evitar condições de corrida;
+- garantir consistência em leituras e escritas concorrentes.
+
+**Como interpretar o exemplo:** `lock` não é palavra de "performance", e sim de **corretude**. Em carreira profissional, entender quando um estado precisa de sincronização é mais importante do que decorar a sintaxe.
+
+> **Referência oficial:** [The `lock` statement](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/statements/lock)
+
+---
+
+### 7.14 `async` e `await`
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+```csharp
+public async Task<string> LerArquivoAsync(string caminho)
+{
+    using var reader = new StreamReader(caminho);
+    return await reader.ReadToEndAsync();
+}
+```
+
+Essas duas palavras são centrais na vida profissional com C# moderno:
+
+- `async` marca que o método participa do modelo assíncrono;
+- `await` suspende a continuação daquele método até a operação terminar, sem bloquear a thread chamadora.
+
+Quando isso aparece na prática:
+
+- chamadas HTTP;
+- banco de dados;
+- acesso a arquivo;
+- filas, mensageria, cloud e I/O em geral.
+
+**Como interpretar o exemplo:** `async`/`await` não é só "sintaxe bonita". É uma das fundações de backend moderno em .NET. O tema aparece em profundidade na **Parte 16**, mas já merece presença aqui porque é palavra-chave que você vai encontrar o tempo todo em produção.
+
+> **Referências oficiais:** [Asynchronous programming with async and await](https://learn.microsoft.com/en-us/dotnet/csharp/asynchronous-programming/), [Async return types](https://learn.microsoft.com/en-us/dotnet/csharp/asynchronous-programming/async-return-types)
+
+---
+
+### 7.15 `required` e `init`
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+```csharp
+public class Cliente
+{
+    public required string Nome { get; init; }
+    public required string Email { get; init; }
+    public DateTime CriadoEm { get; init; } = DateTime.UtcNow;
+}
+
+var cliente = new Cliente
+{
+    Nome = "Ana",
+    Email = "ana@empresa.com"
+};
+```
+
+Essas palavras ajudam a modelar objetos mais corretos já no momento da criação:
+
+- `required` diz ao compilador que aquele membro **precisa** ser inicializado;
+- `init` permite escrita apenas durante a inicialização do objeto.
+
+Quando isso aparece na prática:
+
+- DTOs;
+- configurações;
+- request models;
+- records e objetos de transporte de dados;
+- modelos que devem nascer completos e depois ficar estáveis.
+
+**Como interpretar o exemplo:** `required` e `init` aproximam ergonomia e segurança de modelagem. Eles reduzem objetos parcialmente montados e ajudam a expressar melhor a intenção do domínio sem recorrer imediatamente a construtores gigantes.
+
+> **Referências oficiais:** [The `required` modifier](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/required), [Init only setters](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/init)
 
 ---
 
