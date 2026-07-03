@@ -981,6 +981,137 @@ C# possui mais modificadores de acesso do que Java, oferecendo controle mais gra
 
 **Como interpretar o exemplo:** Modificador de acesso não serve apenas para esconder membros; ele define quem pode colaborar com quem dentro do sistema. Quando você trata `public`, `private`, `protected`, `internal` e os compostos como fronteiras de design, suas APIs ficam menores e menos acopladas.
 
+#### 5.1.1 O que cada modificador permite na prática
+
+- **`private`**: só o próprio tipo acessa. É o mais fechado para membros e, por padrão, o mais seguro em termos de encapsulamento. Uso comum: campos, helpers internos, validações, partes sensíveis do estado e construtores que não devem ser chamados livremente.
+- **`protected`**: o próprio tipo e classes derivadas acessam. Uso comum: pontos de extensão em herança, quando subclasses realmente precisam participar da implementação.
+- **`internal`**: qualquer código do mesmo assembly acessa. Uso comum: cooperação entre classes do mesmo projeto ou biblioteca, detalhes internos de framework e tipos auxiliares que não devem virar API pública.
+- **`protected internal`**: abre em duas direções ao mesmo tempo: mesmo assembly **ou** subclasses em qualquer assembly. Uso comum: raro; só faz sentido quando você quer permitir colaboração interna ampla e também extensão por herança fora da biblioteca.
+- **`private protected`**: o próprio tipo e subclasses, mas apenas dentro do mesmo assembly. Uso comum: frameworks e bibliotecas que querem permitir herança controlada sem abrir tanto quanto `protected`.
+- **`public`**: qualquer código que enxergue o tipo pode acessar. É o mais aberto e, por padrão, o que mais aumenta a superfície de uso indevido, acoplamento e manutenção futura. Uso comum: somente no contrato que você quer realmente expor para consumidores.
+
+Além desses, C# moderno também possui:
+
+- **`file`**: vale para tipos de topo e limita o acesso ao mesmo arquivo `.cs`. É excelente para helpers muito locais, usados só para apoiar um tipo principal sem “vazar” nem para o resto do assembly.
+
+#### 5.1.2 Do mais fechado ao mais aberto
+
+Leitura mental útil:
+
+- para **membros**, o mais fechado por padrão é `private`;
+- para **tipos de topo**, o mais fechado por padrão é `file`;
+- o mais aberto é `public`.
+
+Entre os intermediários, a comparação exige cuidado:
+
+- `protected` e `internal` não formam uma escada perfeita;
+- `protected` abre para **herança**;
+- `internal` abre para **colaboração dentro do assembly**;
+- `protected internal` é o mais permissivo entre os modificadores protegidos;
+- `private protected` é o mais restritivo entre os modificadores protegidos.
+
+#### 5.1.3 Segurança, boa prática e vulnerabilidades
+
+Aqui existe uma nuance importante:
+
+- modificador de acesso ajuda muito com **encapsulamento** e **redução de superfície de uso indevido**;
+- mas ele **não substitui** autenticação, autorização, validação de entrada, criptografia ou gerenciamento de segredos.
+
+Então, quando alguém diz “mais seguro” neste contexto, o sentido correto é:
+
+- **mais restritivo por padrão**;
+- **menos código consegue tocar naquele membro**;
+- **menor chance de uso acidental, acoplamento desnecessário e exposição indevida da API**.
+
+Leitura direta de risco:
+
+- **`public`** é o mais exposto e, por isso, o que mais aumenta a superfície de uso indevido.
+- **`protected internal`** também merece bastante atenção, porque abre ao mesmo tempo para o assembly e para subclasses externas.
+- **`internal`** parece “seguro” à primeira vista, mas ainda deixa o membro acessível para qualquer código do mesmo assembly; em projetos grandes isso já é bastante gente.
+- **`private`** e **`file`** são os mais fechados por padrão, porque restringem muito mais quem consegue tocar no código.
+
+Mas existe o outro lado:
+
+- o mais fechado **não é automaticamente o melhor em qualquer cenário**;
+- **`private`** demais pode deixar um design rígido quando a classe foi pensada para extensão, customização ou testes por colaboração interna;
+- **`file`** demais pode esconder tipos que talvez merecessem viver como peças reaproveitáveis do assembly;
+- em bibliotecas e frameworks extensíveis, fechar tudo cedo demais pode tornar a API difícil de evoluir sem retrabalho.
+
+#### 5.1.4 O que alguém mal-intencionado tentaria explorar
+
+Para iniciantes, a leitura mais útil é esta:
+
+- modificador de acesso não cria um “escudo mágico”;
+- ele diminui ou aumenta a **superfície exposta**;
+- quanto mais coisa você expõe, mais coisas alguém pode chamar, testar, forçar ou observar.
+
+**Se um membro ou tipo está `public`:**
+
+- qualquer código consumidor pode tentar chamar métodos em ordem errada;
+- pode passar entradas maliciosas, exageradas ou inesperadas;
+- pode provocar consumo excessivo de CPU, memória, disco ou rede;
+- pode ler dados sensíveis se você expôs getters, campos ou propriedades demais;
+- pode alterar estado indevidamente se você deixou setters, coleções mutáveis ou métodos perigosos abertos.
+
+**Como se prevenir:**
+
+- exponha o mínimo possível;
+- prefira propriedades somente leitura, `private set`, `init` e métodos com validação;
+- valide todos os argumentos públicos;
+- não exponha segredos, tokens, chaves, caminhos internos ou detalhes de infraestrutura em membros públicos;
+- se uma classe pública não foi pensada para herança, considere `sealed`.
+
+**Se algo está `internal`:**
+
+- qualquer código no mesmo assembly pode acessar;
+- isso inclui código grande demais, misturado demais, ou mal isolado dentro do projeto;
+- se você usar `InternalsVisibleTo`, uma friend assembly ganha acesso aos membros `internal`, `protected internal` e `private protected`.
+
+**Como se prevenir:**
+
+- não trate `internal` como fronteira forte de segurança;
+- use `internal` para colaboração técnica, não para guardar segredos confiando apenas na visibilidade;
+- mantenha `InternalsVisibleTo` sob controle e só para assemblies realmente confiáveis;
+- em bibliotecas maiores, separe código mais sensível em assemblies menores e mais bem isolados.
+
+**Se algo está `protected` ou `protected internal`:**
+
+- alguém pode tentar herdar da sua classe para acessar estado protegido;
+- pode sobrescrever pontos de extensão (`virtual`/`abstract`) de formas inesperadas;
+- pode quebrar invariantes se sua classe depender demais de subclasses “bem-comportadas”;
+- `protected internal` é ainda mais aberto, porque o assembly inteiro também ganha acesso.
+
+**Como se prevenir:**
+
+- só marque como `protected` o que foi realmente desenhado para extensão;
+- não exponha campos sensíveis como `protected` se um método controlado resolver;
+- sele `override`s críticos e use `sealed` quando herança não fizer parte do contrato;
+- documente invariantes e valide estado mesmo quando subclasses participam do fluxo.
+
+**Se algo está `private` ou `file`:**
+
+- pela via normal de compilação, a superfície fica bem menor;
+- esse é o cenário mais fechado para abuso acidental por outros consumidores do código.
+
+**Mas atenção:**
+
+- se um atacante já consegue executar código no seu processo, modificador de acesso sozinho não basta;
+- reflection consegue enumerar tipos e membros, e pode procurar membros não públicos com `BindingFlags.NonPublic`;
+- em cenários confiáveis ou de full trust, código com reflexão pode chegar muito mais longe do que a API pública sugere.
+
+**Como se prevenir de verdade nesse nível:**
+
+- não execute código de origem desconhecida no mesmo processo sem isolamento;
+- use fronteiras reais quando necessário: permissões do sistema operacional, usuários separados, containers, AppContainers, VMs ou processos separados;
+- não confie em `private` para proteger segredo se o processo já está comprometido.
+
+Boa prática geral:
+
+- comece sempre com o modificador **mais restritivo que ainda funciona**;
+- só abra para `internal`, `protected` ou `public` quando existir uma necessidade real de design;
+- cada `public` novo vira parte do contrato que outros podem depender;
+- quanto mais aberta a API, maior a chance de abuso, mau uso, dificuldade de refatoração e bugs por acoplamento externo.
+
 ---
 
 ### 5.2 Boas práticas com modificadores
@@ -1032,6 +1163,40 @@ public class ContaBancaria
     private bool ValorValido(double valor) => valor > 0;
 }
 ```
+
+**Regra prática por cenário:**
+
+- comece pensando em **`private`** como seu padrão inicial.
+  Ideia mental: "ninguém de fora precisa mexer nisso".
+  Use para campos, métodos auxiliares e detalhes internos da classe.
+- use **`file`** quando um tipo auxiliar só faz sentido naquele arquivo.
+  Ideia mental: "isso existe só para apoiar este arquivo, não o projeto inteiro".
+- use **`internal`** quando outras classes do mesmo projeto precisam acessar, mas código de fora da biblioteca não deve ver.
+  Ideia mental: "é público por dentro, fechado por fora".
+- use **`protected`** quando subclasses realmente precisam acessar ou sobrescrever algo.
+  Ideia mental: "isso é para quem herdar de mim, não para qualquer consumidor".
+- use **`private protected`** quando essa herança deve ficar ainda mais controlada.
+  Ideia mental: "só subclasses do mesmo assembly podem usar".
+- use **`protected internal`** com cautela, porque ele abre em duas direções ao mesmo tempo.
+  Ideia mental: "subclasses podem usar, e o assembly inteiro também".
+  Como regra de iniciante: se você não tem um motivo muito claro, provavelmente não precisa dele.
+- use **`public`** apenas no que faz parte da API intencional.
+  Ideia mental: "estou prometendo que outros códigos podem depender disso".
+  Tudo que vira `public` fica mais difícil de mudar depois sem quebrar alguém.
+  Em termos de exposição, ele é o que mais pede atenção.
+
+Se bater dúvida, use esta ordem de decisão:
+
+1. Ninguém de fora precisa acessar? Use **`private`**.
+2. Só este arquivo precisa conhecer o tipo? Use **`file`**.
+3. Só o mesmo projeto precisa acessar? Use **`internal`**.
+4. Só subclasses precisam acessar? Use **`protected`**.
+5. O acesso precisa ser realmente aberto para qualquer consumidor? Aí sim use **`public`**.
+
+Resumo mental final:
+
+- **mais exposto / mais fácil de abusar por padrão:** `public`
+- **mais fechado / pode ficar rígido demais se usado sem pensar:** `private`
 
 ---
 
@@ -4544,9 +4709,13 @@ unsafe
 | **Property** | Encapsula get/set como construção nativa da linguagem |
 | **`var`** | Inferência de tipo local — tipo fixo em compile-time |
 | **`using`** | Import de namespace ou gerenciamento de recursos (IDisposable) |
+| **`private`** | Visível apenas no próprio tipo; menor superfície de acesso |
+| **`protected`** | Visível no tipo e em subclasses |
+| **`public`** | Visível por qualquer código que enxergue o tipo; maior superfície |
 | **`internal`** | Visível apenas dentro do mesmo assembly (≈ package-private do Java) |
 | **`protected internal`** | Visível no assembly + subclasses de qualquer assembly |
 | **`private protected`** | Visível apenas em subclasses dentro do mesmo assembly |
+| **`file`** | Tipo visível apenas no mesmo arquivo fonte |
 | **Interface** | Contrato de comportamento desacoplado da implementação concreta |
 | **Delegate** | Tipo que representa referência a método com assinatura específica |
 | **Event** | Delegate encapsulado para padrão publisher/subscriber |
