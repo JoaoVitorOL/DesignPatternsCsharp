@@ -48,8 +48,9 @@ Ao longo do texto, pense sempre nestas quatro perguntas:
 - [Como usar este guia](#como-usar-este-guia)
 - **Parte 1 — Introdução e Contextualização**
   - [1.1 O que é C#?](#11-o-que-é-c)
-  - [1.2 Por que aprender C# em 2026?](#12-por-que-aprender-c-em-2026)
-  - [1.3 Estrutura de um programa C#](#13-estrutura-de-um-programa-c)
+  - [1.2 O que é um assembly?](#12-o-que-é-um-assembly)
+  - [1.3 Por que aprender C# em 2026?](#13-por-que-aprender-c-em-2026)
+  - [1.4 Estrutura de um programa C#](#14-estrutura-de-um-programa-c)
 - **Parte 2 — Namespaces e Using**
   - [2.1 Namespaces](#21-namespaces)
   - [2.2 Using Directives](#22-using-directives)
@@ -150,8 +151,9 @@ Ao longo do texto, pense sempre nestas quatro perguntas:
   - [21.3 Sincronização](#213-sincronização)
 - **Parte 22 — Interoperabilidade e Recursos Avançados**
   - [22.1 Reflection](#221-reflection)
-  - [22.2 Source Generators (C# 9+)](#222-source-generators-c-9)
-  - [22.3 Unsafe code e ponteiros](#223-unsafe-code-e-ponteiros)
+  - [22.2 Dependency Injection (DI)](#222-dependency-injection-di)
+  - [22.3 Source Generators (C# 9+)](#223-source-generators-c-9)
+  - [22.4 Unsafe code e ponteiros](#224-unsafe-code-e-ponteiros)
 - [Resumo Geral — Conceitos Fundamentais](#resumo-geral-conceitos-fundamentais)
 - **Parte 23 — C# no Contexto de Game Development**
   - [23.1 C# e Unity — a combinação dominante](#231-c-e-unity-a-combinação-dominante)
@@ -198,7 +200,114 @@ O compilador moderno do C# é chamado **Roslyn** e é open-source. O runtime mod
 
 ---
 
-### 1.2 Por que aprender C# em 2026?
+### 1.2 O que é um assembly?
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+`Assembly` é uma das ideias mais importantes do ecossistema .NET e muita gente começa usando sem perceber.
+
+Em termos bem diretos:
+
+- um assembly é a **unidade de compilação, empacotamento, reutilização e versionamento** do .NET;
+- na prática, ele costuma aparecer como um arquivo `.dll` ou `.exe`;
+- dentro dele ficam o código compilado em `IL/CIL`, metadados sobre tipos e, muitas vezes, recursos como arquivos embutidos.
+
+Se você já viu este fluxo:
+
+```text
+Codigo C# (.cs)
+        ↓ compilador
+Assembly .NET (.dll ou .exe)
+        ↓ runtime do .NET
+Execucao
+```
+
+então o assembly é justamente o "pacote" que o compilador produz para o runtime consumir.
+
+#### O que costuma existir dentro de um assembly
+
+Em visão de iniciante, pense nele como um contêiner técnico que normalmente reúne:
+
+- **manifesto do assembly**: identidade, versão e referências;
+- **metadados dos tipos**: classes, interfaces, structs, enums, métodos, propriedades;
+- **código IL/CIL**: instruções intermediárias geradas pelo compilador;
+- **recursos**: strings, imagens, arquivos incorporados e afins.
+
+Você não precisa decorar isso de início, mas ajuda a entender que o assembly não é "só um arquivo qualquer". Ele descreve para o runtime o que existe ali dentro e como aquilo se conecta ao restante da aplicação.
+
+#### Para que assemblies servem na prática
+
+Assemblies importam porque são a fronteira real de várias decisões do .NET:
+
+- **distribuição**: bibliotecas e aplicações são entregues em assemblies;
+- **reutilização**: um projeto pode referenciar o assembly de outro;
+- **versionamento**: versões e dependências são rastreadas nesse nível;
+- **controle de acesso**: `internal` vale dentro do mesmo assembly;
+- **reflection**: o programa pode inspecionar tipos dentro de um assembly carregado;
+- **organização de solução**: separar domínio, infraestrutura, UI e testes normalmente significa separar assemblies.
+
+#### Diferença entre assembly, projeto, namespace e pacote
+
+Esse é um ponto que costuma confundir iniciantes.
+
+- **arquivo `.cs`**: contém código-fonte;
+- **namespace**: organiza nomes logicamente;
+- **projeto (`.csproj`)**: define como compilar aquele conjunto de arquivos;
+- **assembly**: é o artefato compilado gerado pelo projeto;
+- **pacote NuGet**: é um pacote de distribuição que pode carregar um ou mais assemblies.
+
+Regra mental curta:
+
+- `namespace` organiza nomes;
+- `projeto` organiza compilação;
+- `assembly` organiza o que o .NET realmente carrega e referencia.
+
+#### Exemplo mental concreto
+
+Imagine esta solução:
+
+- `MinhaApp.Console`
+- `MinhaApp.Core`
+
+O projeto `MinhaApp.Core` pode compilar para algo como:
+
+```text
+MinhaApp.Core.dll
+```
+
+Esse `.dll` é um assembly.
+
+Depois, `MinhaApp.Console` referencia esse assembly para usar as classes de domínio sem copiar código.
+
+É por isso que, quando você escreve:
+
+```csharp
+internal class PedidoService
+{
+}
+```
+
+o `internal` não quer dizer "visível para o mesmo namespace".
+
+Ele quer dizer:
+
+- visível para qualquer código do **mesmo assembly**.
+
+#### Por que isso é importante cedo
+
+Entender assembly cedo ajuda você a compreender melhor:
+
+- por que `internal` existe;
+- como bibliotecas são consumidas;
+- o que significa "referenciar um projeto";
+- por que reflection fala tanto em `Assembly`, `Type` e `MemberInfo`;
+- por que uma aplicação grande costuma ser dividida em múltiplos assemblies.
+
+**Como interpretar o exemplo:** Se `class` e `interface` ajudam você a pensar em design dentro do código, `assembly` ajuda você a pensar em fronteiras do código depois que ele foi compilado. É um conceito de linguagem + runtime + arquitetura ao mesmo tempo.
+
+---
+
+### 1.3 Por que aprender C# em 2026?
 
 [⬆️ Voltar ao Sumário](#sumário)
 
@@ -223,7 +332,7 @@ C# continua sendo uma linguagem excelente para quem quer combinar **fundamentos 
 
 ---
 
-### 1.3 Estrutura de um programa C#
+### 1.4 Estrutura de um programa C#
 
 [⬆️ Voltar ao Sumário](#sumário)
 
@@ -4801,9 +4910,111 @@ metodo.Invoke(instancia, new object[] { 500.0 });
 
 **Como interpretar o exemplo:** Reflection permite que o programa inspecione tipos e invoque membros dinamicamente em runtime, o que é poderoso para tooling, frameworks e integração genérica. O preço é perder parte da previsibilidade e da segurança do código fortemente tipado.
 
+Leitura mental rápida:
+
+- com código normal, você já sabe em compile-time quais tipos vai usar;
+- com reflection, o programa descobre ou manipula tipos em runtime.
+
+Na prática, reflection responde perguntas como:
+
+- "que classes existem neste assembly?";
+- "essa classe implementa tal interface?";
+- "consigo criar uma instância desse tipo agora?";
+- "quais propriedades e métodos esse tipo possui?".
+
+É por isso que reflection aparece em cenários como:
+
+- frameworks;
+- ORMs;
+- serialização;
+- leitura de attributes;
+- sistemas de plugin;
+- infraestrutura genérica.
+
+No exemplo da `Aula08_AbstractFactoryOCP`, reflection é usada justamente para descobrir, em tempo de execução, quais classes implementam `IHotDrinkFactory`.
+
 ---
 
-### 22.2 Source Generators (C# 9+)
+### 22.2 Dependency Injection (DI)
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+```csharp
+public interface IMessageWriter
+{
+    void Write(string message);
+}
+
+public class ConsoleMessageWriter : IMessageWriter
+{
+    public void Write(string message) => Console.WriteLine(message);
+}
+
+public class Worker
+{
+    private readonly IMessageWriter _writer;
+
+    public Worker(IMessageWriter writer)
+    {
+        _writer = writer;
+    }
+
+    public void Run()
+    {
+        _writer.Write("Executando...");
+    }
+}
+```
+
+**Como interpretar o exemplo:** Dependency Injection (`DI`) é um jeito de uma classe receber as dependências de que precisa, em vez de criá-las sozinha com `new`.
+
+No exemplo acima, `Worker` precisa de algo que escreva mensagens, mas ele não cria `ConsoleMessageWriter` diretamente.
+
+Ele apenas declara sua necessidade no construtor:
+
+```csharp
+IMessageWriter writer
+```
+
+Essa é a ideia central:
+
+- a classe diz do que precisa;
+- outra parte do sistema entrega isso a ela.
+
+Distinção importante para carreira profissional:
+
+- **DI** é o princípio/padrão;
+- **DI container** é a ferramenta que automatiza registro, criação e entrega dessas dependências.
+
+Nuance importante:
+
+- `DI` e `reflection` não são opostos absolutos;
+- muitos containers usam reflection internamente para construir objetos;
+- mas, do ponto de vista da sua classe, ela continua apenas declarando dependências no construtor.
+
+Em .NET, o container costuma trabalhar com registros como:
+
+```csharp
+services.AddSingleton<IMessageWriter, ConsoleMessageWriter>();
+```
+
+e depois injeta a implementação certa no construtor da classe consumidora.
+
+Ganhos comuns de DI:
+
+- menos acoplamento a classes concretas;
+- mais testabilidade;
+- composição mais clara da aplicação;
+- troca de implementações com menos impacto.
+
+Conexão útil com `Abstract Factory`:
+
+- com reflection, a máquina descobre sozinha quais factories existem;
+- com DI, a máquina poderia receber `IEnumerable<IHotDrinkFactory>` já pronto.
+
+---
+
+### 22.3 Source Generators (C# 9+)
 
 [⬆️ Voltar ao Sumário](#sumário)
 
@@ -4823,7 +5034,7 @@ string json = JsonSerializer.Serialize(usuario, MeuJsonContext.Default.Usuario);
 
 ---
 
-### 22.3 Unsafe code e ponteiros
+### 22.4 Unsafe code e ponteiros
 
 [⬆️ Voltar ao Sumário](#sumário)
 
@@ -4859,6 +5070,7 @@ unsafe
 | **IL / CIL** | Código intermediário produzido pelo compilador Roslyn |
 | **Tipo de valor** | Armazena dado diretamente; cópia na atribuição: `int`, `struct`, `enum` |
 | **Tipo de referência** | Armazena endereço para objeto no heap: `class`, `string`, arrays |
+| **Assembly** | Unidade compilada do .NET, normalmente `.dll` ou `.exe`, com IL, metadados e referências |
 | **Nullable type** | `T?` — tipo de valor que aceita null via `Nullable<T>` |
 | **`const`** | Constante de compile-time; apenas primitivos e `string` |
 | **`readonly`** | Campo atribuível somente na declaração ou construtor |
@@ -4896,6 +5108,7 @@ unsafe
 | **Generics** | Tipos parametrizados com segurança em compile-time |
 | **Attribute** | Metadados declarativos processados por compilador, runtime ou framework |
 | **Reflection** | Inspeção e invocação dinâmica de tipos em runtime |
+| **Dependency Injection (DI)** | Entrega de dependências de fora para dentro da classe, em vez de criá-las internamente |
 
 ---
 
@@ -5679,7 +5892,12 @@ As definições, distinções conceituais e atualizações de versão deste guia
 - [File Class (System.IO)](https://learn.microsoft.com/en-us/dotnet/api/system.io.file?view=net-10.0)
 - [Path Class (System.IO)](https://learn.microsoft.com/en-us/dotnet/api/system.io.path?view=net-10.0)
 - [Directory Class (System.IO)](https://learn.microsoft.com/en-us/dotnet/api/system.io.directory?view=net-10.0)
+- [Assemblies in .NET](https://learn.microsoft.com/en-us/dotnet/standard/assembly/)
+- [Assembly contents](https://learn.microsoft.com/en-us/dotnet/standard/assembly/contents)
 - [Interfaces - define behavior for multiple types](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/types/interfaces)
+- [Reflection in .NET](https://learn.microsoft.com/en-us/dotnet/fundamentals/reflection/overview)
+- [.NET dependency injection](https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection/overview)
+- [Dependency injection guidelines](https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection/guidelines)
 - [Properties - C#](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/properties)
 - [Using Properties](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/using-properties)
 - [The `get` keyword](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/get)
@@ -5710,6 +5928,7 @@ Sugestão de estudo: use este guia para construir o modelo mental e a documenta�
 
 - **`abstract`** — modificador que marca uma classe ou membro como incompleto, obrigando subclasses a fornecer a implementação. → [7.3 `abstract`](#73-abstract)
 - **`async` / `await`** — palavras-chave que permitem escrever código assíncrono em estilo sequencial, sem bloquear a thread. → [16.1 O modelo assíncrono do C#](#161-o-modelo-assíncrono-do-c)
+- **Assembly** — unidade compilada do .NET que agrupa IL, metadados, recursos e identidade, normalmente em `.dll` ou `.exe`. → [1.2 O que é um assembly?](#12-o-que-é-um-assembly)
 - **Attribute** — metadado anexado a um tipo ou membro, lido em tempo de compilação ou execução (ex: `[Obsolete]`). → [19.1 Attributes embutidos](#191-attributes-embutidos)
 - **Builder Pattern** — padrão de projeto para construir objetos complexos passo a passo, geralmente com sintaxe fluente. → [11.4 Padrão Builder](#114-padrão-builder)
 - **Burst Compiler** — compilador da Unity que converte código C# em código nativo de alta performance via LLVM. → [23.7 Boas práticas de performance no Unity](#237-boas-práticas-de-performance-no-unity)
@@ -5720,6 +5939,7 @@ Sugestão de estudo: use este guia para construir o modelo mental e a documenta�
 - **`const` / `readonly`** — modificadores para valores imutáveis; `const` é resolvido em tempo de compilação, `readonly` em tempo de execução. → [3.5 `const` e `readonly`](#35-const-e-readonly)
 - **Coroutine** — mecanismo do Unity para executar código ao longo de vários frames, sem usar `async`/`await`. → [23.5 Coroutines](#235-coroutines-execução-assíncrona-sem-asyncawait)
 - **Delegate** — tipo que representa uma referência tipada a um método, base para eventos e lambdas. → [13.1 Delegates](#131-delegates-ponteiros-de-método-tipados)
+- **Dependency Injection (DI)** — padrão em que uma classe recebe suas dependências de fora, em vez de instanciá-las diretamente. → [22.2 Dependency Injection (DI)](#222-dependency-injection-di)
 - **Enum / Flags enum** — tipo que representa um conjunto fixo de valores nomeados; com `[Flags]`, permite combinação via bitmask. → [10.1 Enums básicos](#101-enums-básicos)
 - **Event** — mecanismo baseado em delegates para notificar múltiplos assinantes sobre uma ocorrência. → [13.4 Eventos (Events)](#134-eventos-events)
 - **Extension Method** — método que "adiciona" comportamento a um tipo existente sem modificá-lo ou herdar dele. → [9.2 Métodos de extensão](#92-métodos-de-extensão-extension-methods)
@@ -5745,13 +5965,13 @@ Sugestão de estudo: use este guia para construir o modelo mental e a documenta�
 - **`sealed`** — modificador que impede uma classe de ser herdada (ou um método de ser sobrescrito novamente). → [7.2 `sealed`](#72-sealed)
 - **ScriptableObject** — tipo de asset da Unity para armazenar dados independentes de uma instância de GameObject. → [23.4 ScriptableObject](#234-scriptableobject-dados-desacoplados-do-gameobject)
 - **Singleton** — padrão de projeto que garante uma única instância acessível globalmente de uma classe. → [23.8 Padrões de design comuns em jogos com C#](#238-padrões-de-design-comuns-em-jogos-com-c)
-- **Source Generator** — componente que gera código C# adicional em tempo de compilação. → [22.2 Source Generators](#222-source-generators-c-9)
+- **Source Generator** — componente que gera código C# adicional em tempo de compilação. → [22.3 Source Generators](#223-source-generators-c-9)
 - **Span\<T\> / Memory\<T\>** — estruturas para trabalhar com "fatias" de memória contígua sem alocação extra. → [20.3 Span\<T\> e Memory\<T\> — zero-allocation slicing](#203-spant-e-memoryt-zero-allocation-slicing)
 - **`static`** — modificador que faz um membro pertencer ao tipo, não a uma instância específica. → [7.1 `static`](#71-static)
 - **State Machine** — padrão que organiza o comportamento de um objeto em estados distintos com transições explícitas. → [23.8 Padrões de design comuns em jogos com C#](#238-padrões-de-design-comuns-em-jogos-com-c)
 - **StringBuilder** — classe mutável para concatenar strings repetidamente sem o custo de criar novas instâncias a cada operação. → [4.2 Imutabilidade e StringBuilder](#42-imutabilidade-e-stringbuilder)
 - **Task / ValueTask** — representações de uma operação assíncrona em andamento; `ValueTask` evita alocação em cenários de alta performance. → [16.3 Task vs ValueTask](#163-task-vs-valuetask)
-- **Unsafe code** — blocos de código que permitem manipulação direta de ponteiros, fora da supervisão normal do CLR. → [22.3 Unsafe code e ponteiros](#223-unsafe-code-e-ponteiros)
+- **Unsafe code** — blocos de código que permitem manipulação direta de ponteiros, fora da supervisão normal do CLR. → [22.4 Unsafe code e ponteiros](#224-unsafe-code-e-ponteiros)
 - **`var`** — palavra-chave que permite ao compilador inferir o tipo de uma variável a partir do valor atribuído. → [3.4 `var` — inferência de tipo](#34-var-inferência-de-tipo)
 - **`virtual` / `override`** — modificadores que permitem que um método seja redefinido por uma subclasse. → [7.4 `virtual` e `override`](#74-virtual-e-override)
 - **Handle** — objeto intermediário usado para alcançar outro objeto ou recurso por indireção; no projeto, `Ref<ITheme>` funciona como um handle mutável para o tema atual. → [20.2 `WeakReference<T>` e referências fracas no GC](#202-weakreferencet-e-referências-fracas-no-gc)
