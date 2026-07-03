@@ -5306,7 +5306,7 @@ public partial class Inimigo : Node2D
 
 [⬆️ Voltar ao Sumário](#sumário)
 
-[Link do Miro](https://miro.com/welcomeonboard/K3lDaXB2V0MxVkNMTG5MaEN0UjdTd3cxbjl0QWJzVnZ6bHN5QkhmY05vTFo0bThKRldvTnpTUEdXcWd6UVNqRDFXVlhka1M1dDhITWhWR1RPZ2J2QTh3Lzg1c3lQT1V3d0h2Rk9KVjdXTU9hREpPZ0dIa0R0WjZBK1A0S0tVc0ZzVXVvMm53MW9OWFg5bkJoVXZxdFhRPT0hdjE=?share_link_id=115677346406)
+
 
 Plataformas externas para praticar C# e lógica de programação, cada uma com um foco pedagógico diferente:
 
