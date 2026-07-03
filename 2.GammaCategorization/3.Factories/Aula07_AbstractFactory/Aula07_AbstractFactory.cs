@@ -23,6 +23,25 @@ namespace Aula07_AbstractFactory
     {
         // Product Abstraction:
         // contrato que o cliente recebe depois da criacao.
+        //
+        // Por que devolver `IHotDrink` em vez de `Tea` ou `Coffee`?
+        // Porque, do ponto de vista do cliente, o detalhe relevante aqui
+        // nao e "qual classe concreta nasceu", e sim "eu recebi algo que
+        // pode ser consumido".
+        //
+        // Essa abstracao traz alguns ganhos:
+        // 1. O metodo `MakeDrink(...)` pode ter um retorno estavel.
+        //    Ele sempre devolve `IHotDrink`, mesmo que por baixo nasca
+        //    `Tea`, `Coffee` ou outra bebida futura.
+        // 2. O cliente fica menos acoplado a classes concretas.
+        //    Se a implementacao concreta mudar, o cliente nao precisa mudar
+        //    junto, desde que o contrato continue o mesmo.
+        // 3. A API expressa melhor a intencao.
+        //    O cliente quer "uma bebida quente consumivel",
+        //    nao necessariamente "um objeto Tea".
+        // 4. Novas variantes entram com menos atrito.
+        //    Podemos adicionar outra bebida que implemente `IHotDrink`
+        //    sem reescrever toda a parte que so quer consumir a bebida.
         void Consume();
     }
 
@@ -48,10 +67,10 @@ namespace Aula07_AbstractFactory
         }
     }
 
-    // ===== Interface =====
+    // ===== Interface ABSTRACT FACTORY =====
     public interface IHotDrinkFactory
     {
-        // Abstract Factory:
+        // ABSTRACT FACTORY:
         // define o contrato comum para preparar qualquer bebida quente.
         IHotDrink Prepare(int amount);
     }
@@ -61,10 +80,10 @@ namespace Aula07_AbstractFactory
     // Temos uma abstracao de factory (`IHotDrinkFactory`)
     // e varias factories concretas para variantes da familia.
 
-    // ===== Classe =====
+    // =====  Classe CONCRETE FACTORY =====
     internal class TeaFactory : IHotDrinkFactory
     {
-        // Concrete Factory: sabe preparar Tea.
+        // CONCRETE FACTORY: sabe preparar Tea.
 
         public IHotDrink Prepare(int amount)
         {
@@ -74,10 +93,10 @@ namespace Aula07_AbstractFactory
         }
     }
 
-    // ===== Classe =====
+    // =====  Classe CONCRETE FACTORY =====
     internal class CoffeeFactory : IHotDrinkFactory
     {
-        // Concrete Factory: sabe preparar Coffee.
+        // CONCRETE FACTORY: sabe preparar Coffee.
 
         public IHotDrink Prepare(int amount)
         {
@@ -86,6 +105,8 @@ namespace Aula07_AbstractFactory
         }
     }
 
+
+ // ===== Classe =====
     public class HotDrinkMachine
     {
         // Esta classe funciona como um ponto de entrada para o cliente.
@@ -120,6 +141,12 @@ namespace Aula07_AbstractFactory
         {
             // O cliente escolhe a variante desejada.
             // A maquina delega a criacao para a factory concreta correspondente.
+            //
+            // Repare no tipo de retorno:
+            // a maquina NAO devolve `Tea` ou `Coffee`.
+            // Ela devolve `IHotDrink`, porque o contrato estavel da maquina
+            // e "eu entrego uma bebida quente preparada", nao
+            // "eu exponho qual classe concreta nasceu por baixo".
             return factories[drink].Prepare(amount);
         }
     }
@@ -131,6 +158,11 @@ namespace Aula07_AbstractFactory
             // O cliente conversa com a maquina e recebe o produto abstrato.
             // Ele nao depende diretamente de TeaFactory, CoffeeFactory,
             // Tea ou Coffee para consumir a bebida.
+            //
+            // Isso e polimorfismo na pratica:
+            // `drink` e `drink2` tem o mesmo tipo visivel (`IHotDrink`),
+            // mas cada variavel aponta para uma implementacao concreta diferente.
+            // O cliente continua funcionando porque so depende do contrato comum.
             var machine = new HotDrinkMachine();
             var drink = machine.MakeDrink(HotDrinkMachine.AvailableDrink.Tea, 200);
             drink.Consume();
