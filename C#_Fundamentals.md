@@ -1037,74 +1037,6 @@ Mas existe o outro lado:
 - **`file`** demais pode esconder tipos que talvez merecessem viver como peças reaproveitáveis do assembly;
 - em bibliotecas e frameworks extensíveis, fechar tudo cedo demais pode tornar a API difícil de evoluir sem retrabalho.
 
-#### 5.1.4 O que alguém mal-intencionado tentaria explorar
-
-Para iniciantes, a leitura mais útil é esta:
-
-- modificador de acesso não cria um “escudo mágico”;
-- ele diminui ou aumenta a **superfície exposta**;
-- quanto mais coisa você expõe, mais coisas alguém pode chamar, testar, forçar ou observar.
-
-**Se um membro ou tipo está `public`:**
-
-- qualquer código consumidor pode tentar chamar métodos em ordem errada;
-- pode passar entradas maliciosas, exageradas ou inesperadas;
-- pode provocar consumo excessivo de CPU, memória, disco ou rede;
-- pode ler dados sensíveis se você expôs getters, campos ou propriedades demais;
-- pode alterar estado indevidamente se você deixou setters, coleções mutáveis ou métodos perigosos abertos.
-
-**Como se prevenir:**
-
-- exponha o mínimo possível;
-- prefira propriedades somente leitura, `private set`, `init` e métodos com validação;
-- valide todos os argumentos públicos;
-- não exponha segredos, tokens, chaves, caminhos internos ou detalhes de infraestrutura em membros públicos;
-- se uma classe pública não foi pensada para herança, considere `sealed`.
-
-**Se algo está `internal`:**
-
-- qualquer código no mesmo assembly pode acessar;
-- isso inclui código grande demais, misturado demais, ou mal isolado dentro do projeto;
-- se você usar `InternalsVisibleTo`, uma friend assembly ganha acesso aos membros `internal`, `protected internal` e `private protected`.
-
-**Como se prevenir:**
-
-- não trate `internal` como fronteira forte de segurança;
-- use `internal` para colaboração técnica, não para guardar segredos confiando apenas na visibilidade;
-- mantenha `InternalsVisibleTo` sob controle e só para assemblies realmente confiáveis;
-- em bibliotecas maiores, separe código mais sensível em assemblies menores e mais bem isolados.
-
-**Se algo está `protected` ou `protected internal`:**
-
-- alguém pode tentar herdar da sua classe para acessar estado protegido;
-- pode sobrescrever pontos de extensão (`virtual`/`abstract`) de formas inesperadas;
-- pode quebrar invariantes se sua classe depender demais de subclasses “bem-comportadas”;
-- `protected internal` é ainda mais aberto, porque o assembly inteiro também ganha acesso.
-
-**Como se prevenir:**
-
-- só marque como `protected` o que foi realmente desenhado para extensão;
-- não exponha campos sensíveis como `protected` se um método controlado resolver;
-- sele `override`s críticos e use `sealed` quando herança não fizer parte do contrato;
-- documente invariantes e valide estado mesmo quando subclasses participam do fluxo.
-
-**Se algo está `private` ou `file`:**
-
-- pela via normal de compilação, a superfície fica bem menor;
-- esse é o cenário mais fechado para abuso acidental por outros consumidores do código.
-
-**Mas atenção:**
-
-- se um atacante já consegue executar código no seu processo, modificador de acesso sozinho não basta;
-- reflection consegue enumerar tipos e membros, e pode procurar membros não públicos com `BindingFlags.NonPublic`;
-- em cenários confiáveis ou de full trust, código com reflexão pode chegar muito mais longe do que a API pública sugere.
-
-**Como se prevenir de verdade nesse nível:**
-
-- não execute código de origem desconhecida no mesmo processo sem isolamento;
-- use fronteiras reais quando necessário: permissões do sistema operacional, usuários separados, containers, AppContainers, VMs ou processos separados;
-- não confie em `private` para proteger segredo se o processo já está comprometido.
-
 Boa prática geral:
 
 - comece sempre com o modificador **mais restritivo que ainda funciona**;
@@ -1195,7 +1127,7 @@ Se bater dúvida, use esta ordem de decisão:
 
 Resumo mental final:
 
-- **mais exposto / mais fácil de abusar por padrão:** `public`
+- **mais exposto / mais fácil de abusar por padrão:** `public` (Mais cuidado ao usar)
 - **mais fechado / pode ficar rígido demais se usado sem pensar:** `private`
 
 ---
