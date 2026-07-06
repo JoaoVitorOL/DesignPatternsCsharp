@@ -565,21 +565,21 @@ Console.WriteLine(listaA[0]); // 99 — o mesmo objeto foi modificado
 
 **Tipos de valor primitivos do C#:**
 
-| Tipo C# | Alias .NET | Tamanho | Valor padrão | Uso |
-|---|---|---|---|---|
-| `sbyte` | `SByte` | 8 bits | `0` | Inteiro com sinal pequeno |
-| `byte` | `Byte` | 8 bits | `0` | Inteiro sem sinal pequeno / dados binários |
-| `short` | `Int16` | 16 bits | `0` | Inteiro pequeno |
-| `ushort` | `UInt16` | 16 bits | `0` | Inteiro sem sinal |
-| `int` | `Int32` | 32 bits | `0` | **Inteiro — o mais comum** |
-| `uint` | `UInt32` | 32 bits | `0` | Inteiro sem sinal |
-| `long` | `Int64` | 64 bits | `0L` | Inteiros grandes (ex: IDs, timestamps) |
-| `ulong` | `UInt64` | 64 bits | `0UL` | Inteiro sem sinal grande |
-| `float` | `Single` | 32 bits | `0.0f` | Decimal com precisão menor |
-| `double` | `Double` | 64 bits | `0.0` | **Decimal — o mais comum** |
-| `decimal` | `Decimal` | 128 bits | `0.0m` | **Precisão financeira (sem erro de ponto flutuante)** |
-| `char` | `Char` | 16 bits | `'\0'` | Um caractere Unicode |
-| `bool` | `Boolean` | 1 bit | `false` | Verdadeiro ou falso |
+| Tipo C# | Alias .NET | Tamanho | Faixa de valores | Valor padrão | Uso |
+|---|---|---|---|---|---|
+| `sbyte` | `SByte` | 8 bits | `-128` a `127` | `0` | Inteiro com sinal pequeno |
+| `byte` | `Byte` | 8 bits | `0` a `255` | `0` | Inteiro sem sinal pequeno / dados binários |
+| `short` | `Int16` | 16 bits | `-32768` a `32767` | `0` | Inteiro pequeno |
+| `ushort` | `UInt16` | 16 bits | `0` a `65535` | `0` | Inteiro sem sinal |
+| `int` | `Int32` | 32 bits | `-2147483648` a `2147483647` | `0` | **Inteiro — o mais comum** |
+| `uint` | `UInt32` | 32 bits | `0` a `4294967295` | `0` | Inteiro sem sinal |
+| `long` | `Int64` | 64 bits | `-9223372036854775808` a `9223372036854775807` | `0L` | Inteiros grandes (ex: IDs, timestamps) |
+| `ulong` | `UInt64` | 64 bits | `0` a `18446744073709551615` | `0UL` | Inteiro sem sinal grande |
+| `float` | `Single` | 32 bits | aproximadamente `±3.402823e38` | `0.0f` | Decimal com precisão menor |
+| `double` | `Double` | 64 bits | aproximadamente `±1.797693e308` | `0.0` | **Decimal — o mais comum** |
+| `decimal` | `Decimal` | 128 bits | aproximadamente `±7.922816251426433759354198725e28` | `0.0m` | **Precisão financeira (sem erro de ponto flutuante)** |
+| `char` | `Char` | 16 bits | `U+0000` a `U+FFFF` | `'\0'` | Um caractere Unicode |
+| `bool` | `Boolean` | 1 bit | `true` ou `false` | `false` | Verdadeiro ou falso |
 
 > ⚠️ `decimal` é o tipo correto para cálculos monetários. `double` e `float` usam representação binária que pode acumular erros de arredondamento (`0.1 + 0.2 != 0.3`). `decimal` usa representação decimal de base 10, eliminando esse problema para a maioria dos casos financeiros.
 
