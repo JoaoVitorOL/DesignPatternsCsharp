@@ -126,6 +126,10 @@ namespace Aula08_AbstractFactoryOCP
 
 
 
+
+
+
+
     // Em vez de mapear `enum -> factory`, a maquina guarda uma lista de
     // pares:
     // - `Item1`: nome exibido ao usuario;
@@ -134,6 +138,8 @@ namespace Aula08_AbstractFactoryOCP
     // Para quem esta comecando:
     // `Tuple<string, IHotDrinkFactory>` e apenas um jeito simples de
     // manter esses dois dados juntos.
+
+
     private List<Tuple<string, IHotDrinkFactory>> factories = new List<Tuple<string, IHotDrinkFactory>>();
 // =================================
 //    Constructor
