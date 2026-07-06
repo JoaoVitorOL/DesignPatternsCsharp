@@ -166,6 +166,15 @@ Ao longo do texto, pense sempre nestas quatro perguntas:
   - [23.8 Padrões de design comuns em jogos com C#](#238-padrões-de-design-comuns-em-jogos-com-c)
   - [23.9 C# no Godot 4](#239-c-no-godot-4)
   - [23.10 Diferenças entre C# padrão e C# no Unity](#2310-diferenças-entre-c-padrão-e-c-no-unity)
+- **Parte 24 — Arquitetura de Aplicações C#/.NET**
+  - [24.1 C# não impõe arquitetura](#241-c-não-impõe-arquitetura)
+  - [24.2 Arquitetura em camadas](#242-arquitetura-em-camadas)
+  - [24.3 Clean Architecture, Onion e Ports and Adapters](#243-clean-architecture-onion-e-ports-and-adapters)
+  - [24.4 Domain-Driven Design (DDD)](#244-domain-driven-design-ddd)
+  - [24.5 CQRS e separação entre comandos e consultas](#245-cqrs-e-separação-entre-comandos-e-consultas)
+  - [24.6 Event-Driven Architecture](#246-event-driven-architecture)
+  - [24.7 Microservices em .NET](#247-microservices-em-net)
+  - [24.8 Padrões enterprise clássicos](#248-padrões-enterprise-clássicos)
 - [Anexo A — Plataformas de Prática Recomendadas](#anexo-a--plataformas-de-prática-recomendadas)
 - [Anexo B — Referências Oficiais Consultadas](#anexo-b--referências-oficiais-consultadas)
 - [Glossário](#glossário)
@@ -5846,6 +5855,346 @@ public partial class Inimigo : Node2D
 
 ---
 
+## Parte 24 — Arquitetura de Aplicações C#/.NET
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+Esta parte não tenta transformar C# em uma "linguagem arquitetural". C# é uma linguagem; arquitetura é uma decisão de design sobre como organizar responsabilidades, dependências, dados, regras de negócio, integrações e deploy.
+
+O que existe, na prática, é um ecossistema .NET com padrões muito comuns: aplicações web ASP.NET Core, APIs, workers, bibliotecas, serviços, sistemas distribuídos, aplicações desktop, jogos e aplicações cloud-native. A documentação oficial da Microsoft trata várias dessas arquiteturas nos guias de [.NET Architecture](https://learn.microsoft.com/en-us/dotnet/architecture/).
+
+O objetivo aqui é dar ao leitor um mapa curto e tecnicamente honesto: entender quais padrões aparecem com frequência em projetos C#/.NET, que problema cada um tenta resolver e onde estudar pela fonte original ou oficial.
+
+---
+
+### 24.1 C# não impõe arquitetura
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+C# oferece recursos de linguagem e runtime que facilitam certos estilos arquiteturais:
+
+- interfaces;
+- classes abstratas;
+- generics;
+- delegates e events;
+- attributes;
+- reflection;
+- async/await;
+- LINQ;
+- records;
+- dependency injection no ecossistema .NET.
+
+Mas nenhum desses recursos obriga a aplicação a seguir uma arquitetura específica.
+
+Uma aplicação C# pode ser:
+
+- monolítica;
+- modular;
+- em camadas;
+- orientada a domínio;
+- baseada em eventos;
+- distribuída em microservices;
+- um jogo com arquitetura baseada em componentes;
+- um script simples de console.
+
+A pergunta arquitetural correta não é "qual arquitetura C# usa?", e sim:
+
+**qual organização deixa este sistema mais simples de evoluir, testar, manter e operar?**
+
+**Fonte oficial:** Microsoft Learn — [.NET Architecture guides](https://learn.microsoft.com/en-us/dotnet/architecture/).
+
+---
+
+### 24.2 Arquitetura em camadas
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+A arquitetura em camadas organiza a aplicação por responsabilidades horizontais. Um desenho comum em C#/.NET é:
+
+```text
+Presentation / API
+        ↓
+Application / Use Cases
+        ↓
+Domain / Business Rules
+        ↓
+Infrastructure / Database, Files, External APIs
+```
+
+Cada camada tem um papel:
+
+- **Presentation/API:** recebe requisições, valida formato de entrada e devolve resposta.
+- **Application:** coordena casos de uso, transações e chamadas ao domínio.
+- **Domain:** concentra regras de negócio.
+- **Infrastructure:** conversa com banco de dados, mensageria, arquivos e serviços externos.
+
+O erro comum é transformar "camadas" em apenas pastas com nomes bonitos, mas deixar qualquer camada chamar qualquer outra. A arquitetura só existe de verdade quando as dependências são controladas.
+
+Em projetos ASP.NET Core, isso costuma aparecer como:
+
+```text
+MyApp.Api
+MyApp.Application
+MyApp.Domain
+MyApp.Infrastructure
+```
+
+Não é obrigatório separar em projetos diferentes desde o início, mas essa separação ajuda quando o sistema cresce.
+
+**Fonte oficial:** Microsoft Learn — [Common web application architectures](https://learn.microsoft.com/en-us/dotnet/architecture/modern-web-apps-azure/common-web-application-architectures).
+
+---
+
+### 24.3 Clean Architecture, Onion e Ports and Adapters
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+A documentação da Microsoft explica que aplicações que seguem o **Dependency Inversion Principle** e princípios de **Domain-Driven Design** tendem a chegar a uma arquitetura parecida, conhecida por nomes como:
+
+- Hexagonal Architecture;
+- Ports and Adapters;
+- Onion Architecture;
+- Clean Architecture.
+
+A ideia central é inverter a dependência:
+
+```text
+Interface externa → Application → Domain
+Infrastructure → implementa contratos definidos pelo núcleo
+```
+
+O núcleo da aplicação não deve depender diretamente de detalhes como:
+
+- Entity Framework Core;
+- banco SQL específico;
+- API externa específica;
+- fila específica;
+- framework web específico.
+
+Em vez disso, o núcleo define contratos:
+
+```csharp
+public interface IOrderRepository
+{
+    Task<Order?> GetByIdAsync(OrderId id);
+    Task SaveAsync(Order order);
+}
+```
+
+E a infraestrutura implementa:
+
+```csharp
+public sealed class EfOrderRepository : IOrderRepository
+{
+    public Task<Order?> GetByIdAsync(OrderId id)
+    {
+        // implementação com EF Core
+    }
+}
+```
+
+O benefício é proteger regras de negócio contra detalhes técnicos. O custo é mais abstração. Em sistemas pequenos, isso pode ser exagero; em sistemas com domínio complexo, integrações e vida longa, costuma pagar o investimento.
+
+**Fonte oficial:** Microsoft Learn — [Common web application architectures](https://learn.microsoft.com/en-us/dotnet/architecture/modern-web-apps-azure/common-web-application-architectures).
+
+---
+
+### 24.4 Domain-Driven Design (DDD)
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+`Domain-Driven Design` é uma abordagem para sistemas em que a complexidade principal está no domínio de negócio, não apenas em telas, CRUD ou infraestrutura.
+
+Em C#/.NET, DDD costuma aparecer com:
+
+- entidades;
+- value objects;
+- aggregates;
+- domain services;
+- repositories;
+- domain events;
+- ubiquitous language;
+- bounded contexts.
+
+Um exemplo de `Value Object` em C#:
+
+```csharp
+public readonly record struct Money(decimal Amount, string Currency)
+{
+    public Money
+    {
+        if (Amount < 0)
+            throw new ArgumentOutOfRangeException(nameof(Amount));
+
+        if (string.IsNullOrWhiteSpace(Currency))
+            throw new ArgumentException("Currency is required.", nameof(Currency));
+    }
+}
+```
+
+O ponto não é usar `record` porque é moderno. O ponto é representar um conceito do domínio com igualdade por valor e invariantes claras.
+
+Uma leitura importante:
+
+- se o sistema é CRUD simples, DDD completo pode ser peso desnecessário;
+- se o sistema tem regras de negócio ricas, vocabulário complexo e muitas exceções, DDD ajuda a organizar o modelo mental.
+
+**Fonte oficial Microsoft:** [Designing a DDD-oriented microservice](https://learn.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/ddd-oriented-microservice).  
+**Livro original:** Eric Evans — *Domain-Driven Design: Tackling Complexity in the Heart of Software*. Referência do autor: [Domain Language — DDD resources](https://www.domainlanguage.com/ddd/).
+
+---
+
+### 24.5 CQRS e separação entre comandos e consultas
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+`CQRS` significa **Command and Query Responsibility Segregation**.
+
+A ideia é separar operações que mudam estado de operações que apenas leem estado:
+
+- **Command:** altera algo no sistema.
+- **Query:** consulta algo sem alterar estado observável.
+
+Exemplo mental:
+
+```text
+CreateOrderCommand      → muda estado
+GetOrderDetailsQuery    → apenas consulta
+```
+
+Em C#, isso costuma aparecer com tipos separados:
+
+```csharp
+public sealed record CreateOrderCommand(Guid CustomerId, IReadOnlyList<OrderItemInput> Items);
+
+public sealed record GetOrderDetailsQuery(Guid OrderId);
+```
+
+CQRS não exige microservices, filas, event sourcing ou bancos separados. Essas coisas podem aparecer em arquiteturas maiores, mas não fazem parte da definição mínima.
+
+Use CQRS quando a separação deixar o sistema mais claro:
+
+- muitas regras no caminho de escrita;
+- leituras com formatos diferentes do modelo de escrita;
+- telas que precisam de projeções otimizadas;
+- domínio com comandos importantes de negócio.
+
+Evite CQRS quando ele só duplica classes sem reduzir complexidade.
+
+**Fonte oficial:** Microsoft Learn — [.NET Microservices: DDD and CQRS patterns](https://learn.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/).
+
+---
+
+### 24.6 Event-Driven Architecture
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+Em uma arquitetura orientada a eventos, partes do sistema reagem a fatos que já aconteceram.
+
+Exemplos:
+
+```text
+OrderCreated
+PaymentApproved
+InventoryReserved
+CustomerRegistered
+```
+
+Em C#, um evento de domínio pode ser modelado como um tipo simples:
+
+```csharp
+public sealed record OrderCreated(Guid OrderId, Guid CustomerId, DateTimeOffset OccurredAt);
+```
+
+A diferença importante:
+
+- **comando:** pede que algo aconteça;
+- **evento:** informa que algo já aconteceu.
+
+Eventos ajudam quando diferentes partes do sistema precisam reagir sem acoplamento direto. Por exemplo, depois de `OrderCreated`, uma aplicação pode:
+
+- enviar e-mail;
+- reservar estoque;
+- publicar mensagem;
+- atualizar projeção de leitura;
+- registrar auditoria.
+
+O cuidado é não transformar tudo em evento cedo demais. Eventos trazem desafios de ordem, duplicidade, idempotência, rastreabilidade e consistência eventual.
+
+**Fonte oficial:** Microsoft Learn — [Domain events: Design and implementation](https://learn.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/domain-events-design-implementation).
+
+---
+
+### 24.7 Microservices em .NET
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+Microservices organizam um sistema como um conjunto de serviços pequenos e independentes, cada um com responsabilidade própria e deploy independente.
+
+No ecossistema .NET, isso costuma envolver:
+
+- ASP.NET Core Web APIs;
+- containers;
+- mensageria;
+- bancos por serviço;
+- observabilidade;
+- versionamento de contratos;
+- resiliência em chamadas remotas;
+- autenticação e autorização distribuídas.
+
+O ponto mais importante: microservices não são "classes pequenas pela rede". Eles são uma decisão operacional e organizacional.
+
+Use microservices quando houver motivos reais como:
+
+- domínios com ciclos de evolução independentes;
+- times diferentes responsáveis por partes diferentes;
+- necessidade de escalar partes específicas do sistema;
+- fronteiras de negócio claras.
+
+Evite microservices quando a aplicação ainda não tem fronteiras bem compreendidas. Nesse caso, um monólito modular em C# pode ser mais simples, mais barato e mais confiável.
+
+**Fonte oficial:** Microsoft Learn — [.NET Microservices: Architecture for Containerized .NET Applications](https://learn.microsoft.com/en-us/dotnet/architecture/microservices/).
+
+---
+
+### 24.8 Padrões enterprise clássicos
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+Além dos padrões GoF, aplicações C#/.NET de negócio frequentemente usam padrões catalogados em *Patterns of Enterprise Application Architecture*, de Martin Fowler.
+
+Alguns que aparecem muito em projetos C#:
+
+| Padrão | Ideia central | Onde aparece em C#/.NET |
+|---|---|---|
+| Repository | Media o domínio e o mapeamento de dados | Interfaces como `ICustomerRepository` |
+| Unit of Work | Coordena mudanças de uma transação | `DbContext` costuma cumprir esse papel no EF Core |
+| Service Layer | Define operações de aplicação | Serviços de caso de uso em `Application` |
+| Data Transfer Object | Carrega dados entre processos/camadas | Requests/responses de API |
+| Domain Model | Modelo com dados e comportamento de domínio | Entidades, value objects e aggregates |
+| Active Record | Objeto mistura dados, persistência e lógica | Mais comum em ORMs de estilo diferente; em .NET moderno, use com cuidado |
+
+Esses padrões são úteis, mas não devem ser aplicados automaticamente.
+
+Exemplo: se você usa Entity Framework Core, criar um `Repository` genérico por cima de `DbSet<T>` pode apenas repetir a API do EF sem agregar semântica. Já um repositório específico do domínio pode ser útil quando expressa operações reais:
+
+```csharp
+public interface ICustomerRepository
+{
+    Task<Customer?> FindByEmailAsync(Email email);
+    Task<IReadOnlyList<Customer>> FindActiveCustomersAsync();
+}
+```
+
+O critério é simples:
+
+- se o padrão dá nome a uma responsabilidade real, ele ajuda;
+- se só adiciona camada por hábito, ele atrapalha.
+
+**Livro original e catálogo:** Martin Fowler — [Patterns of Enterprise Application Architecture](https://martinfowler.com/books/eaa.html) e [catalog of PoEAA patterns](https://martinfowler.com/eaaCatalog/).
+
+---
+
 ## Anexo A — Plataformas de Prática Recomendadas
 
 [⬆️ Voltar ao Sumário](#sumário)
@@ -5915,6 +6264,14 @@ As definições, distinções conceituais e atualizações de versão deste guia
 - [Fundamentals of garbage collection](https://learn.microsoft.com/en-us/dotnet/standard/garbage-collection/fundamentals)
 - [Introduction to LINQ queries](https://learn.microsoft.com/en-us/dotnet/csharp/linq/get-started/introduction-to-linq-queries)
 - [Explicit Interface Implementation](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/interfaces/explicit-interface-implementation)
+- [.NET Architecture guides](https://learn.microsoft.com/en-us/dotnet/architecture/)
+- [Common web application architectures](https://learn.microsoft.com/en-us/dotnet/architecture/modern-web-apps-azure/common-web-application-architectures)
+- [.NET Microservices: Architecture for Containerized .NET Applications](https://learn.microsoft.com/en-us/dotnet/architecture/microservices/)
+- [Designing a DDD-oriented microservice](https://learn.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/ddd-oriented-microservice)
+- [Domain events: Design and implementation](https://learn.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/domain-events-design-implementation)
+- [Martin Fowler — Patterns of Enterprise Application Architecture](https://martinfowler.com/books/eaa.html)
+- [Martin Fowler — Catalog of Patterns of Enterprise Application Architecture](https://martinfowler.com/eaaCatalog/)
+- [Domain Language — DDD resources](https://www.domainlanguage.com/ddd/)
 
 Sugestão de estudo: use este guia para construir o modelo mental e a documentação oficial para validar detalhes de comportamento, APIs e mudanças de versão.
 
@@ -5932,14 +6289,18 @@ Sugestão de estudo: use este guia para construir o modelo mental e a documenta�
 - **Attribute** — metadado anexado a um tipo ou membro, lido em tempo de compilação ou execução (ex: `[Obsolete]`). → [19.1 Attributes embutidos](#191-attributes-embutidos)
 - **Builder Pattern** — padrão de projeto para construir objetos complexos passo a passo, geralmente com sintaxe fluente. → [11.4 Padrão Builder](#114-padrão-builder)
 - **Burst Compiler** — compilador da Unity que converte código C# em código nativo de alta performance via LLVM. → [23.7 Boas práticas de performance no Unity](#237-boas-práticas-de-performance-no-unity)
+- **Clean Architecture** — estilo arquitetural que protege o núcleo de domínio/aplicação contra detalhes externos como banco, framework web e APIs externas. → [24.3 Clean Architecture, Onion e Ports and Adapters](#243-clean-architecture-onion-e-ports-and-adapters)
 - **CLR (Common Language Runtime)** — máquina virtual do .NET que executa o código compilado (IL), análoga à JVM do Java. → [1.1 O que é C#?](#11-o-que-é-c)
 - **Constraints (restrições de generics)** — regras que limitam quais tipos podem ser usados num tipo genérico. → [17.2 Constraints (restrições)](#172-constraints-restrições)
 - **Conversão definida pelo usuário (`implicit` / `explicit`)** — mecanismo que permite a um tipo ensinar ao compilador como convertê-lo para outro tipo com ou sem cast explícito. → [7.9 Conversões definidas pelo usuário (`implicit` e `explicit`)](#79-conversões-definidas-pelo-usuário-implicit-e-explicit)
 - **Construtor** — método especial, sem tipo de retorno, executado na criação de uma instância (`new`), responsável por inicializar seu estado. → [11.2 Construtores em Profundidade](#112-construtores-em-profundidade)
 - **`const` / `readonly`** — modificadores para valores imutáveis; `const` é resolvido em tempo de compilação, `readonly` em tempo de execução. → [3.5 `const` e `readonly`](#35-const-e-readonly)
 - **Coroutine** — mecanismo do Unity para executar código ao longo de vários frames, sem usar `async`/`await`. → [23.5 Coroutines](#235-coroutines-execução-assíncrona-sem-asyncawait)
+- **CQRS** — separação entre comandos que alteram estado e consultas que apenas leem estado. → [24.5 CQRS e separação entre comandos e consultas](#245-cqrs-e-separação-entre-comandos-e-consultas)
 - **Delegate** — tipo que representa uma referência tipada a um método, base para eventos e lambdas. → [13.1 Delegates](#131-delegates-ponteiros-de-método-tipados)
 - **Dependency Injection (DI)** — padrão em que uma classe recebe suas dependências de fora, em vez de instanciá-las diretamente. → [22.2 Dependency Injection (DI)](#222-dependency-injection-di)
+- **Domain-Driven Design (DDD)** — abordagem de design que organiza o software em torno de um modelo de domínio e de uma linguagem compartilhada. → [24.4 Domain-Driven Design (DDD)](#244-domain-driven-design-ddd)
+- **Event-Driven Architecture** — arquitetura em que partes do sistema reagem a eventos que representam fatos já ocorridos. → [24.6 Event-Driven Architecture](#246-event-driven-architecture)
 - **Enum / Flags enum** — tipo que representa um conjunto fixo de valores nomeados; com `[Flags]`, permite combinação via bitmask. → [10.1 Enums básicos](#101-enums-básicos)
 - **Event** — mecanismo baseado em delegates para notificar múltiplos assinantes sobre uma ocorrência. → [13.4 Eventos (Events)](#134-eventos-events)
 - **Extension Method** — método que "adiciona" comportamento a um tipo existente sem modificá-lo ou herdar dele. → [9.2 Métodos de extensão](#92-métodos-de-extensão-extension-methods)
@@ -5953,6 +6314,7 @@ Sugestão de estudo: use este guia para construir o modelo mental e a documenta�
 - **Lambda (expressão lambda)** — função anônima e compacta, geralmente usada com delegates e LINQ. → [13.3 Expressões Lambda](#133-expressões-lambda)
 - **LINQ (Language Integrated Query)** — conjunto de recursos da linguagem e da biblioteca para consultar e transformar dados de forma tipada e declarativa. → [14.1 O que é LINQ?](#141-o-que-é-linq)
 - **MonoBehaviour** — classe base da qual todo script que vive numa GameObject do Unity deriva. → [23.2 MonoBehaviour](#232-monobehaviour-a-classe-base-dos-scripts-unity)
+- **Microservices** — estilo arquitetural que organiza uma aplicação como serviços independentes com responsabilidades e deploys próprios. → [24.7 Microservices em .NET](#247-microservices-em-net)
 - **Namespace** — contêiner lógico que agrupa tipos relacionados, evitando colisão de nomes. → [2.1 Namespaces](#21-namespaces)
 - **Nullable Type** — tipo de valor que pode aceitar `null` além do seu valor normal (ex: `int?`). → [3.3 Nullable Types](#33-nullable-types-tipos-que-aceitam-null)
 - **Pattern Matching** — sintaxe para testar e desestruturar valores com base em forma/tipo (`is`, `switch` expressions). → [7.6 `is`, `as` e Pattern Matching](#76-is-as-e-pattern-matching)

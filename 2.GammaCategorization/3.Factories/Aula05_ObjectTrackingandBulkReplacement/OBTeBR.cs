@@ -54,7 +54,7 @@ namespace Aula05_ObjectTrackingandBulkReplacement
         private readonly List<WeakReference<ITheme>> themes = new();
 
         // A lista guarda rastros dos temas criados para consulta posterior.
-        // WeakReference observa o objeto sem impedir sua coleta pelo GC.
+        // WeakReference observa o objeto sem impedir sua coleta pelo GC (Garbage Collector).
 
         // ===== Metodos =====
         public ITheme CreateTheme(bool dark)
