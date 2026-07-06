@@ -47,6 +47,7 @@ Ao longo do texto, pense sempre nestas quatro perguntas:
 
 - [Como usar este guia](#como-usar-este-guia)
 - **Parte 1 — Introdução e Contextualização**
+  - [1.0 Padrões oficiais de nomenclatura do C#](#10-padrões-oficiais-de-nomenclatura-do-c)
   - [1.1 O que é C#?](#11-o-que-é-c)
   - [1.2 O que é um assembly?](#12-o-que-é-um-assembly)
   - [1.3 Por que aprender C# em 2026?](#13-por-que-aprender-c-em-2026)
@@ -184,6 +185,44 @@ Ao longo do texto, pense sempre nestas quatro perguntas:
 ## Parte 1 — Introdução e Contextualização
 
 [⬆️ Voltar ao Sumário](#sumário)
+
+Antes de avançarmos para conceitos mais técnicos, vale conhecer os padrões oficiais de nomenclatura recomendados pela Microsoft para o ecossistema .NET. Em projetos reais, usar nomes consistentes não é apenas uma questão estética: isso melhora leitura, facilita manutenção e reduz ruídos em code reviews e no trabalho em equipe.
+
+### 1.0 Padrões oficiais de nomenclatura do C#
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+As diretrizes oficiais de nomenclatura do .NET recomendam uma convenção simples e consistente:
+
+- **Tipos, classes, structs, interfaces e enums** devem usar **PascalCase**. Exemplo: `CustomerService`, `OrderRepository`, `IRepository`.
+- **Métodos, propriedades e eventos** também usam **PascalCase**. Exemplo: `CalculateTotal()`, `CustomerName`, `OnChanged`.
+- **Variáveis locais, parâmetros e campos privados** costumam usar **camelCase**. Exemplo: `customerName`, `totalAmount`, `orderId`.
+- **Campos privados** são comumente escritos com um underscore inicial, como `_customerName` ou `_totalAmount`.
+- **Constantes** normalmente usam **PascalCase** ou, em alguns cenários, `ALL_CAPS` em código legado; em projetos modernos, o mais comum é **PascalCase**.
+- **Acrônimos** devem ser tratados de forma consistente: preferir `HttpClient` em vez de `HTTPClient`, e `Url` em vez de `URL` quando o estilo for o padrão do .NET.
+- **Namespaces** usam **PascalCase** e tendem a refletir a estrutura do domínio ou da camada da aplicação.
+
+Um exemplo prático:
+
+```csharp
+public class CustomerService
+{
+    private readonly IRepository _repository;
+
+    public CustomerService(IRepository repository)
+    {
+        _repository = repository;
+    }
+
+    public string GetCustomerName(int customerId)
+    {
+        string customerName = _repository.FindNameById(customerId);
+        return customerName;
+    }
+}
+```
+
+Essas convenções ajudam a tornar o código mais previsível e alinhado com o estilo adotado pela própria biblioteca base do .NET e pelos projetos oficiais da Microsoft.
 
 ---
 
