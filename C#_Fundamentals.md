@@ -58,6 +58,7 @@ Ao longo do texto, pense sempre nestas quatro perguntas:
 - **Parte 3 — Variáveis e Tipos**
   - [3.1 O que é uma variável?](#31-o-que-é-uma-variável)
   - [3.2 Tipos de valor vs tipos de referência](#32-tipos-de-valor-vs-tipos-de-referência)
+  - [3.2.1 Conversões implícitas e explícitas](#321-conversões-implícitas-e-explícitas)
   - [3.3 Nullable Types — tipos que aceitam null](#33-nullable-types-tipos-que-aceitam-null)
   - [3.4 `var` — inferência de tipo](#34-var-inferência-de-tipo)
   - [3.5 `const` e `readonly`](#35-const-e-readonly)
@@ -600,6 +601,47 @@ Console.WriteLine(p1.X); // ainda 10
 ```
 
 **Como interpretar o exemplo:** O que realmente importa aqui não é decorar `stack` e `heap`, mas entender a semântica de cópia e compartilhamento. Quando você domina isso, passa a prever melhor efeitos colaterais, mutabilidade e comportamento de parâmetros e coleções.
+
+---
+
+### 3.2.1 Conversões implícitas e explícitas
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+Em C#, uma conversão pode acontecer de duas formas principais:
+
+- **Conversão implícita**: o compilador aceita automaticamente porque a transformação é segura e não há perda de informação significativa.
+- **Conversão explícita**: o programador declara a conversão manualmente, geralmente porque ela pode perder dados, mudar o significado ou até falhar em tempo de execução.
+
+```csharp
+int idade = 30;
+long codigo = idade;       // conversão implícita: int -> long
+
+double valor = 10.75;
+int truncado = (int)valor; // conversão explícita: double -> int
+```
+
+No exemplo acima, `int -> long` é seguro e natural, portanto a conversão é implícita. Já `double -> int` exige um cast explícito porque o valor decimal precisa ser transformado em inteiro, o que pode truncar a parte fracionária.
+
+#### Quando usar cada uma
+
+- Use **conversão implícita** quando o tipo de destino consegue representar o valor do tipo de origem sem risco real de perda.
+- Use **conversão explícita** quando a transformação exige atenção, pode reduzir precisão ou pode não ser válida para todos os valores.
+
+#### Riscos principais
+
+- **Implícita**: pode esconder problemas de design se a conversão for usada em excesso ou entre tipos que não são realmente compatíveis.
+- **Explícita**: pode causar perda de dados, arredondamento ou `InvalidCastException` em tempo de execução, dependendo do tipo envolvido.
+- Para entradas externas, preferir `int.Parse`, `double.Parse` ou `TryParse` em vez de depender apenas de cast direto.
+
+```csharp
+string texto = "42";
+int numero = int.Parse(texto); // conversão de texto para número
+
+bool sucesso = int.TryParse(texto, out int resultado);
+```
+
+**Como interpretar o exemplo:** cast é uma ferramenta poderosa, mas deve ser usada com intenção. O compilador ajuda quando a conversão é claramente segura; quando ela é potencialmente problemática, a leitura do código deve deixar isso evidente.
 
 ---
 
