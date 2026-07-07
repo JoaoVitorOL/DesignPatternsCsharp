@@ -46,17 +46,6 @@ namespace aula03_ExplicitDeepCopyInterface
             Address = address.DeepCopy();
         }
 
-        // ==============
-        // Construtor de cópia
-        // ==============
-        // Cria uma nova instância a partir de uma existente.
-        // Este construtor mostra que a cópia precisa ser feita de forma cuidadosa,
-        // especialmente quando há colunas internas mutáveis, como arrays e objetos compostos.
-        public Person(Person other)
-        {
-            Names = (string[])other.Names.Clone();
-            Address = new Address(other.Address);
-        }
 
         public override string ToString()
         {
@@ -105,15 +94,6 @@ namespace aula03_ExplicitDeepCopyInterface
             HouseNumber = houseNumber;
         }
 
-        // ==============
-        // Construtor de cópia
-        // ==============
-        // Cria uma nova Address a partir de outra, preservando os dados sem compartilhar a mesma instância.
-        public Address(Address otherAddress)
-        {
-            StreetName = otherAddress.StreetName;
-            HouseNumber = otherAddress.HouseNumber;
-        }
 
 
         // ==============
