@@ -1,7 +1,7 @@
 using System;
 using static System.Console;
 
-namespace DotNetDesignPatternDemos.Creational.Prototype.Inheritance
+namespace aula04_PrototypeInhertance
 {
   // ==============
   // Contexto do exemplo
@@ -15,7 +15,7 @@ namespace DotNetDesignPatternDemos.Creational.Prototype.Inheritance
   // ==============
   // Define um contrato simples para a operação de clonagem profunda.
   // A ideia é deixar explícito que a cópia deve ser feita de forma independente.
-  public interface IDeepCopyable<T> where T : new()
+  public interface IPrototype<T> where T : new()
   {
     void CopyTo(T target);
     
@@ -31,7 +31,7 @@ namespace DotNetDesignPatternDemos.Creational.Prototype.Inheritance
   // Classe Address
   // ==============
   // Representa um objeto composto que também precisa ser copiado corretamente.
-  public class Address : IDeepCopyable<Address>
+  public class Address : IPrototype<Address>
   {
     public string StreetName;
     public int HouseNumber;
@@ -74,7 +74,7 @@ namespace DotNetDesignPatternDemos.Creational.Prototype.Inheritance
   // ==============
   // Aqui começa o Prototype na hierarquia: Person é a classe base do protótipo.
   // Ela define o estado comum e a lógica inicial de clonagem que será reutilizada.
-  public class Person : IDeepCopyable<Person>
+  public class Person : IPrototype<Person>
   {
     public string[] Names;
     public Address Address;
@@ -119,7 +119,7 @@ namespace DotNetDesignPatternDemos.Creational.Prototype.Inheritance
   // ==============
   // Aqui está a herança do Prototype: Employee herda de Person e estende o comportamento
   // de cópia para incluir o estado específico da subclasse, como o salário.
-  public class Employee : Person, IDeepCopyable<Employee>
+  public class Employee : Person, IPrototype<Employee>
   {
     public int Salary;
 
@@ -147,7 +147,7 @@ namespace DotNetDesignPatternDemos.Creational.Prototype.Inheritance
   // Torna a operação de clonagem mais natural de ser chamada no código cliente.
   public static class DeepCopyExtensions
   {
-    public static T DeepCopy<T>(this IDeepCopyable<T> item) 
+    public static T DeepCopy<T>(this IPrototype<T> item) 
       where T : new()
     {
       return item.DeepCopy();
@@ -156,7 +156,7 @@ namespace DotNetDesignPatternDemos.Creational.Prototype.Inheritance
     public static T DeepCopy<T>(this T person)
       where T : Person, new()
     {
-      return ((IDeepCopyable<T>) person).DeepCopy();
+      return ((IPrototype<T>) person).DeepCopy();
     }
   }
   
