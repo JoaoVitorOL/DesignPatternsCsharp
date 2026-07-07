@@ -4,6 +4,13 @@ using static System.Console;
 namespace DotNetDesignPatternDemos.Creational.Prototype.Inheritance
 {
   // ==============
+  // Contexto do exemplo
+  // ==============
+  // Este exemplo retrata um cenário em que um objeto base, como Person,
+  // é usado como protótipo para criar versões derivadas, como Employee.
+  // A ideia é mostrar como a clonagem profunda pode ser aplicada em uma hierarquia
+  // de classes sem perder o isolamento entre as instâncias.
+  // ==============
   // Interface de cópia explícita
   // ==============
   // Define um contrato simples para a operação de clonagem profunda.
@@ -65,7 +72,8 @@ namespace DotNetDesignPatternDemos.Creational.Prototype.Inheritance
   // ==============
   // Classe Person
   // ==============
-  // Representa a base do modelo de protótipo, com estado comum a todas as subclasses.
+  // Aqui começa o Prototype na hierarquia: Person é a classe base do protótipo.
+  // Ela define o estado comum e a lógica inicial de clonagem que será reutilizada.
   public class Person : IDeepCopyable<Person>
   {
     public string[] Names;
@@ -109,7 +117,8 @@ namespace DotNetDesignPatternDemos.Creational.Prototype.Inheritance
   // ==============
   // Classe Employee
   // ==============
-  // Extende a hierarquia e adiciona um estado específico, como o salário.
+  // Aqui está a herança do Prototype: Employee herda de Person e estende o comportamento
+  // de cópia para incluir o estado específico da subclasse, como o salário.
   public class Employee : Person, IDeepCopyable<Employee>
   {
     public int Salary;
@@ -117,7 +126,9 @@ namespace DotNetDesignPatternDemos.Creational.Prototype.Inheritance
     // ==============
     // Implementação da cópia na subclasse
     // ==============
-    // Reutiliza a cópia da classe base e adiciona o estado específico da subclasse.
+    // Este é o ponto exato em que a herança do Prototype aparece:
+    // a subclasse reutiliza a lógica da classe base com base.CopyTo(target)
+    // e depois adiciona o que é próprio dela.
     public void CopyTo(Employee target)
     {
       base.CopyTo(target);

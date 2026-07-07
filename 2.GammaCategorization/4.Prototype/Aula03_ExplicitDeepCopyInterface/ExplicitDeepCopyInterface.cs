@@ -4,7 +4,13 @@ using System;
 namespace aula03_ExplicitDeepCopyInterface
 {
 
-
+    // ==============
+    // Contexto do exemplo
+    // ==============
+    // Este exemplo retrata um cenário em que uma pessoa já configurada
+    // serve como protótipo para criar outra instância com estado independente.
+    // A ideia é mostrar como o padrão Prototype pode ser implementado com uma
+    // interface explícita para cópia profunda, sem depender de ICloneable.
     // ==============
     // Interface de cópia explícita
     // ==============
