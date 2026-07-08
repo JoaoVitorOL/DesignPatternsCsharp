@@ -18,7 +18,10 @@ namespace aula05_PrototypeSerialization
   // e depois reconstruí-los. Ele foi marcado como obsoleto e deixou de ser uma opção segura
   // ou recomendada em aplicações modernas. Por isso, não deve ser usado em código novo.
   // Para fins didáticos, este arquivo usa uma abordagem manual de serialização binária,
-  // apenas para explicar o fluxo conceitual de Serialization → Deserialization.
+  // ou seja, o estado do objeto é gravado diretamente em bytes no MemoryStream usando
+  // BinaryWriter e reconstruído depois com BinaryReader.
+  // Isso é diferente do BinaryFormatter, porque aqui não existe uma infraestrutura pronta
+  // de serialização automática; o fluxo é montado manualmente para fins didáticos.
   // Isso é uma gambiarra de ensino, não uma forma convencional ou recomendada de implementar
   // Prototype por serialization em C# moderno.
   // ==============
