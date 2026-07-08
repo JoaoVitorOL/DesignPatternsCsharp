@@ -12,6 +12,16 @@ namespace aula05_PrototypeSerialization
   // A intenção é manter o conceito do padrão, mesmo sem depender do BinaryFormatter,
   // que hoje é incompatível com o runtime moderno.
   // ==============
+  // Aviso importante
+  // ==============
+  // O BinaryFormatter foi uma API antiga usada para converter objetos em dados binários
+  // e depois reconstruí-los. Ele foi marcado como obsoleto e deixou de ser uma opção segura
+  // ou recomendada em aplicações modernas. Por isso, não deve ser usado em código novo.
+  // Para fins didáticos, este arquivo usa uma abordagem manual de serialização binária,
+  // apenas para explicar o fluxo conceitual de Serialization → Deserialization.
+  // Isso é uma gambiarra de ensino, não uma forma convencional ou recomendada de implementar
+  // Prototype por serialization em C# moderno.
+  // ==============
   // Extensões de cópia
   // ==============
   // Aqui criamos uma extensão chamada DeepCopy que transforma o objeto em um fluxo
