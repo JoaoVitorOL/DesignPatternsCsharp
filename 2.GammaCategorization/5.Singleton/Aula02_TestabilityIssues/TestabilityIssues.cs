@@ -1,10 +1,13 @@
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.CompilerServices;
+using System.Reflection;
+using Microsoft.VisualBasic;
+using System.Runtime.CompilerServices; // [FIX] Fixes CS0246 for CallerFilePath
+using NUnit.Framework;                  // [FIX] Fixes CS0246 for TestFixture, Test, and Assert
 
-namespace Aula01_SingletonImplementation
+
+// Problemas do Sinlgeton em relação à Testabilidade
+
+namespace Aula02_TestabilityIssues
 {
     // ===== Interface =====
     // Contrato que representa o "acesso a dados de populacao".
@@ -23,10 +26,14 @@ namespace Aula01_SingletonImplementation
         // Estrutura em memoria: nome da capital -> populacao.
         private Dictionary<string, int> capitals;
 
+        private static int instanceCount;
+        public static int Count => instanceCount;
+
         // ===== Construtores =====
         // Le o arquivo "capitals.txt" e monta o dicionario de capitais.
         private SingletonDatabase() 
         {
+            instanceCount++;
             Console.WriteLine("Initializing Database . . .");
 
             // [FIXED] Single-line path solution using [CallerFilePath] via an inline argument
@@ -59,6 +66,60 @@ namespace Aula01_SingletonImplementation
         // Ponto de acesso global exigido pelo pattern Singleton.
         public static SingletonDatabase Instance => instance.Value; // Expõe Singleton
     }
+
+
+
+    public class SingletonRecordFinder
+    {
+        public int GetTotalPopulation(IEnumerable<string> names)
+        {
+            int result = 0;
+
+            foreach(var name in names)
+            {
+                result += SingletonDatabase.Instance.GetPopulation(name);
+            }
+
+            return result;
+        }
+    }
+
+
+
+
+
+    // ================= Seção de Testes =====================
+//    [TestFixture]
+//    public class SingletonTests
+//    {
+//        [Test]
+//        public void IsSingletonTest()
+//        {
+//            var db = SingletonDatabase.Instance;
+//            var db2 = SingletonDatabase.Instance;
+//
+//            Assert.That(db, Is.SameAs(db2));
+//            Assert.That(SingletonDatabase.Count, Is.EqualTo(1));
+//
+//        }
+
+//         [Test]
+//         public void SingletonPopulationTest()
+//         {
+//            var rf = new SingletonRecordFinder();
+//            var names = new[] {"Seoul","Mexico"};
+//
+//            int tp = rf.GetTotalPopulation(names);
+//            Assert.That(tp, IsBoxed.EqualTo(175000 + 174000));
+//
+//            
+//         }
+//     }
+//
+
+
+
+
 
     public static class Program
     {
