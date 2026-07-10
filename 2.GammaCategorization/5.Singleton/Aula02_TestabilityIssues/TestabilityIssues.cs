@@ -7,6 +7,27 @@ using NUnit.Framework;                  // [FIX] Fixes CS0246 for TestFixture, T
 
 // Problemas do Sinlgeton em relação à Testabilidade
 
+// Impossibilidade de Mocking (Acoplamento Rígido): 
+// A classe SingletonRecordFinder consome diretamente a propriedade estática SingletonDatabase.
+// Instance em vez de receber a interface IDatabase.
+// Isso impede que o teste isole a lógica de contagem, obrigando-o a interagir sempre com a implementação real do banco de dados.
+
+
+// Dependência Oculta de Infraestrutura (I/O de Disco): 
+// O construtor do Singleton lê o arquivo físico "capitals.txt" diretamente do disco. ]
+// Se esse arquivo for alterado durante o teste, deletado ou se o teste rodar em um ambiente sem acesso a essa pasta,
+// o teste unitário falhará, tornando-o frágil e lento.
+
+// Poluição de Estado entre Testes (Estado Global): 
+// Como a Instance é estática e persistente via Lazy<SingletonDatabase>, 
+// ela mantém o mesmo estado na memória durante toda a execução da suíte de testes.
+//  Se um teste modificar os dados internos, os testes seguintes herdarão essa sujeira, gerando testes instáveis
+// (que passam sozinhos, mas falham em lote).
+
+// Dificuldade de Paralelização: 
+// Devido ao estado global único compartilhado pela propriedade Instance,
+//  rodar os testes dessa classe em paralelo pode causar condições de corrida (race conditions),
+//  corrompendo os resultados.
 namespace Aula02_TestabilityIssues
 {
     // ===== Interface =====

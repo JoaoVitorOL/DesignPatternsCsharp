@@ -52,12 +52,16 @@ namespace Aula01_SingletonImplementation
             return capitals[name];
         }
 
-        //======= Forma Otimizada (Lazy) ===================
+        //======= Singleton Forma Otimizada (Lazy) ===================
         private static Lazy<SingletonDatabase> instance = 
           new Lazy<SingletonDatabase>(() => new SingletonDatabase()); // Inicializa Singleton (Lazy)
 
         // Ponto de acesso global exigido pelo pattern Singleton.
         public static SingletonDatabase Instance => instance.Value; // Expõe Singleton
+
+        //====== Singleton Padrão ============
+        // private static SingletonDatabase instance = new SingletonDatabase();
+        // public static SIngletonDatabase Instance => instance;
     }
 
     public static class Program
