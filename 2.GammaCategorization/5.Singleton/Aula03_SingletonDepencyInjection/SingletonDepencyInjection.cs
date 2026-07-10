@@ -26,53 +26,54 @@ namespace Aula03_SingletonDependencyInjection
         int GetPopulation(string name);
     }
 
-    // ===== Classe =====
-    public class SingletonDatabase : IDatabase
-    {
-        // ===== Campos =====
-        // Estrutura em memoria: nome da capital -> populacao.
-        private Dictionary<string, int> capitals;
+    // ===== Classe SingletonDatabase (Jeito Errado) =====
+//    public class SingletonDatabase : IDatabase
+//    {
+//        // ===== Campos =====
+//        // Estrutura em memoria: nome da capital -> populacao.
+//        private Dictionary<string, int> capitals;
+//
+//        private static int instanceCount;
+//        public static int Count => instanceCount;
+//
+//        // ===== Construtores =====
+//        // Le o arquivo "capitals.txt" e monta o dicionario de capitais.
+//        private SingletonDatabase() 
+//        {
+//            instanceCount++;
+//            Console.WriteLine("Initializing Database . . .");
+//
+//         
+//            string currentCodeFile = GetCurrentFilePath();
+//            string sourceFolder = Path.GetDirectoryName(currentCodeFile) ?? "";
+//            string filePath = Path.Combine(sourceFolder, "capitals.txt");
+//
+//            capitals = File.ReadAllLines(filePath)
+//                .Chunk(2)
+//                .ToDictionary(
+//                    list => list.ElementAt(0).Trim(),
+//                    list => int.Parse(list.ElementAt(1))
+//                );
+//        }
+//
+//        // Helper method needed to capture the compile-time file path attribute string safely
+//        private static string GetCurrentFilePath([CallerFilePath] string path = "") => path;
+//
+//        // ===== Metodos =====
+//        // Consulta a populacao de uma capital ja carregada em memoria.
+//        public int GetPopulation(string name)
+//        {
+//            return capitals[name];
+//        }
+//
+//        //======= Forma Otimizada (Lazy) ===================
+//        private static Lazy<SingletonDatabase> instance = 
+//          new Lazy<SingletonDatabase>(() => new SingletonDatabase()); // Inicializa Singleton (Lazy)
+//
+//        // Ponto de acesso global exigido pelo pattern Singleton.
+//        public static SingletonDatabase Instance => instance.Value; // Expõe Singleton
+//    }
 
-        private static int instanceCount;
-        public static int Count => instanceCount;
-
-        // ===== Construtores =====
-        // Le o arquivo "capitals.txt" e monta o dicionario de capitais.
-        private SingletonDatabase() 
-        {
-            instanceCount++;
-            Console.WriteLine("Initializing Database . . .");
-
-         
-            string currentCodeFile = GetCurrentFilePath();
-            string sourceFolder = Path.GetDirectoryName(currentCodeFile) ?? "";
-            string filePath = Path.Combine(sourceFolder, "capitals.txt");
-
-            capitals = File.ReadAllLines(filePath)
-                .Chunk(2)
-                .ToDictionary(
-                    list => list.ElementAt(0).Trim(),
-                    list => int.Parse(list.ElementAt(1))
-                );
-        }
-
-        // Helper method needed to capture the compile-time file path attribute string safely
-        private static string GetCurrentFilePath([CallerFilePath] string path = "") => path;
-
-        // ===== Metodos =====
-        // Consulta a populacao de uma capital ja carregada em memoria.
-        public int GetPopulation(string name)
-        {
-            return capitals[name];
-        }
-
-        //======= Forma Otimizada (Lazy) ===================
-        private static Lazy<SingletonDatabase> instance = 
-          new Lazy<SingletonDatabase>(() => new SingletonDatabase()); // Inicializa Singleton (Lazy)
-
-        // Ponto de acesso global exigido pelo pattern Singleton.
-        public static SingletonDatabase Instance => instance.Value; // Expõe Singleton
-    }
 
     // ===== Classe (NOVA em relação à Aula02) =====
     // `OrdinaryDatabase` é a peça central da mudança: é a MESMA lógica de
@@ -131,20 +132,20 @@ namespace Aula03_SingletonDependencyInjection
     // Não há como injetar um banco de dados fake aqui para testar,
     // porque a dependência não entra por fora — ela é buscada
     // internamente. É esse acoplamento que motiva a classe seguinte.
-    public class SingletonRecordFinder
-    {
-        public int GetTotalPopulation(IEnumerable<string> names)
-        {
-            int result = 0;
-
-            foreach(var name in names)
-            {
-                result += SingletonDatabase.Instance.GetPopulation(name);
-            }
-
-            return result;
-        }
-    }
+//    public class SingletonRecordFinder
+//    {
+//        public int GetTotalPopulation(IEnumerable<string> names)
+//        {
+//            int result = 0;
+//
+//            foreach(var name in names)
+//            {
+//                result += SingletonDatabase.Instance.GetPopulation(name);
+//            }
+//
+//            return result;
+//        }
+//    }
 
 
     // ===== Classe (NOVA em relação à Aula02) =====
