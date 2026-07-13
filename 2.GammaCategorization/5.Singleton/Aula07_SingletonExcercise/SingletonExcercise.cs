@@ -9,14 +9,22 @@
 
 using System;
 
-  namespace Coding.Exercise
-  {
+namespace Coding.Exercise
+{
     public class SingletonTester
     {
-      public static bool IsSingleton(Func<object> func)
-      {
-        // todo
-      }
+        public static bool IsSingleton(Func<object> func)
+        {
+            // Executa a fábrica pela primeira vez
+            object instance1 = func();
+            
+            // Executa a fábrica pela segunda vez
+            object instance2 = func();
+
+            // Se ambas as referências apontarem para o mesmo objeto na memória, 
+            // significa que a fábrica está gerenciando uma instância única (Singleton).
+            return ReferenceEquals(instance1, instance2);
+        }
     }
-  }
+}
 
