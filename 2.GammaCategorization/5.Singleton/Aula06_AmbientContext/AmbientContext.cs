@@ -12,17 +12,21 @@ using System.Text;
 // O QUE É: Cria uma configuração "no ar" (ambiente) para que novos objetos se
 //          configurem sozinhos, sem precisar passar parâmetros manualmente.
 //
+// EVOLUÇÃO DA HISTÓRIA (Conexão com as aulas anteriores):
+// * Aula01 (Singleton): Garante uma única instância pro programa todo, mas é 
+//   rígido demais. Se você precisar mudar um valor temporariamente, quebra tudo.
+// * Aula03 (Dependency Injection): Resolve a rigidez do Singleton passando tudo
+//   por parâmetro no construtor. Mas se você tiver 500 objetos iguais, vai poluir
+//   o código repetindo o mesmo parâmetro toda hora (Parameter Pollution).
+// * Aula06 (Ambient Context): O equilíbrio perfeito. Ele dá o acesso fácil e 
+//   global do Singleton, mas com a flexibilidade de mudar o valor em blocos 
+//   isolados (usando o escopo do 'using'), limpando tudo ao fechar o bloco.
+//
 // ANALOGIAS PRÁTICAS:
 // * Photoshop: Você escolhe a cor vermelha UMA vez. Todas as linhas desenhadas
 //   a partir dali nascem vermelhas porque olham para a cor ativa do "ambiente".
-// * Caps Lock: O bloco 'using' liga o Caps Lock. Tudo ali dentro sai em maiúsculo 
-//   (muda o comportamento). Fechou o bloco, o Caps Lock desliga automaticamente.
-//
-// POR QUE USAR?
-// * Evita Parâmetros Inúteis: Se tiver 500 paredes, você não precisa passar o 
-//   valor "3000" no construtor de cada uma delas (Parameter Pollution).
-// * Mais flexível que Singleton: O Singleton é rígido e global para sempre. O 
-//   Ambient Context permite mudar a configuração temporariamente em blocos isolados.
+// * Caps Lock: O bloco 'using' liga o Caps Lock. Tudo ali dentro sai em maiúsculo.
+//   Fechou o bloco, o Caps Lock desliga automaticamente e o ambiente volta ao normal.
 // ============================================================================
 namespace Aula06_AmbientContext
 {
