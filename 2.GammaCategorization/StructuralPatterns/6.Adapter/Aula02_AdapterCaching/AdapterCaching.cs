@@ -3,8 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using MoreLinq;
-using NUnit.Framework;
 using static System.Console;
 
 // ============================================================================
@@ -49,7 +47,7 @@ namespace DotNetDesignPatternDemos.Structural.Adapter.WithCaching
       return X == other.X && Y == other.Y;
     }
 
-    public override bool Equals(object obj) // Overload de método
+    public override bool Equals(object? obj) // Overload de método (Ajustado com '?' para evitar warnings de nullability)
     {
       if (ReferenceEquals(null, obj)) return false;
       if (ReferenceEquals(this, obj)) return true;
@@ -93,7 +91,7 @@ namespace DotNetDesignPatternDemos.Structural.Adapter.WithCaching
       return Equals(Start, other.Start) && Equals(End, other.End);
     }
 
-    public override bool Equals(object obj) // método overload
+    public override bool Equals(object? obj) // método overload (Ajustado com '?' para evitar warnings de nullability)
     {
       if (ReferenceEquals(null, obj)) return false;
       if (ReferenceEquals(this, obj)) return true;
@@ -228,6 +226,8 @@ namespace DotNetDesignPatternDemos.Structural.Adapter.WithCaching
       // * No segundo Draw(), nenhuma matemática será executada! O console apenas imprimirá 
       //   os pontos "." sem disparar nenhuma mensagem "Generating points...".
       Draw();
+      WriteLine();
+      WriteLine("--- SEGUNDA CHAMADA (USANDO O CACHE) ---");
       Draw();
     }
 
@@ -240,9 +240,10 @@ namespace DotNetDesignPatternDemos.Structural.Adapter.WithCaching
           // Toda vez que instanciamos o adapter, ele apenas checa o cache.
           var adapter = new LineToPointAdapter(line);
           
-          // O método estendido '.ForEach()' (da biblioteca MoreLinq) consome o IEnumerable
-          // desenhando pixel a pixel na tela.
-          adapter.ForEach(DrawPoint);
+          foreach (var point in adapter)
+          {
+            DrawPoint(point);
+          }
         }
       }
     }
