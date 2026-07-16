@@ -185,7 +185,7 @@ namespace DotNetDesignPatternDemos.Structural.Adapter
     // Formatação amigável para exibir os dados do vetor de forma legível no console.
     public override string ToString()
     {
-      return $"{string.Join(",", data)}";
+      return $"{string.Join("--", data)}";
     }
   }
   
