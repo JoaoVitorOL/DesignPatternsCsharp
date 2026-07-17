@@ -38,7 +38,7 @@ namespace Aula01_Bridge
     {
         void RenderCircle(float radius);
         // Se quiséssemos adicionar suporte a quadrado, adicionaríamos aqui:
-        // void RenderSquare(float side);
+        void RenderSquare(float side);
     }
 
     // ========================================================================
@@ -54,6 +54,11 @@ namespace Aula01_Bridge
         {
             Console.WriteLine($"Drawing a circle of radius {radius} as vectors.");
         }
+
+        public void RenderSquare(float size)
+        {
+            Console.WriteLine($"Drawing a square of size {size} as vectors.");
+        }
     }
 
     // Renderizador focado em desenho rasterizado (geração pixel por pixel)
@@ -62,6 +67,11 @@ namespace Aula01_Bridge
         public void RenderCircle(float radius)
         {
             Console.WriteLine($"Drawing a circle of radius {radius} as pixels.");
+        }
+
+         public void RenderSquare(float size)
+        {
+            Console.WriteLine($"Drawing a square of size {size} as pixels.");
         }
     }
 
@@ -120,6 +130,28 @@ namespace Aula01_Bridge
         }
     }
 
+
+    public class Square : Shape
+    {
+        private float lateral_size;
+
+        public Square(IRenderer renderer, float lateral_size) : base(renderer)
+        {
+            this.lateral_size = lateral_size;
+        }
+
+        public override void Draw()
+        {
+            renderer.RenderSquare(lateral_size);
+        }
+
+        public override void Resize(float factor)
+        {
+            lateral_size = factor;
+        }
+    }
+
+
     // ========================================================================
     // ==== DEMONSTRAÇÃO DE USO (CLIENT) ====
     // ========================================================================
@@ -151,6 +183,22 @@ namespace Aula01_Bridge
             Console.WriteLine("\n--- Redimensionando Círculo Vetorial ---");
             circle1.Resize(2.0f); // Dobra o raio de 5.0 para 10.0
             circle1.Draw();
+
+
+            var square1 = new Square(vectorRenderer, 10.0f);
+            Console.WriteLine("--- Desenhando Quadrado Vetorial ---");
+            square1.Draw(); // Saída orientada a vetores
+
+
+            var square2 = new Square(rasterRenderer, 5.0f);
+            Console.WriteLine("--- Desenhando Quadrado Rasterizado ---");
+            square2.Draw(); // Saída orientada a vetores
+
+
+             // Modificamos o estado do círculo através da abstração e renderizamos novamente
+            Console.WriteLine("\n--- Redimensionando Quadrado Vetorial ---");
+            square1.Resize(2.0f); // Dobra o raio de 5.0 para 10.0
+            square1.Draw();
 
             Console.WriteLine("\n==========================================================");
         }
