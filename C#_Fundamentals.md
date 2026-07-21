@@ -45,18 +45,34 @@ Ao longo do texto, pense sempre nestas quatro perguntas:
 
 ## Sumário Geral
 
-### Mapa rápido de aprendizagem
+### Como o conteúdo está organizado
 
-| Bloco | Partes | O que você aprende | Ponto de entrada |
-|---|---:|---|---|
-| Fundamentos da linguagem | 1–4 | runtime, programa, namespaces, tipos, nulabilidade e texto | [Parte 1](#parte-1--introdução-e-contextualização) |
-| Construção de tipos e fluxo | 5–12 | encapsulamento, propriedades, palavras-chave, fluxo, métodos, enums, objetos e polimorfismo | [Parte 5](#parte-5--modificadores-de-acesso) |
-| Composição e dados | 13–17 | delegates, eventos, lambdas, LINQ, coleções, async e generics | [Parte 13](#parte-13--delegates-events-e-lambdas) |
-| Robustez e baixo nível | 18–22 | exceções, attributes, memória, concorrência, reflection, geração e interop | [Parte 18](#parte-18--tratamento-de-exceções) |
-| Aplicação e arquitetura | 23–24 | C# em engines e organização arquitetural de sistemas .NET | [Parte 23](#parte-23--c-no-contexto-de-game-development) |
-| Engenharia profissional | 25–27 | SDK, build, I/O, HTTP, testes, observabilidade, segurança e publicação | [Parte 25](#parte-25--sdk-projetos-dependências-e-qualidade) |
-| Catálogo e ecossistema | 28–29 | palavras-chave, BCL, APIs prontas, frameworks e pacotes externos | [Parte 28](#parte-28--catálogo-da-linguagem-e-da-biblioteca-padrão) |
-| Consulta e revisão | Anexos | trilhas oficiais, fontes primárias e glossário navegável | [Anexo A](#anexo-a--trilhas-oficiais-de-estudo-e-prática) |
+O guia progride do modelo de execução para a sintaxe, da sintaxe para o desenho de tipos e, por fim, para engenharia e arquitetura. As Partes 28 e 29 funcionam também como catálogos: não é necessário lê-las de uma vez para consultar uma API ou biblioteca.
+
+| Bloco | Partes | Assuntos centrais | Resultado esperado | Comece por |
+|---|---:|---|---|---|
+| 1. Base da linguagem e do runtime | 1–4 | compilação, CLR, assemblies, programa, namespaces, tipos, nulabilidade e texto | compreender como o código é organizado, compilado e representado | [Parte 1](#parte-1--introdução-e-contextualização) |
+| 2. Sintaxe aplicada e modelagem | 5–12 | acesso, propriedades, palavras-chave, operadores, fluxo, métodos, enums, classes, interfaces e polimorfismo | construir tipos com contratos, invariantes e comportamento previsíveis | [Parte 5](#parte-5--modificadores-de-acesso) |
+| 3. Composição, consultas e dados | 13–17 | delegates, eventos, lambdas, LINQ, coleções, assincronia e generics | compor comportamento e processar dados com abstrações reutilizáveis | [Parte 13](#parte-13--delegates-events-e-lambdas) |
+| 4. Robustez, memória e integração avançada | 18–22 | exceções, metadados, memória, concorrência, reflection e interoperabilidade | reconhecer garantias, custos e riscos de recursos avançados | [Parte 18](#parte-18--tratamento-de-exceções) |
+| 5. Domínios de aplicação e arquitetura | 23–24 | jogos, engines, camadas, Clean Architecture, DDD, CQRS, eventos e microsserviços | aplicar C# dentro de plataformas e estruturas arquiteturais reais | [Parte 23](#parte-23--c-no-contexto-de-game-development) |
+| 6. Engenharia profissional | 25–27 | SDK, projetos, dependências, build, I/O, HTTP, testes, observabilidade, segurança e publicação | desenvolver, validar, diagnosticar e entregar software .NET | [Parte 25](#parte-25--sdk-projetos-dependências-e-qualidade) |
+| 7. Catálogo da plataforma e do ecossistema | 28–29 | palavras-chave, BCL, APIs prontas, estruturas de dados, frameworks, bibliotecas e ferramentas | descobrir o que já existe antes de implementar ou adicionar dependências | [Parte 28](#parte-28--catálogo-da-linguagem-e-da-biblioteca-padrão) |
+| 8. Consulta e revisão | Anexos | trilhas oficiais, fontes primárias e glossário navegável | revisar conceitos e aprofundar o estudo nas fontes originais | [Anexo A](#anexo-a--trilhas-oficiais-de-estudo-e-prática) |
+
+### Atalhos por pergunta prática
+
+| Se você quer saber... | Consulte primeiro |
+|---|---|
+| como C#, compilador, CLR, assembly, projeto e pacote se relacionam | [Partes 1](#parte-1--introdução-e-contextualização), [25](#parte-25--sdk-projetos-dependências-e-qualidade) e [28.1](#281-c-clr-bcl-framework-e-pacote-não-são-sinônimos) |
+| como escolher um tipo, controlar nulabilidade e entender cópias | [Parte 3](#parte-3--variáveis-e-tipos) |
+| como modelar classes, valores, contratos e extensibilidade | [Partes 5–12](#parte-5--modificadores-de-acesso) e [17](#parte-17--generics) |
+| como consultar, armazenar e transformar dados em memória | [Partes 14](#parte-14--linq-language-integrated-query), [15](#parte-15--coleções) e [28.6](#286-estruturas-de-dados-e-coleções-prontas) |
+| como trabalhar com I/O sem bloquear e com cancelamento | [16.4](#164-streams-assíncronos-cancelamento-e-descarte) e [Parte 26](#parte-26--io-serialização-http-e-globalização) |
+| como tratar erros, recursos, memória e concorrência | [Partes 18–21](#parte-18--tratamento-de-exceções) |
+| como estruturar, testar, observar, proteger e publicar uma aplicação | [Partes 24–27](#parte-24--arquitetura-de-aplicações-cnet) |
+| qual API, coleção, interface, framework ou biblioteca já está disponível | [Partes 28](#parte-28--catálogo-da-linguagem-e-da-biblioteca-padrão) e [29](#parte-29--ecossistema-externo-frameworks-bibliotecas-e-ferramentas) |
+| onde encontrar uma definição curta ou a fonte oficial | [Glossário](#glossário) e [Anexo B](#anexo-b--referências-oficiais-consultadas) |
 
 ### Índice detalhado
 
@@ -64,43 +80,47 @@ Ao longo do texto, pense sempre nestas quatro perguntas:
 
 - [Como usar este guia](#como-usar-este-guia)
 
-**Bloco 1 — Fundamentos da linguagem (Partes 1–4)**
+**Bloco 1 — Base da linguagem e do runtime (Partes 1–4)**
 
-- **Parte 1 — Introdução e Contextualização**
+> Do código-fonte aos valores manipulados pelo programa: contexto, compilação, organização, tipos e texto.
+
+- **[Parte 1 — Introdução e Contextualização](#parte-1--introdução-e-contextualização)** — situa a linguagem, o compilador, o runtime, os assemblies e a estrutura de uma aplicação.
   - [1.0 Padrões oficiais de nomenclatura do C#](#10-padrões-oficiais-de-nomenclatura-do-c)
   - [1.1 O que é C#?](#11-o-que-é-c)
   - [1.2 O que é um assembly?](#12-o-que-é-um-assembly)
   - [1.3 Por que aprender C# em 2026?](#13-por-que-aprender-c-em-2026)
   - [1.4 Estrutura de um programa C#](#14-estrutura-de-um-programa-c)
-- **Parte 2 — Namespaces e Using**
+- **[Parte 2 — Namespaces e Using](#parte-2--namespaces-e-using)** — organiza nomes e controla como tipos e membros entram no escopo.
   - [2.1 Namespaces](#21-namespaces)
   - [2.2 Using Directives](#22-using-directives)
-- **Parte 3 — Variáveis e Tipos**
+- **[Parte 3 — Variáveis e Tipos](#parte-3--variáveis-e-tipos)** — explica representação, cópia, conversão, nulabilidade, inferência e referências.
   - [3.1 O que é uma variável?](#31-o-que-é-uma-variável)
   - [3.2 Tipos de valor vs tipos de referência](#32-tipos-de-valor-vs-tipos-de-referência)
-  - [3.2.1 Conversões implícitas e explícitas](#321-conversões-implícitas-e-explícitas)
+    - [3.2.1 Conversões implícitas e explícitas](#321-conversões-implícitas-e-explícitas)
   - [3.3 Nullable Types — tipos que aceitam null](#33-nullable-types--tipos-que-aceitam-null)
   - [3.4 `var` — inferência de tipo](#34-var--inferência-de-tipo)
   - [3.5 `const` e `readonly`](#35-const-e-readonly)
   - [3.6 Referências diretas, indiretas e fracas](#36-referências-diretas-indiretas-e-fracas)
   - [3.7 `object`, `dynamic`, tipos anônimos e boxing](#37-object-dynamic-tipos-anônimos-e-boxing)
   - [3.8 Literais, target typing e descartes](#38-literais-target-typing-e-descartes)
-- **Parte 4 — String e suas Peculiaridades**
+- **[Parte 4 — String e suas Peculiaridades](#parte-4--string-e-suas-peculiaridades)** — trata imutabilidade, construção, formatação e operações textuais da BCL.
   - [4.1 String é um tipo de referência imutável](#41-string-é-um-tipo-de-referência-imutável)
   - [4.2 Imutabilidade e StringBuilder](#42-imutabilidade-e-stringbuilder)
   - [4.3 String Interpolation e verbatim strings](#43-string-interpolation-e-verbatim-strings)
   - [4.4 Métodos importantes de string](#44-métodos-importantes-de-string)
-  - [4.5 Classes e funções predefinidas essenciais do .NET](#45-classes-e-funções-predefinidas-essenciais-do-net)
+  - [4.5 Da linguagem à biblioteca padrão do .NET](#45-da-linguagem-à-biblioteca-padrão-do-net)
 
-**Bloco 2 — Construção de tipos e fluxo (Partes 5–12)**
+**Bloco 2 — Sintaxe aplicada e modelagem (Partes 5–12)**
 
-- **Parte 5 — Modificadores de Acesso**
+> Da superfície de uma API ao comportamento dos objetos: encapsulamento, fluxo, métodos e relações entre tipos.
+
+- **[Parte 5 — Modificadores de Acesso](#parte-5--modificadores-de-acesso)** — define as fronteiras de uso dentro do tipo, arquivo, assembly e hierarquia.
   - [5.1 Os modificadores de acesso do C#](#51-os-modificadores-de-acesso-do-c)
   - [5.2 Boas práticas com modificadores](#52-boas-práticas-com-modificadores)
-- **Parte 6 — Propriedades (Properties)**
-  - [6.1 O que são Properties?](#61-o-que-são-properties)
+- **[Parte 6 — Propriedades (Properties)](#parte-6--propriedades-properties)** — expõe estado com leitura, escrita, inicialização, validação e cálculo controlados.
+  - [6.1 O que são propriedades?](#61-o-que-são-propriedades)
   - [6.2 Expression-bodied members](#62-expression-bodied-members)
-- **Parte 7 — Palavras-chave Especiais do C#**
+- **[Parte 7 — Palavras-chave Especiais do C#](#parte-7--palavras-chave-especiais-do-c)** — reúne palavras-chave que alteram ciclo de vida, despacho, passagem de dados e geração de código.
   - [7.1 `static`](#71-static)
   - [7.2 `sealed`](#72-sealed)
   - [7.3 `abstract`](#73-abstract)
@@ -117,94 +137,100 @@ Ao longo do texto, pense sempre nestas quatro perguntas:
   - [7.14 `async` e `await`](#714-async-e-await)
   - [7.15 `required` e `init`](#715-required-e-init)
   - [7.16 Recursos essenciais do C# 14](#716-recursos-essenciais-do-c-14)
-- **Parte 8 — Controle de Fluxo**
+- **[Parte 8 — Controle de Fluxo](#parte-8--controle-de-fluxo)** — organiza decisões, repetição, expressões, precedência, overflow e operadores próprios.
   - [8.1 `if / else if / else`](#81-if--else-if--else)
   - [8.2 `switch` e switch expressions](#82-switch-e-switch-expressions)
   - [8.3 Loops](#83-loops)
   - [8.4 Operadores, precedência e overflow](#84-operadores-precedência-e-overflow)
   - [8.5 Operadores definidos pelo usuário](#85-operadores-definidos-pelo-usuário)
-- **Parte 9 — Métodos**
+- **[Parte 9 — Métodos](#parte-9--métodos)** — desenha assinaturas, parâmetros, retornos, sobrecargas, extensões e funções locais.
   - [9.1 Declaração de métodos](#91-declaração-de-métodos)
   - [9.2 Métodos de extensão (Extension Methods)](#92-métodos-de-extensão-extension-methods)
   - [9.3 Sobrecarga de métodos](#93-sobrecarga-de-métodos)
   - [9.4 Funções locais, retornos por referência e contratos de parâmetros](#94-funções-locais-retornos-por-referência-e-contratos-de-parâmetros)
-- **Parte 10 — Enums**
+- **[Parte 10 — Enums](#parte-10--enums)** — modela conjuntos fechados de constantes e combinações binárias com flags.
   - [10.1 Enums básicos](#101-enums-básicos)
   - [10.2 Flags enum — bitmask](#102-flags-enum--bitmask)
-- **Parte 11 — Classes e Objetos**
+- **[Parte 11 — Classes e Objetos](#parte-11--classes-e-objetos)** — constrói entidades e valores com invariantes, igualdade, inicialização e APIs fluentes.
   - [11.1 Estrutura completa de uma classe](#111-estrutura-completa-de-uma-classe)
   - [11.2 Construtores em Profundidade](#112-construtores-em-profundidade)
   - [11.3 Records (C# 9+)](#113-records-c-9)
   - [11.4 Padrão Builder](#114-padrão-builder)
   - [11.5 Structs, inicializadores, indexadores e igualdade](#115-structs-inicializadores-indexadores-e-igualdade)
-- **Parte 12 — Herança e Polimorfismo**
+- **[Parte 12 — Herança e Polimorfismo](#parte-12--herança-e-polimorfismo)** — compara especialização por classe com contratos definidos por interfaces.
   - [12.1 Herança em C#](#121-herança-em-c)
   - [12.2 Interfaces](#122-interfaces)
 
-**Bloco 3 — Composição e dados (Partes 13–17)**
+**Bloco 3 — Composição, consultas e dados (Partes 13–17)**
 
-- **Parte 13 — Delegates, Events e Lambdas**
+> Comportamento como valor, sequências como abstração e algoritmos reutilizáveis sobre diferentes tipos.
+
+- **[Parte 13 — Delegates, Events e Lambdas](#parte-13--delegates-events-e-lambdas)** — representa funções, callbacks, notificações, closures e expressões inspecionáveis.
   - [13.1 Delegates — referências de método tipadas](#131-delegates--referências-de-método-tipadas)
   - [13.2 Func, Action e Predicate](#132-func-action-e-predicate)
   - [13.3 Expressões Lambda](#133-expressões-lambda)
   - [13.4 Eventos (Events)](#134-eventos-events)
   - [13.5 Closures e árvores de expressão](#135-closures-e-árvores-de-expressão)
-- **Parte 14 — LINQ (Language Integrated Query)**
+- **[Parte 14 — LINQ (Language Integrated Query)](#parte-14--linq-language-integrated-query)** — consulta sequências e provedores, distinguindo tradução, execução e materialização.
   - [14.1 O que é LINQ?](#141-o-que-é-linq)
   - [14.2 Operadores LINQ principais](#142-operadores-linq-principais)
   - [14.3 `IEnumerable<T>` e o contrato fundamental das sequências](#143-ienumerablet-e-o-contrato-fundamental-das-sequências)
   - [14.4 `IQueryable<T>` e queries traduzíveis para outra fonte](#144-iqueryablet-e-queries-traduzíveis-para-outra-fonte)
   - [14.5 Execução adiada, materialização e armadilhas](#145-execução-adiada-materialização-e-armadilhas)
-- **Parte 15 — Coleções**
+- **[Parte 15 — Coleções](#parte-15--coleções)** — escolhe contratos e estruturas por ordem, chave, unicidade, índice, mutabilidade e concorrência.
   - [15.1 Tipos de coleções principais](#151-tipos-de-coleções-principais)
   - [15.2 List<T>](#152-listt)
   - [15.3 Dictionary<TKey, TValue>](#153-dictionarytkey-tvalue)
   - [15.4 Como escolher a coleção certa](#154-como-escolher-a-coleção-certa)
   - [15.5 Arrays, coleções imutáveis, congeladas e concorrentes](#155-arrays-coleções-imutáveis-congeladas-e-concorrentes)
-- **Parte 16 — Async/Await e Programação Assíncrona**
+- **[Parte 16 — Async/Await e Programação Assíncrona](#parte-16--asyncawait-e-programação-assíncrona)** — compõe operações não bloqueantes com tarefas, cancelamento e descarte assíncrono.
   - [16.1 O modelo assíncrono do C#](#161-o-modelo-assíncrono-do-c)
   - [16.2 Padrões de uso](#162-padrões-de-uso)
   - [16.3 Task vs ValueTask](#163-task-vs-valuetask)
   - [16.4 Streams assíncronos, cancelamento e descarte](#164-streams-assíncronos-cancelamento-e-descarte)
-- **Parte 17 — Generics**
+- **[Parte 17 — Generics](#parte-17--generics)** — cria algoritmos e tipos parametrizados com restrições e variância seguras.
   - [17.1 Tipos parametrizados](#171-tipos-parametrizados)
   - [17.2 Constraints (restrições)](#172-constraints-restrições)
   - [17.3 Covariância e contravariância](#173-covariância-e-contravariância)
 
-**Bloco 4 — Robustez e recursos de baixo nível (Partes 18–22)**
+**Bloco 4 — Robustez, memória e integração avançada (Partes 18–22)**
 
-- **Parte 18 — Tratamento de Exceções**
+> Falhas, metadados, tempo de vida, paralelismo e fronteiras onde garantias adicionais se tornam indispensáveis.
+
+- **[Parte 18 — Tratamento de Exceções](#parte-18--tratamento-de-exceções)** — modela, lança, captura e propaga falhas sem perder contexto ou esconder bugs.
   - [18.1 `try / catch / finally`](#181-try--catch--finally)
   - [18.2 Exceções customizadas](#182-exceções-customizadas)
   - [18.3 Hierarquia de exceções](#183-hierarquia-de-exceções)
   - [18.4 Exceções de argumento e implementação comuns](#184-exceções-de-argumento-e-implementação-comuns)
   - [18.5 Práticas de tratamento e desenho de exceções](#185-práticas-de-tratamento-e-desenho-de-exceções)
-- **Parte 19 — Attributes e metadados**
+- **[Parte 19 — Attributes e metadados](#parte-19--attributes-e-metadados)** — anexa informações declarativas consumidas pela linguagem, runtime e ferramentas.
   - [19.1 Attributes embutidos](#191-attributes-embutidos)
   - [19.2 Criando Attributes customizados](#192-criando-attributes-customizados)
   - [19.3 Informações do chamador e atributos modernos](#193-informações-do-chamador-e-atributos-modernos)
-- **Parte 20 — Tipos Especiais Modernos do C#**
+- **[Parte 20 — Tipos Especiais Modernos do C#](#parte-20--tipos-especiais-modernos-do-c)** — cobre tuplas, referências fracas, fatias de memória, uniões modeladas e responsabilidade pelo tempo de vida.
   - [20.1 Tuple e ValueTuple](#201-tuple-e-valuetuple)
   - [20.2 `WeakReference<T>` e referências fracas no GC](#202-weakreferencet-e-referências-fracas-no-gc)
   - [20.3 Span<T> e Memory<T> — fatias de memória](#203-spant-e-memoryt--fatias-de-memória)
   - [20.4 Sealed classes com Pattern Matching (como Discriminated Union)](#204-sealed-classes-com-pattern-matching-como-discriminated-union)
   - [20.5 Memória gerenciada, GC e ownership de recursos](#205-memória-gerenciada-gc-e-ownership-de-recursos)
-- **Parte 21 — Threads e Concorrência**
+- **[Parte 21 — Threads e Concorrência](#parte-21--threads-e-concorrência)** — coordena trabalho paralelo e estado compartilhado com sincronização e canais.
   - [21.1 Thread básico e ThreadPool](#211-thread-básico-e-threadpool)
   - [21.2 Task Parallel Library (TPL)](#212-task-parallel-library-tpl)
   - [21.3 Sincronização](#213-sincronização)
   - [21.4 Memória compartilhada, coleções concorrentes e canais](#214-memória-compartilhada-coleções-concorrentes-e-canais)
-- **Parte 22 — Interoperabilidade e Recursos Avançados**
+- **[Parte 22 — Interoperabilidade e Recursos Avançados](#parte-22--interoperabilidade-e-recursos-avançados)** — inspeciona, gera e conecta código gerenciado a mecanismos externos ou de baixo nível.
   - [22.1 Reflection](#221-reflection)
   - [22.2 Dependency Injection (DI)](#222-dependency-injection-di)
   - [22.3 Source Generators (C# 9+)](#223-source-generators-c-9)
   - [22.4 Unsafe code e ponteiros](#224-unsafe-code-e-ponteiros)
   - [22.5 Interoperabilidade nativa e marshalling](#225-interoperabilidade-nativa-e-marshalling)
-- [Resumo Geral — Conceitos Fundamentais](#resumo-geral--conceitos-fundamentais)
+- **Revisão do núcleo:** [Checkpoint — Fundamentos da Linguagem](#checkpoint--fundamentos-da-linguagem-partes-122)
 
-**Bloco 5 — Aplicação e arquitetura (Partes 23–24)**
+**Bloco 5 — Domínios de aplicação e arquitetura (Partes 23–24)**
 
-- **Parte 23 — C# no Contexto de Game Development**
+> A mesma linguagem dentro de engines e de estruturas arquiteturais com diferentes responsabilidades e custos.
+
+- **[Parte 23 — C# no Contexto de Game Development](#parte-23--c-no-contexto-de-game-development)** — adapta o modelo da linguagem ao ciclo de vida, serialização e desempenho das engines.
   - [23.1 C# e Unity](#231-c-e-unity)
   - [23.2 MonoBehaviour — a classe base dos scripts Unity](#232-monobehaviour--a-classe-base-dos-scripts-unity)
   - [23.3 Ciclo de vida do MonoBehaviour](#233-ciclo-de-vida-do-monobehaviour)
@@ -215,7 +241,7 @@ Ao longo do texto, pense sempre nestas quatro perguntas:
   - [23.8 Padrões de design comuns em jogos com C#](#238-padrões-de-design-comuns-em-jogos-com-c)
   - [23.9 C# no Godot 4](#239-c-no-godot-4)
   - [23.10 Diferenças entre C# padrão e C# no Unity](#2310-diferenças-entre-c-padrão-e-c-no-unity)
-- **Parte 24 — Arquitetura de Aplicações C#/.NET**
+- **[Parte 24 — Arquitetura de Aplicações C#/.NET](#parte-24--arquitetura-de-aplicações-cnet)** — compara estilos de organização, domínio, integração e distribuição de sistemas.
   - [24.1 C# não impõe arquitetura](#241-c-não-impõe-arquitetura)
   - [24.2 Arquitetura em camadas](#242-arquitetura-em-camadas)
   - [24.3 Clean Architecture, Onion e Ports and Adapters](#243-clean-architecture-onion-e-ports-and-adapters)
@@ -227,20 +253,22 @@ Ao longo do texto, pense sempre nestas quatro perguntas:
 
 **Bloco 6 — Engenharia profissional (Partes 25–27)**
 
-- **Parte 25 — SDK, Projetos, Dependências e Qualidade**
+> Do repositório ao ambiente de produção: ferramentas, integrações, qualidade, diagnóstico, segurança e entrega.
+
+- **[Parte 25 — SDK, Projetos, Dependências e Qualidade](#parte-25--sdk-projetos-dependências-e-qualidade)** — configura compilação, referências, análise, testes e artefatos do projeto.
   - [25.1 SDK, runtime e CLI](#251-sdk-runtime-e-cli)
   - [25.2 `.csproj`, TFM e versão da linguagem](#252-csproj-tfm-e-versão-da-linguagem)
   - [25.3 Soluções, referências e NuGet](#253-soluções-referências-e-nuget)
   - [25.4 Build, testes, empacotamento e publicação](#254-build-testes-empacotamento-e-publicação)
   - [25.5 Analisadores, EditorConfig e documentação de API](#255-analisadores-editorconfig-e-documentação-de-api)
   - [25.6 Diretivas de pré-processador e compilação condicional](#256-diretivas-de-pré-processador-e-compilação-condicional)
-- **Parte 26 — I/O, Serialização, HTTP e Globalização**
+- **[Parte 26 — I/O, Serialização, HTTP e Globalização](#parte-26--io-serialização-http-e-globalização)** — integra arquivos, rede e formatos externos com cultura e limites explícitos.
   - [26.1 Arquivos, streams e buffers](#261-arquivos-streams-e-buffers)
   - [26.2 JSON com System.Text.Json](#262-json-com-systemtextjson)
   - [26.3 HTTP e tempo de vida do HttpClient](#263-http-e-tempo-de-vida-do-httpclient)
   - [26.4 Cultura, parsing, datas e fusos horários](#264-cultura-parsing-datas-e-fusos-horários)
   - [26.5 Expressões regulares com limite de tempo](#265-expressões-regulares-com-limite-de-tempo)
-- **Parte 27 — Engenharia para Produção**
+- **[Parte 27 — Engenharia para Produção](#parte-27--engenharia-para-produção)** — trata testes, configuração, observabilidade, desempenho, segurança e publicação sustentável.
   - [27.1 Estratégia de testes](#271-estratégia-de-testes)
   - [27.2 Logging, configuração, opções e segredos](#272-logging-configuração-opções-e-segredos)
   - [27.3 Diagnóstico, observabilidade e performance](#273-diagnóstico-observabilidade-e-performance)
@@ -250,7 +278,9 @@ Ao longo do texto, pense sempre nestas quatro perguntas:
 
 **Bloco 7 — Catálogo da plataforma e do ecossistema (Partes 28–29)**
 
-- **Parte 28 — Catálogo da Linguagem e da Biblioteca Padrão**
+> Consulta orientada a descoberta: primeiro procure na linguagem e na BCL; depois avalie frameworks e pacotes externos.
+
+- **[Parte 28 — Catálogo da Linguagem e da Biblioteca Padrão](#parte-28--catálogo-da-linguagem-e-da-biblioteca-padrão)** — indexa palavras-chave, tipos, APIs, coleções, interfaces, namespaces e utilitários prontos.
   - [28.1 C#, CLR, BCL, framework e pacote não são sinônimos](#281-c-clr-bcl-framework-e-pacote-não-são-sinônimos)
   - [28.2 Todas as palavras-chave reservadas](#282-todas-as-palavras-chave-reservadas)
   - [28.3 Todas as palavras-chave contextuais](#283-todas-as-palavras-chave-contextuais)
@@ -261,7 +291,7 @@ Ao longo do texto, pense sempre nestas quatro perguntas:
   - [28.8 Namespaces essenciais da biblioteca padrão](#288-namespaces-essenciais-da-biblioteca-padrão)
   - [28.9 Algoritmos e utilitários que você não precisa reimplementar](#289-algoritmos-e-utilitários-que-você-não-precisa-reimplementar)
   - [28.10 Como descobrir se a API já existe](#2810-como-descobrir-se-a-api-já-existe)
-- **Parte 29 — Ecossistema Externo: Frameworks, Bibliotecas e Ferramentas**
+- **[Parte 29 — Ecossistema Externo: Frameworks, Bibliotecas e Ferramentas](#parte-29--ecossistema-externo-frameworks-bibliotecas-e-ferramentas)** — mapeia soluções oficiais e comunitárias e ensina a avaliá-las.
   - [29.1 O que é externo ao padrão](#291-o-que-é-externo-ao-padrão)
   - [29.2 Plataformas e frameworks mantidos pela Microsoft](#292-plataformas-e-frameworks-mantidos-pela-microsoft)
   - [29.3 Dados, bancos e persistência](#293-dados-bancos-e-persistência)
@@ -274,9 +304,9 @@ Ao longo do texto, pense sempre nestas quatro perguntas:
 
 **Anexos e consulta rápida**
 
-- [Anexo A — Trilhas Oficiais de Estudo e Prática](#anexo-a--trilhas-oficiais-de-estudo-e-prática)
-- [Anexo B — Referências Oficiais Consultadas](#anexo-b--referências-oficiais-consultadas)
-- [Glossário](#glossário)
+- [Anexo A — Trilhas Oficiais de Estudo e Prática](#anexo-a--trilhas-oficiais-de-estudo-e-prática) — roteiros para continuar o aprendizado com exercícios e documentação oficial.
+- [Anexo B — Referências Oficiais Consultadas](#anexo-b--referências-oficiais-consultadas) — fontes primárias usadas para validar linguagem, runtime e ecossistema.
+- [Glossário](#glossário) — definições breves ligadas aos capítulos em que cada conceito é explicado.
 
 ---
 
@@ -356,82 +386,28 @@ O compilador moderno do C# faz parte da plataforma **Roslyn** e é open source. 
 
 [⬆️ Voltar ao Sumário](#sumário)
 
-`Assembly` é uma das ideias mais importantes do ecossistema .NET e muita gente começa usando sem perceber.
+Um **assembly** é a unidade de implantação, versionamento e reutilização que o .NET carrega. Normalmente é um arquivo `.dll` ou `.exe` produzido pelo build de um projeto. Ele não contém apenas instruções: também descreve sua própria identidade e os tipos disponíveis.
 
-Em termos bem diretos:
+| Conteúdo comum | Função |
+|---|---|
+| manifesto | identidade, versão, cultura e referências para outros assemblies |
+| metadados | descrição de tipos, membros, assinaturas e attributes |
+| IL/CIL | instruções intermediárias geradas pelo compilador |
+| recursos | arquivos, textos ou imagens incorporados quando necessário |
 
-- um assembly é a **unidade de compilação, empacotamento, reutilização e versionamento** do .NET;
-- na prática, ele costuma aparecer como um arquivo `.dll` ou `.exe`;
-- dentro dele ficam o código compilado em `IL/CIL`, metadados sobre tipos e, muitas vezes, recursos como arquivos embutidos.
+Conceitos próximos pertencem a níveis diferentes:
 
-Se você já viu este fluxo:
+| Elemento | Papel |
+|---|---|
+| arquivo `.cs` | guarda código-fonte |
+| namespace | organiza nomes logicamente |
+| projeto `.csproj` | configura compilação, referências e publicação |
+| assembly | artefato que o runtime carrega e referencia |
+| pacote NuGet | unidade de distribuição que pode conter um ou mais assemblies |
 
-```text
-Código C# (.cs)
-        ↓ compilador
-Assembly .NET (.dll ou .exe)
-        ↓ runtime do .NET
-Execução
-```
+Imagine uma solution com `MinhaApp.Console` e `MinhaApp.Core`. O segundo projeto pode gerar `MinhaApp.Core.dll`; o primeiro usa um `ProjectReference` durante o desenvolvimento e, em execução, carrega o assembly resultante. Não há cópia manual das classes.
 
-então o assembly é justamente o "pacote" que o compilador produz para o runtime consumir.
-
-#### O que costuma existir dentro de um assembly
-
-Em visão de iniciante, pense nele como um contêiner técnico que normalmente reúne:
-
-- **manifesto do assembly**: identidade, versão e referências;
-- **metadados dos tipos**: classes, interfaces, structs, enums, métodos, propriedades;
-- **código IL/CIL**: instruções intermediárias geradas pelo compilador;
-- **recursos**: strings, imagens, arquivos incorporados e afins.
-
-Você não precisa decorar isso de início, mas ajuda a entender que o assembly não é "só um arquivo qualquer". Ele descreve para o runtime o que existe ali dentro e como aquilo se conecta ao restante da aplicação.
-
-#### Para que assemblies servem na prática
-
-Assemblies importam porque são a fronteira real de várias decisões do .NET:
-
-- **distribuição**: bibliotecas e aplicações são entregues em assemblies;
-- **reutilização**: um projeto pode referenciar o assembly de outro;
-- **versionamento**: versões e dependências são rastreadas nesse nível;
-- **controle de acesso**: `internal` vale dentro do mesmo assembly;
-- **reflection**: o programa pode inspecionar tipos dentro de um assembly carregado;
-- **organização de solução**: separar domínio, infraestrutura, UI e testes normalmente significa separar assemblies.
-
-#### Diferença entre assembly, projeto, namespace e pacote
-
-Esse é um ponto que costuma confundir iniciantes.
-
-- **arquivo `.cs`**: contém código-fonte;
-- **namespace**: organiza nomes logicamente;
-- **projeto (`.csproj`)**: define como compilar aquele conjunto de arquivos;
-- **assembly**: é o artefato compilado gerado pelo projeto;
-- **pacote NuGet**: é um pacote de distribuição que pode carregar um ou mais assemblies.
-
-Regra mental curta:
-
-- `namespace` organiza nomes;
-- `projeto` organiza compilação;
-- `assembly` organiza o que o .NET realmente carrega e referencia.
-
-#### Exemplo mental concreto
-
-Imagine esta solução:
-
-- `MinhaApp.Console`
-- `MinhaApp.Core`
-
-O projeto `MinhaApp.Core` pode compilar para algo como:
-
-```text
-MinhaApp.Core.dll
-```
-
-Esse `.dll` é um assembly.
-
-Depois, `MinhaApp.Console` referencia esse assembly para usar as classes de domínio sem copiar código.
-
-É por isso que, quando você escreve:
+Essa fronteira também explica `internal`:
 
 ```csharp
 internal class PedidoService
@@ -439,23 +415,9 @@ internal class PedidoService
 }
 ```
 
-o `internal` não quer dizer "visível para o mesmo namespace".
+**Leitura guiada:** `PedidoService` pode ser usado por qualquer código compilado no mesmo assembly, independentemente do namespace, mas não vira API pública para assemblies consumidores. Essa mesma unidade aparece em referências, reflection e carregamento do runtime.
 
-Ele quer dizer:
-
-- visível para qualquer código do **mesmo assembly**.
-
-#### Por que isso é importante cedo
-
-Entender assembly cedo ajuda você a compreender melhor:
-
-- por que `internal` existe;
-- como bibliotecas são consumidas;
-- o que significa "referenciar um projeto";
-- por que reflection fala tanto em `Assembly`, `Type` e `MemberInfo`;
-- por que uma aplicação grande costuma ser dividida em múltiplos assemblies.
-
-**Como interpretar o exemplo:** Se `class` e `interface` ajudam você a pensar em design dentro do código, `assembly` ajuda você a pensar em fronteiras do código depois que ele foi compilado. É um conceito de linguagem + runtime + arquitetura ao mesmo tempo.
+Um projeto costuma gerar um assembly principal, mas não trate projeto e assembly como sinônimos universais: tarefas de build e ferramentas podem produzir artefatos adicionais. O modelo essencial é que o projeto descreve **como construir** e o assembly é uma das principais saídas **carregáveis pelo .NET**.
 
 > **Referências oficiais:** [Assemblies in .NET](https://learn.microsoft.com/en-us/dotnet/standard/assembly/), [Assembly contents](https://learn.microsoft.com/en-us/dotnet/standard/assembly/contents)
 
@@ -752,7 +714,7 @@ Console.WriteLine(p1.X); // ainda 10
 
 ---
 
-### 3.2.1 Conversões implícitas e explícitas
+#### 3.2.1 Conversões implícitas e explícitas
 
 [⬆️ Voltar ao Sumário](#sumário)
 
@@ -771,12 +733,12 @@ int truncado = (int)valor; // conversão explícita: double -> int
 
 No exemplo acima, `int -> long` é seguro e natural, portanto a conversão é implícita. Já `double -> int` exige um cast explícito porque o valor decimal precisa ser transformado em inteiro, o que pode truncar a parte fracionária.
 
-#### Quando usar cada uma
+##### Quando usar cada uma
 
 - Use a **conversão implícita** prevista pela linguagem quando sua semântica for adequada; ainda assim, conheça as regras de precisão numérica do par de tipos.
 - Use **conversão explícita** quando a transformação exige atenção, pode reduzir precisão ou pode não ser válida para todos os valores.
 
-#### Riscos principais
+##### Riscos principais
 
 - **Implícita**: pode esconder problemas de design se a conversão for usada em excesso ou entre tipos que não são realmente compatíveis.
 - **Explícita**: pode causar perda de dados, arredondamento ou `InvalidCastException` em tempo de execução, dependendo do tipo envolvido.
@@ -942,19 +904,12 @@ public sealed class Carrinho
 
 [⬆️ Voltar ao Sumário](#sumário)
 
-Quando esse assunto aparece em exemplos como `ITheme` e `Ref<ITheme>`, é fácil misturar ideias que, tecnicamente, pertencem a eixos diferentes.
+Dois eixos diferentes costumam ser confundidos:
 
-O jeito mais claro de organizar isso é separar duas perguntas:
+- **direta ou indireta** descreve o caminho usado para chegar ao objeto;
+- **forte ou fraca** descreve se a referência impede o Garbage Collector de coletá-lo.
 
-1. **Como eu chego até o objeto?**
-2. **Essa referência impede o GC de coletar o objeto?**
-
-Essas perguntas produzem duas distinções diferentes:
-
-- **direta vs indireta** descreve o caminho de acesso ao objeto;
-- **forte vs fraca** descreve a relação da referência com o Garbage Collector.
-
-> Observação importante: "referência direta" e "referência indireta" são rótulos didáticos úteis, mas o termo formal do runtime para a referência comum do dia a dia é **referência forte**.
+“Direta” e “indireta” são rótulos didáticos. Para o runtime, a referência comum que mantém um objeto alcançável é uma **referência forte**.
 
 ```csharp
 public interface ITheme
@@ -978,130 +933,26 @@ public sealed class Ref<T> where T : class
 // Program.cs — uso das classes declaradas acima
 ITheme directTheme = new DarkTheme();
 var handle = new Ref<ITheme>(new DarkTheme());
-var weak = new WeakReference<ITheme>(directTheme);
 ```
 
-**Leitura guiada:** as três últimas linhas criam relações diferentes. `directTheme` guarda uma referência comum e forte para um tema. `handle` guarda uma caixa `Ref<ITheme>` cuja propriedade `Value` pode ser substituída posteriormente. `weak` guarda uma referência fraca para o mesmo objeto alcançado por `directTheme`; ela permite tentar reencontrá-lo, mas não é suficiente para mantê-lo vivo. `Ref<T>` é uma classe didática deste guia, não um recurso especial da linguagem.
+**Leitura guiada:** `directTheme` guarda diretamente uma referência forte para o tema. `handle` guarda uma caixa intermediária; o tema é alcançado por `handle.Value`, que pode ser substituído sem entregar outro handle aos clientes. `Ref<T>` é uma classe didática comum, não uma construção especial do C#.
 
-#### 3.6.1 Referência direta
+Visualmente:
 
-Quando você escreve:
-
-```csharp
-ITheme directTheme = new DarkTheme();
+```text
+cliente -> directTheme -> DarkTheme
+cliente -> handle -> Value -> DarkTheme
 ```
 
-o código cliente segura o próprio objeto de domínio diretamente.
+No segundo caminho, tanto a referência para a caixa quanto a propriedade `Value` continuam fortes. Portanto, **indireção não implica referência fraca**. Esse handle mutável pode viabilizar uma troca em massa: uma factory rastreia vários `Ref<ITheme>` e substitui o `Value` de cada um, enquanto os clientes mantêm a mesma caixa.
 
-Leitura mental:
-
-- a variável `directTheme` aponta direto para o tema;
-- não existe uma caixa intermediária;
-- esse acesso é **direto**;
-- e, no uso normal, também é uma **referência forte**.
-
-Em forma de seta:
-
-`cliente -> directTheme -> DarkTheme`
-
-#### 3.6.2 Referência indireta
-
-Quando você escreve:
-
-```csharp
-var handle = new Ref<ITheme>(new DarkTheme());
-```
-
-o cliente já não segura o tema diretamente. Ele segura um objeto intermediário.
-
-Leitura mental:
-
-- `handle` aponta para a caixa `Ref<ITheme>`;
-- o tema real está dentro de `handle.Value`;
-- para chegar ao tema, o cliente passa pelo handle;
-- então o acesso ao tema é **indireto**.
-
-Em forma de seta:
-
-`cliente -> handle -> Value -> DarkTheme`
-
-Essa é exatamente a ideia do exemplo do projeto:
-
-- cada cliente não recebe `ITheme` diretamente;
-- cada cliente recebe um `Ref<ITheme>`;
-- a factory pode trocar `handle.Value` depois;
-- o cliente continua com o mesmo handle, mas passa a ver outro tema.
-
-Ponto crucial: **indireta não significa fraca**.
-
-No exemplo acima, `handle` é uma referência forte para a caixa, e a caixa mantém uma referência forte para o tema em `Value`.
-
-#### 3.6.3 Referência fraca
-
-Quando você escreve:
-
-```csharp
-var weak = new WeakReference<ITheme>(directTheme);
-```
-
-você não está dizendo "quero usar esse objeto normalmente". Você está dizendo:
-
-"quero tentar observá-lo depois, sem ser o responsável por mantê-lo vivo".
-
-Leitura mental:
-
-- `weak` sabe qual era o objeto;
-- mas não conta como posse forte;
-- se só restarem weak references, o GC pode coletar o objeto;
-- por isso o acesso posterior precisa usar `TryGetTarget(...)`.
-
-```csharp
-if (weak.TryGetTarget(out var aliveTheme))
-{
-    Console.WriteLine(aliveTheme.Name);
-}
-else
-{
-    Console.WriteLine("O objeto já foi coletado.");
-}
-```
-
-**Leitura guiada:** `TryGetTarget` devolve duas informações: o `bool` indica sucesso e o parâmetro `out` recebe o objeto quando ele ainda existe. A variável `aliveTheme` só deve ser usada no ramo `true`. No ramo `false`, não existe alvo seguro para acessar. O GC pode executar em momentos diferentes, então o código nunca pressupõe que uma weak reference continuará válida.
-
-#### 3.6.4 A diferença certa: não confunda os eixos
-
-O ponto mais importante desta seção é este:
-
-- **direta vs indireta** fala sobre o **caminho** até o objeto;
-- **forte vs fraca** fala sobre **tempo de vida e GC**.
-
-Isso significa que:
-
-- uma referência pode ser **direta e forte**;
-- um acesso pode ser **indireto e ainda assim forte**;
-- uma `WeakReference<T>` é **fraca**, mesmo que a variável que a guarda seja uma referência comum para o wrapper `WeakReference<T>`.
-
-Tabela mental rápida:
-
-| Caso | Como o cliente chega ao objeto | Impede coleta pelo GC? |
+| Caso | Caminho até o objeto | Mantém o alvo vivo? |
 |---|---|---|
-| `ITheme theme = new DarkTheme();` | Direto | Sim, enquanto essa referência forte existir |
-| `Ref<ITheme> handle = new Ref<ITheme>(...)` | Indireto, via `handle.Value` | Sim, enquanto `handle` e `Value` mantiverem o objeto alcançável |
-| `WeakReference<T> weak = new WeakReference<T>(theme);` | Indireto, via `TryGetTarget(...)` | Não |
+| `ITheme theme = new DarkTheme();` | direto | sim, enquanto essa referência forte existir |
+| `Ref<ITheme> handle = new(...);` | indireto, por `handle.Value` | sim, enquanto o caminho forte continuar alcançável |
+| `WeakReference<ITheme>` | indireto, por `TryGetTarget` | não |
 
-#### 3.6.5 Ligando isso ao projeto
-
-Na aula `Object Tracking and Bulk Replacement`, os três conceitos aparecem juntos, mas com papéis diferentes:
-
-- em **Object Tracking**, a factory guarda `WeakReference<T>` para observar temas sem mantê-los vivos artificialmente;
-- em **Bulk Replacement**, o cliente recebe `Ref<ITheme>` para que a factory possa trocar o `Value` depois;
-- nesses dois casos, a centralização da criação pela factory é a base, mas tracking e bulk replacement continuam sendo capacidades opcionais.
-
-Se você guardar só uma frase desta seção, guarde esta:
-
-**`Ref<ITheme>` é indireção controlada; `WeakReference<T>` é observação sem posse forte.**
-
-**Como interpretar o exemplo:** O erro mais comum é tratar `handle`, `weak reference` e `referência normal` como se fossem apenas versões diferentes da mesma coisa. Não são. `Ref<ITheme>` resolve um problema de indireção e substituição; `WeakReference<T>` resolve um problema de observação sem estender tempo de vida; e a referência direta comum continua sendo a forma padrão de usar objetos no dia a dia.
+A referência fraca serve para tentar observar um objeto sem assumir seu tempo de vida. Sua API, o comportamento do GC e os casos de uso são explicados uma única vez em [20.2 `WeakReference<T>`](#202-weakreferencet-e-referências-fracas-no-gc).
 
 > **Referências oficiais:** [WeakReference<T>](https://learn.microsoft.com/en-us/dotnet/api/system.weakreference-1?view=net-10.0), [Weak references](https://learn.microsoft.com/en-us/dotnet/standard/garbage-collection/weak-references)
 
@@ -1382,69 +1233,23 @@ bool   ok     = int.TryParse("abc", out int val); // seguro — retorna false se
 
 ---
 
-### 4.5 Classes e funções predefinidas essenciais do .NET
+### 4.5 Da linguagem à biblioteca padrão do .NET
 
 [⬆️ Voltar ao Sumário](#sumário)
 
-C# não é só sintaxe e palavras-chave. Pela documentação oficial da Microsoft, muitos recursos que o iniciante percebe como "funções da linguagem" são, na prática, **tipos e métodos da biblioteca base do .NET**. O namespace `System` é a raiz dos tipos fundamentais, e vários keywords do C# são apenas aliases de tipos do .NET, como `int` → `System.Int32` e `string` → `System.String`.
+C# fornece a sintaxe; a biblioteca padrão do .NET fornece a maior parte dos tipos e operações usados no cotidiano. Assim, `if` e `foreach` pertencem à linguagem, enquanto `Console.WriteLine`, `Math.Sqrt`, `Guid.NewGuid` e `File.ReadAllText` são membros de tipos da BCL. Da mesma forma, `int` e `string` são aliases do C# para `System.Int32` e `System.String`.
 
-```csharp
-using System;
-using System.Globalization;
-using System.IO;
+| Forma encontrada no código | Natureza | Onde estudar |
+|---|---|---|
+| `if`, `class`, `async` | palavra-chave/sintaxe do C# | [Parte 7](#parte-7--palavras-chave-especiais-do-c) e [Parte 8](#parte-8--controle-de-fluxo) |
+| `string`, `int` | alias da linguagem para um tipo .NET | [Parte 3](#parte-3--variáveis-e-tipos) e [28.4](#284-tipos-internos-aliases-e-literais) |
+| `Console`, `Math`, `DateTime`, `Guid` | tipos da BCL | [28.5](#285-operações-prontas-por-domínio) |
+| `List<T>`, `Dictionary<TKey,TValue>` | coleções da BCL | [Parte 15](#parte-15--coleções) e [28.6](#286-estruturas-de-dados-e-coleções-prontas) |
+| Dapper, Serilog, Polly | pacotes externos | [Parte 29](#parte-29--ecossistema-externo-frameworks-bibliotecas-e-ferramentas) |
 
-Console.Write("Nome: ");
-string? nomeLido = Console.ReadLine();
+Este é apenas o ponto de ligação entre texto e plataforma. O catálogo completo, sem repetir explicações dentro de cada capítulo, está na [Parte 28](#parte-28--catálogo-da-linguagem-e-da-biblioteca-padrão).
 
-double raiz = Math.Sqrt(144);
-int notaAjustada = Math.Clamp(150, 0, 100); // 100
-
-DateTime agoraLocal = DateTime.Now;
-DateTime agoraUtc   = DateTime.UtcNow;
-DateOnly hoje       = DateOnly.FromDateTime(agoraLocal);
-TimeOnly horario    = TimeOnly.FromDateTime(agoraLocal);
-TimeSpan timeout    = TimeSpan.FromSeconds(30);
-
-Guid id = Guid.NewGuid();
-
-int dado = Random.Shared.Next(1, 7); // 1 a 6; reutilização thread-safe no .NET atual
-
-bool okNumero = int.TryParse("42", out int numero);
-bool okData = DateTime.TryParseExact(
-    "25/06/2026",
-    "dd/MM/yyyy",
-    CultureInfo.InvariantCulture,
-    DateTimeStyles.None,
-    out DateTime data);
-
-string desktop = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-string arquivo = Path.Combine(desktop, "resumo.txt");
-File.WriteAllText(arquivo, $"Id={id}; Dado={dado}; NumeroValido={okNumero}");
-bool existe = File.Exists(arquivo);
-```
-
-**Leitura guiada:** os três `using` tornam disponíveis tipos de namespaces diferentes. O programa lê uma linha que pode ser nula, usa métodos estáticos de `Math`, cria representações distintas de data, hora e duração, gera um `Guid` e sorteia um número de 1 a 6 porque o limite superior de `Random.Next` é exclusivo. Os dois `TryParse` devolvem `true` ou `false` e escrevem o resultado nos parâmetros `out`, sem usar exceção para uma entrada inválida. Por fim, `Path.Combine` monta um caminho apropriado ao sistema operacional, `File.WriteAllText` cria ou sobrescreve o arquivo e `File.Exists` verifica sua existência. Como há escrita real no Desktop, adapte o caminho ou use uma pasta temporária ao experimentar.
-
-| Tipo/API | Quando aparece no dia a dia | Membros comuns | Cuidado profissional |
-| --- | --- | --- | --- |
-| `Console` | Apps de terminal, demos, ferramentas internas | `WriteLine`, `Write`, `ReadLine`, `Error` | saída normal e erro podem seguir fluxos diferentes |
-| `Math` | Cálculos numéricos | `Abs`, `Clamp`, `Round`, `Min`, `Max`, `Sqrt`, `Pow` | arredondamento e ponto flutuante exigem atenção |
-| `DateTime` | Data e hora completas | `Now`, `UtcNow`, `AddDays`, `ToString`, `TryParse` | prefira UTC para integrações e persistência |
-| `DateOnly` / `TimeOnly` | Quando você quer só data ou só hora | `FromDateTime`, `AddDays`, `AddHours`, `Parse` | mais claro do que usar `DateTime` "pela metade" |
-| `TimeSpan` | Duração, timeout, intervalo | `FromSeconds`, `FromMinutes`, `TotalSeconds` | não use para representar um instante no calendário |
-| `Guid` | Identificadores únicos | `NewGuid`, `Parse`, `TryParse`, `ToString("N")` | não é identificador legível e não substitui regra de negócio |
-| `Random` | Sorteio, simulação, jogos, testes | `Next`, `NextDouble`, `NextInt64`, `NextBytes` | não use para senha, token ou criptografia |
-| `Convert` e `TryParse` | Conversão entre tipos e parsing | `Convert.ToInt32`, `int.TryParse`, `DateTime.TryParseExact` | entrada externa deve preferir `TryParse` |
-| `Environment` | Dados do processo e da máquina | `MachineName`, `UserName`, `Version`, `GetEnvironmentVariable` | o resultado depende do ambiente onde o app roda |
-| `Path`, `File`, `Directory` | Caminhos, arquivos e pastas | `Combine`, `GetExtension`, `ReadAllText`, `WriteAllText`, `Exists`, `CreateDirectory` | não monte caminhos manualmente com `/` ou `\\` |
-
-**Como interpretar o exemplo:** Em C#, "funções predefinidas" normalmente são métodos estáticos ou membros de tipos da BCL (Base Class Library), e não funções soltas como em linguagens script. Isso muda a forma correta de estudar: vale mais aprender **famílias de responsabilidade** (`System`, `System.IO`, `System.Text`, `System.Collections.Generic`) do que decorar chamadas isoladas.
-
-**Regra prática:** se um recurso não é sintaxe (`if`, `switch`, `foreach`, `using`) nem palavra-chave (`class`, `public`, `async`), há uma boa chance de você estar olhando para uma API do .NET. `Console.WriteLine`, `Math.Sqrt`, `Guid.NewGuid`, `File.ReadAllText` e `Path.Combine` são exemplos clássicos.
-
-**Mapa mental útil:** este guia já detalha alguns desses tipos em seções próprias, como `string` e `StringBuilder` na Parte 4, `List<T>` e `Dictionary<TKey, TValue>` na Parte 15, exceções na Parte 18 e LINQ na Parte 14. O importante é enxergar tudo isso como parte do mesmo ecossistema da linguagem.
-
-> **Referências oficiais:** [Overview of core .NET libraries](https://learn.microsoft.com/en-us/dotnet/standard/class-library-overview), [Built-in types (C# reference)](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/built-in-types), [Console](https://learn.microsoft.com/en-us/dotnet/api/system.console?view=net-10.0), [Math](https://learn.microsoft.com/en-us/dotnet/api/system.math?view=net-10.0), [DateTime](https://learn.microsoft.com/en-us/dotnet/api/system.datetime?view=net-10.0), [DateOnly e TimeOnly](https://learn.microsoft.com/en-us/dotnet/standard/datetime/how-to-use-dateonly-timeonly), [TimeSpan](https://learn.microsoft.com/en-us/dotnet/api/system.timespan?view=net-10.0), [Guid](https://learn.microsoft.com/en-us/dotnet/api/system.guid?view=net-10.0), [Random](https://learn.microsoft.com/en-us/dotnet/api/system.random?view=net-10.0), [Convert](https://learn.microsoft.com/en-us/dotnet/api/system.convert?view=net-10.0), [Environment](https://learn.microsoft.com/en-us/dotnet/api/system.environment?view=net-10.0), [File](https://learn.microsoft.com/en-us/dotnet/api/system.io.file?view=net-10.0), [Path](https://learn.microsoft.com/en-us/dotnet/api/system.io.path?view=net-10.0)
+> **Referências oficiais:** [Overview of core .NET libraries](https://learn.microsoft.com/en-us/dotnet/standard/class-library-overview), [Built-in types](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/built-in-types), [.NET API Browser](https://learn.microsoft.com/en-us/dotnet/api/)
 
 ---
 
@@ -1509,39 +1314,11 @@ Entre os intermediários, a comparação exige cuidado:
 - `protected internal` é o mais permissivo entre os modificadores protegidos;
 - `private protected` é o mais restritivo entre os modificadores protegidos.
 
-#### 5.1.3 Segurança, boa prática e vulnerabilidades
+#### 5.1.3 Encapsulamento não é uma fronteira de segurança
 
-Aqui existe uma nuance importante:
+Modificadores de acesso reduzem a superfície de uso acidental e ajudam a preservar invariantes, mas não são uma fronteira de segurança contra código hostil. Eles não substituem autenticação, autorização, validação, criptografia nem proteção de segredos.
 
-- modificador de acesso ajuda muito com **encapsulamento** e **redução de superfície de uso indevido**;
-- mas ele **não substitui** autenticação, autorização, validação de entrada, criptografia ou gerenciamento de segredos.
-
-Então, quando alguém diz “mais seguro” neste contexto, o sentido correto é:
-
-- **mais restritivo por padrão**;
-- **menos código consegue tocar naquele membro**;
-- **menor chance de uso acidental, acoplamento desnecessário e exposição indevida da API**.
-
-Leitura direta de risco:
-
-- **`public`** é o mais exposto e, por isso, o que mais aumenta a superfície de uso indevido.
-- **`protected internal`** também merece bastante atenção, porque abre ao mesmo tempo para o assembly e para subclasses externas.
-- **`internal`** parece “seguro” à primeira vista, mas ainda deixa o membro acessível para qualquer código do mesmo assembly; em projetos grandes isso já é bastante gente.
-- **`private`** e **`file`** são os mais fechados por padrão, porque restringem muito mais quem consegue tocar no código.
-
-Mas existe o outro lado:
-
-- o mais fechado **não é automaticamente o melhor em qualquer cenário**;
-- **`private`** demais pode deixar um design rígido quando a classe foi pensada para extensão, customização ou testes por colaboração interna;
-- **`file`** demais pode esconder tipos que talvez merecessem viver como peças reaproveitáveis do assembly;
-- em bibliotecas e frameworks extensíveis, fechar tudo cedo demais pode tornar a API difícil de evoluir sem retrabalho.
-
-Boa prática geral:
-
-- comece sempre com o modificador **mais restritivo que ainda funciona**;
-- só abra para `internal`, `protected` ou `public` quando existir uma necessidade real de design;
-- cada `public` novo vira parte do contrato que outros podem depender;
-- quanto mais aberta a API, maior a chance de abuso, mau uso, dificuldade de refatoração e bugs por acoplamento externo.
+Neste contexto, “mais seguro” significa apenas **mais restritivo e menos acoplado**. Um membro `public` vira contrato para consumidores; `protected internal` abre tanto para o assembly quanto para subclasses externas; `internal` continua acessível por todo o assembly. A escolha adequada é o menor nível que ainda permite a colaboração planejada — decisão aplicada no exemplo da próxima seção.
 
 > **Referências oficiais:** [Access modifiers](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/access-modifiers), [Accessibility levels](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/accessibility-levels), [File access modifier](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/file)
 
@@ -1556,20 +1333,21 @@ public class ContaBancaria
 {
     // Campos de implementação: prefira private
     private decimal _saldo;
-    private string _titular;
+    private string _titular = string.Empty;
 
-    // Propriedade pública com getter/setter encapsulado
-    // (C# usa Properties — mais poderoso que getters/setters do Java)
+    // Propriedade pública com setter restrito ao próprio tipo
     public string Titular
     {
         get => _titular;
-        private set => _titular = value ?? throw new ArgumentNullException(nameof(value));
+        private set => _titular = string.IsNullOrWhiteSpace(value)
+            ? throw new ArgumentException("O titular é obrigatório.", nameof(value))
+            : value;
     }
 
     // Auto-property — sintaxe simplificada (compilador gera o campo privado)
     public string NumeroConta { get; private set; }
 
-    // Propriedade readonly (init-only — C# 9+)
+    // Propriedade somente para inicialização (init-only — C# 9+)
     public DateTime DataAbertura { get; init; }
 
     // Construtor
@@ -1577,7 +1355,7 @@ public class ContaBancaria
     {
         Titular       = titular;
         _saldo        = saldoInicial;
-        NumeroConta   = Guid.NewGuid().ToString("N")[..8].ToUpper();
+        NumeroConta   = Guid.NewGuid().ToString("N")[..8].ToUpperInvariant();
         DataAbertura  = DateTime.Now;
     }
 
@@ -1599,39 +1377,19 @@ public class ContaBancaria
 
 **Como interpretar o exemplo:** A `ContaBancaria` mostra um padrão muito comum em C#: campos privados para estado interno e propriedades públicas para exposição controlada. Isso permite validar entrada, manter invariantes e evoluir a implementação sem quebrar a interface visível.
 
-**Regra prática por cenário:**
+Use esta matriz de decisão:
 
-- comece pensando em **`private`** como seu padrão inicial.
-  Ideia mental: "ninguém de fora precisa mexer nisso".
-  Use para campos, métodos auxiliares e detalhes internos da classe.
-- use **`file`** quando um tipo auxiliar só faz sentido naquele arquivo.
-  Ideia mental: "isso existe só para apoiar este arquivo, não o projeto inteiro".
-- use **`internal`** quando outras classes do mesmo projeto precisam acessar, mas código de fora da biblioteca não deve ver.
-  Ideia mental: "é público por dentro, fechado por fora".
-- use **`protected`** quando subclasses realmente precisam acessar ou sobrescrever algo.
-  Ideia mental: "isso é para quem herdar de mim, não para qualquer consumidor".
-- use **`private protected`** quando essa herança deve ficar ainda mais controlada.
-  Ideia mental: "só subclasses do mesmo assembly podem usar".
-- use **`protected internal`** com cautela, porque ele abre em duas direções ao mesmo tempo.
-  Ideia mental: "subclasses podem usar, e o assembly inteiro também".
-  Como regra de iniciante: se você não tem um motivo muito claro, provavelmente não precisa dele.
-- use **`public`** apenas no que faz parte da API intencional.
-  Ideia mental: "estou prometendo que outros códigos podem depender disso".
-  Tudo que vira `public` fica mais difícil de mudar depois sem quebrar alguém.
-  Em termos de exposição, ele é o que mais pede atenção.
+| Quem precisa acessar? | Modificador inicial |
+|---|---|
+| somente o próprio tipo | `private` |
+| somente tipos declarados no mesmo arquivo | `file` — apenas para tipos de topo |
+| qualquer código do mesmo assembly | `internal` |
+| o tipo e suas subclasses | `protected` |
+| subclasses, mas apenas no mesmo assembly | `private protected` |
+| mesmo assembly **ou** subclasses externas | `protected internal` |
+| qualquer consumidor que veja o tipo | `public` |
 
-Se bater dúvida, use esta ordem de decisão:
-
-1. Ninguém de fora precisa acessar? Use **`private`**.
-2. Só este arquivo precisa conhecer o tipo? Use **`file`**.
-3. Só o mesmo projeto precisa acessar? Use **`internal`**.
-4. Só subclasses precisam acessar? Use **`protected`**.
-5. O acesso precisa ser realmente aberto para qualquer consumidor? Aí sim use **`public`**.
-
-Resumo mental final:
-
-- **mais exposto / mais fácil de abusar por padrão:** `public` (Mais cuidado ao usar)
-- **mais fechado / pode ficar rígido demais se usado sem pensar:** `private`
+Comece pelo caso mais fechado que atende ao contrato. Abra a superfície quando houver um consumidor concreto, não por antecipação.
 
 ---
 
@@ -1643,7 +1401,7 @@ Propriedades oferecem sintaxe de campo com contrato de membros e acessores. Elas
 
 ---
 
-### 6.1 O que são Properties?
+### 6.1 O que são propriedades?
 
 [⬆️ Voltar ao Sumário](#sumário)
 
@@ -1697,139 +1455,28 @@ Console.WriteLine(p.NomeCompleto); // "Ana (ID: ...)"
 // p.Email = "novo@email.com";    // ERRO: init só aceita atribuição durante a criação
 ```
 
-**Como interpretar o exemplo:** Properties parecem campos para quem consome a classe, mas se comportam como acessos controlados por `get`, `set` ou `init`. Esse recurso existe para encapsular validação, cálculo e evolução interna sem mudar o contrato externo.
+**Como interpretar o exemplo:** Propriedades parecem campos para quem consome a classe, mas se comportam como acessos controlados por `get`, `set` ou `init`. Esse recurso existe para encapsular validação, cálculo e evolução interna sem mudar o contrato externo.
 
-Em termos de vocabulário, é aqui que entram os **getters** e **setters**:
+Os acessores formam o contrato da propriedade:
 
-- `get` é o acessor de **leitura**. Ele define o que acontece quando alguém consulta a propriedade.
-- `set` é o acessor de **escrita**. Ele define o que acontece quando alguém atribui um novo valor.
-- Dentro do `set`, a palavra-chave implícita `value` representa o valor que está sendo atribuído.
-- `init` é uma forma especial de escrita permitida apenas durante a inicialização do objeto.
-- `private set` significa: leitura pública, escrita restrita à própria classe.
+- `get` executa a leitura;
+- `set` executa a escrita, e `value` representa o valor recebido;
+- `init` permite a escrita apenas durante a inicialização;
+- `private set` oferece leitura pública com escrita restrita ao próprio tipo.
 
-Em outras palavras, quando alguém escreve `p.Nome`, o `get` é executado. Quando alguém escreve `p.Nome = "Ana"`, o `set` é executado. Isso é importante porque a propriedade não é apenas um campo exposto; ela é um **ponto de controle**. Você pode validar entrada, impedir estados inválidos, calcular valores dinamicamente ou até trocar a implementação interna sem mudar a forma de uso da API.
+Em `Idade`, `_idade` é o **backing field**: armazena o valor que a propriedade valida. Em `Nome { get; set; }`, o compilador sintetiza esse campo, formando uma auto-property. Serializadores, ORMs, data binding e ferramentas de inspeção reconhecem propriedades como parte do modelo público do tipo.
 
-Outro conceito importante é o de **backing field** (campo de apoio). No exemplo, `_idade` é o campo real onde o valor fica armazenado, enquanto `Idade` é a propriedade que controla o acesso a esse campo. Já em `public string Nome { get; set; }`, o compilador cria esse campo automaticamente, e por isso chamamos essa forma de **auto-property**.
+#### Propriedades calculadas e custo escondido
 
-Essa distinção ajuda muito quem vem de Java. Em Java, normalmente você vê métodos como `getNome()` e `setNome(...)`. Em C#, a linguagem elevou esse padrão para a sintaxe nativa com `Nome { get; set; }`. O efeito arquitetural é parecido, mas a ergonomia é melhor, e várias bibliotecas do ecossistema .NET entendem properties como parte central do modelo de objetos, incluindo serialização, data binding, ORMs e ferramentas de inspeção.
+Um `get` é um método acessor e pode calcular um valor, como `NomeCompleto` no exemplo. Isso não autoriza esconder qualquer trabalho atrás da sintaxe de campo: consumidores normalmente esperam que uma propriedade seja rápida, determinística e sem efeitos colaterais observáveis.
 
-#### Como ler um `get` mais "forte", com lógica real
+| Se a operação... | Prefira... |
+|---|---|
+| lê ou deriva estado de forma barata e previsível | propriedade |
+| faz I/O, altera estado, pode demorar ou exige parâmetros | método |
+| repete um cálculo caro | método explícito ou cache com política clara |
 
-[⬆️ Voltar ao Sumário](#sumário)
-
-Nem todo `get` é apenas "devolver um campo".
-
-Às vezes o `get` executa lógica real sempre que a propriedade é acessada. Isso aparece no projeto no exemplo da factory de temas, em uma propriedade que monta um relatório textual a partir do estado atual da coleção:
-
-```csharp
-public string Info
-{
-    get
-    {
-        var sb = new StringBuilder();
-
-        for (int i = 0; i < themes.Count; i++)
-        {
-            var reference = themes[i];
-
-            if (reference.TryGetTarget(out var theme))
-            {
-                sb.Append("Theme #")
-                  .Append(i + 1)
-                  .Append(": ")
-                  .Append(theme is DarkTheme ? "DarkTheme" : "LightTheme")
-                  .Append(" -> TextColor: ")
-                  .Append(theme.TextColor)
-                  .Append(", BackgroundColor: ")
-                  .Append(theme.BackgroundColor)
-                  .AppendLine();
-            }
-            else
-            {
-                sb.Append("Theme #")
-                  .Append(i + 1)
-                  .AppendLine(": collected");
-            }
-        }
-
-        return sb.ToString();
-    }
-}
-```
-
-Leitura correta desse código:
-
-- quando alguém escreve `factory.Info`, o `get` é chamado;
-- esse `get` cria um `StringBuilder` novo;
-- percorre a coleção `themes`;
-- tenta recuperar cada objeto com `TryGetTarget(...)`;
-- decide o texto de saída com `if`;
-- e só no final devolve a string pronta com `return sb.ToString()`.
-
-Ou seja: a propriedade `Info` não está apenas expondo um valor armazenado. Ela está **calculando** um valor sob demanda.
-
-Isso leva a uma ideia fundamental sobre properties:
-
-- `get` pode conter lógica arbitrária de C#;
-- mas, do ponto de vista de quem consome a API, essa lógica fica escondida atrás da sintaxe de acesso a propriedade.
-
-Por isso, o leitor precisa treinar esta pergunta:
-
-**"esta propriedade lê estado pronto ou recalcula algo toda vez?"**
-
-#### O que o `get` representa tecnicamente?
-
-Do ponto de vista do compilador e do runtime, o `get` é um **método acessor**.
-
-Então:
-
-- `p.Nome` parece um campo na leitura;
-- mas por baixo o compilador está chamando algo equivalente a um método getter.
-
-É exatamente por isso que um `get` pode:
-
-- ler um campo;
-- validar estado;
-- montar um objeto;
-- percorrer listas;
-- consultar outra dependência;
-- ou combinar várias fontes para produzir o valor.
-
-#### Quando um `get` assim faz sentido?
-
-Esse estilo faz sentido quando:
-
-- o valor representa uma visão derivada do estado atual;
-- a leitura precisa refletir o momento presente;
-- a API continua intuitiva como "uma propriedade do objeto".
-
-No caso de `Info`, isso faz bastante sentido porque a propriedade representa um relatório textual do estado atual das referências rastreadas.
-
-#### Cuidados de design com `get`
-
-Como a sintaxe de propriedade sugere algo barato e previsível, vale tomar cuidado quando o `get` começa a fazer trabalho pesado.
-
-Boas perguntas de design:
-
-- esse cálculo é rápido o bastante para parecer leitura de propriedade?
-- acessar a propriedade várias vezes repete trabalho caro?
-- há efeitos colaterais escondidos demais para continuar sendo uma boa property?
-
-Regra prática útil:
-
-- se a operação parece uma **consulta barata e natural do estado**, propriedade costuma fazer sentido;
-- se a operação é pesada, surpreendente, lenta ou com efeitos colaterais relevantes, um método como `BuildInfoReport()` ou `GetTrackingInfo()` pode comunicar melhor a intenção.
-
-#### `get` e o projeto atual
-
-O projeto já usa properties em vários níveis:
-
-- properties simples, como `TextColor` e `BackgroundColor`, que apenas devolvem um valor;
-- properties com encapsulamento, como `private set` e `init`;
-- properties calculadas, como `NomeCompleto`;
-- e properties com lógica mais rica, como `Info`, que monta um relatório completo em tempo de acesso.
-
-Esse contraste é didaticamente ótimo porque mostra que `get` não significa "campo disfarçado". Significa "ponto de leitura controlada", que pode ser simples ou sofisticado dependendo do contrato da API.
+Pergunte sempre se duas leituras consecutivas são seguras e compreensíveis. Um relatório que percorre uma coleção inteira, por exemplo, pode ser melhor comunicado por `BuildReport()` do que por uma propriedade aparentemente barata.
 
 > **Referências oficiais:** [Properties - C#](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/properties), [Using Properties](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/using-properties), [The `get` keyword](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/get)
 
@@ -4834,20 +4481,7 @@ ISet<T>                   -> semântica de conjunto (unicidade)
 IDictionary<TKey, TValue> -> mapeamento chave/valor
 ```
 
-Agora sim, os tipos concretos mais comuns:
-
-| Tipo | Estrutura mental | Pontos fortes | Cuidado principal |
-|---|---|---|---|
-| `T[]` | Array de tamanho fixo | Muito simples, rápido, ótimo para interop | Tamanho imutável |
-| `List<T>` | Array dinâmico | Índice rápido, uso geral excelente | Inserções/remover no meio custam `O(n)` |
-| `LinkedList<T>` | Nós encadeados | Inserções/remoções por nó | Péssimo para acesso por índice; raramente é a melhor escolha |
-| `HashSet<T>` | Conjunto baseado em hash | Teste de pertencimento rápido, unicidade | Não preserva ordem |
-| `SortedSet<T>` | Conjunto ordenado | Unicidade + ordenação | Operações tendem a ser `O(log n)` |
-| `Queue<T>` | Fila FIFO | Processamento em ordem de chegada | Não é para acesso aleatório |
-| `Stack<T>` | Pilha LIFO | Backtracking, undo, parsing | Semântica específica |
-| `Dictionary<TKey, TValue>` | Tabela hash | Busca por chave muito rápida | Chave deve ser estável e bem comparável |
-| `SortedDictionary<TKey, TValue>` | Mapa ordenado | Chaves sempre em ordem | Mais caro que `Dictionary` comum |
-| `ConcurrentDictionary<TKey, TValue>` | Dicionário thread-safe | Concorrência | Não substitui desenho correto de sincronização |
+As implementações se agrupam pela capacidade dominante: arrays e listas oferecem posição; dicionários oferecem chave; sets oferecem unicidade; filas, pilhas e filas de prioridade definem ordem de retirada; coleções concorrentes ou imutáveis controlam compartilhamento. A matriz de decisão está em [15.4](#154-como-escolher-a-coleção-certa), e o inventário amplo — incluindo estruturas ordenadas, frozen e concorrentes — fica em [28.6](#286-estruturas-de-dados-e-coleções-prontas).
 
 Repare em um ponto sutil, porém crítico:
 
@@ -4865,7 +4499,7 @@ Confundir essas coisas leva a APIs mal desenhadas.
 
 [⬆️ Voltar ao Sumário](#sumário)
 
-`List<T>` é a coleção "padrão ouro" do C# para a maioria dos cenários em memória. Internamente, ela funciona como um **array redimensionável**.
+`List<T>` é uma das coleções de uso geral mais comuns em C#. Internamente, ela funciona como um **array redimensionável**.
 
 Isso traz uma combinação excelente para uso geral:
 
@@ -4884,9 +4518,9 @@ nomes.Insert(1, "Eduardo"); // insere na posição 1
 nomes.AddRange(new[] { "Fabi", "Gabi" }); // adiciona múltiplos
 
 Console.WriteLine(nomes[0]);             // "Ana"
-Console.WriteLine(nomes.Count);          // 6
+Console.WriteLine(nomes.Count);          // 7
 Console.WriteLine(nomes.Contains("Ana")); // true
-Console.WriteLine(nomes.IndexOf("Carlos")); // 2
+Console.WriteLine(nomes.IndexOf("Carlos")); // 3
 
 nomes.Remove("Ana");    // remove por valor
 nomes.RemoveAt(0);      // remove por índice
@@ -5802,16 +5436,17 @@ public class Tema
 
 ```csharp
 // Program.cs — observação sem manter o objeto vivo
-Tema? tema = new Tema { Nome = "DarkTheme" };
-var weak = new WeakReference<Tema>(tema);
-
-// Enquanto existe uma referência forte, o objeto continua claramente alcançável
-if (weak.TryGetTarget(out var alvoVivo))
+static void MostrarSeDisponivel(WeakReference<Tema> referencia)
 {
-    Console.WriteLine(alvoVivo.Nome);
+    if (referencia.TryGetTarget(out var alvo))
+        Console.WriteLine(alvo.Nome);
 }
 
-tema = null; // remove esta referência forte
+Tema? tema = new Tema { Nome = "DarkTheme" };
+var weak = new WeakReference<Tema>(tema);
+MostrarSeDisponivel(weak);
+
+tema = null; // remove a referência forte mantida pelo programa
 
 // Em algum ciclo futuro do GC, o objeto pode ou não ainda existir aqui
 if (weak.TryGetTarget(out var talvezAindaVivo))
@@ -5824,144 +5459,28 @@ else
 }
 ```
 
-**Leitura guiada:** `weak` recebe uma referência fraca ao mesmo objeto inicialmente guardado por `tema`. `TryGetTarget` testa e recupera o alvo em uma única operação segura; dentro do `if`, `alvoVivo` é uma referência forte temporária. A atribuição `tema = null` remove apenas aquela referência forte. Ela não força uma coleta e, por isso, a segunda consulta pode entrar em qualquer um dos ramos. Não escreva lógica funcional que dependa de o GC coletar o objeto em um momento específico.
+**Leitura guiada:** `weak` recebe uma referência fraca ao mesmo objeto inicialmente guardado por `tema`. `MostrarSeDisponivel` usa `TryGetTarget` para testar e recuperar o alvo em uma única operação; `alvo` é uma referência forte temporária, limitada à chamada do método. A atribuição `tema = null` remove a referência forte mantida pelo programa, mas não força uma coleta. Por isso, a segunda consulta pode entrar em qualquer um dos ramos. Não escreva lógica funcional que dependa de o GC coletar o objeto em um momento específico.
 
-Para entender `WeakReference<T>`, primeiro vale separar dois conceitos:
+Uma referência forte mantém o objeto alcançável; `WeakReference<T>` permite tentar recuperá-lo sem assumir essa posse. Se a dúvida for sobre acesso direto, handles mutáveis ou troca em massa, consulte [3.6 Referências diretas, indiretas e fracas](#36-referências-diretas-indiretas-e-fracas). Aqui o assunto é exclusivamente o contrato com o GC.
 
-- **referência forte**: a referência comum do dia a dia em C#; enquanto o objeto continua alcançável por referências fortes, ele não deve ser coletado;
-- **referência fraca**: uma referência que aponta para o objeto, mas não impede o Garbage Collector de recuperá-lo quando não restarem referências fortes.
+Quando o alvo deixa de ser alcançável por referências fortes, torna-se elegível para coleta. A coleta não ocorre em momento previsível, e uma referência fraca não garante que o objeto existirá no próximo acesso. `TryGetTarget(out T target)` combina o teste e a recuperação:
 
-Se a sua dúvida também envolver `Ref<ITheme>` e handles, consulte a seção [3.6 Referências diretas, indiretas e fracas](#36-referências-diretas-indiretas-e-fracas). Lá o foco é o caminho de acesso ao objeto; aqui, o foco é a relação da referência com o GC.
+- retorna `true` e fornece uma referência forte temporária quando o alvo ainda existe;
+- retorna `false` quando o alvo já foi coletado.
 
-Em linguagem simples:
+Use o `target` obtido dentro daquele fluxo. Testar em uma etapa e tentar buscar novamente mais tarde pode observar outro estado do GC.
 
-- uma variável como `Tema tema = new Tema();` é uma referência forte;
-- uma `WeakReference<T>` é mais parecida com um "atalho observável", e não com posse real do objeto.
-
-Esse tipo aparece no projeto na aula `Object Tracking and Bulk Replacement`, em que a factory quer:
-
-- saber quais objetos já nasceram;
-- sem ser a responsável por mantê-los vivos para sempre.
-
-Importante: isso não significa que toda factory naturalmente evolui para tracking ou bulk replacement.
-
-Essas ideias devem ser vistas como capacidades opcionais que podem ser adicionadas a uma factory quando a centralização da criação precisa resolver algo a mais além de instanciar.
-
-#### O que significa "handle" nesse exemplo?
-
-Na aula do projeto, a classe `Ref<ITheme>` é descrita como um **handle mutável**.
-
-Aqui, "handle" está sendo usado no sentido mais geral de software design:
-
-- é um objeto intermediário que você segura;
-- ele te dá acesso indireto a outro objeto;
-- e esse nível de indireção permite trocar o alvo real sem trocar a referência externa.
-
-Uma imagem mental simples ajuda bastante:
-
-- `Ref<ITheme>` é a caixa;
-- o cliente segura a caixa;
-- o tema atual fica dentro da caixa, em `Value`;
-- a factory pode trocar o conteúdo da caixa;
-- o cliente continua com a mesma caixa, mas passa a enxergar outro tema.
-
-Leitura mental:
-
-- o cliente segura o handle;
-- o handle aponta para o objeto atual;
-- a factory pode trocar o objeto apontado;
-- o cliente continua com o mesmo handle, mas passa a enxergar outro conteúdo.
-
-Em forma de seta:
-
-`cliente -> Ref<ITheme> -> Value -> ITheme atual`
-
-Logo, neste exemplo:
-
-- o handle é `Ref<ITheme>`;
-- o tema real não é o handle;
-- `Value` é o ponto pelo qual o handle alcança o tema atual.
-
-Importante distinguir dois usos da palavra:
-
-- no exemplo do projeto, handle significa **referência indireta controlada**;
-- em APIs como `SafeHandle`, handle significa um **identificador/encapsulamento seguro de recurso de sistema operacional**.
-
-Os dois usos compartilham a ideia de "algo que você segura para chegar em outra coisa", mas não são o mesmo conceito técnico.
-
-#### O que seria a "troca em massa" do bulk replacement?
-
-No exemplo do projeto, "troca em massa" significa atualizar vários clientes com uma única chamada da factory.
-
-Imagine que três partes da aplicação estejam segurando estes handles:
-
-- `headerTheme`
-- `sidebarTheme`
-- `footerTheme`
-
-Se todos eles apontarem para temas escuros, uma única chamada:
-
-```csharp
-replaceableFactory.ReplaceTheme(dark: false);
-```
-
-faz a factory percorrer todos os handles vivos e trocar o `Value` de cada um para um novo `LightTheme`.
-
-Então, o "em massa" está aqui:
-
-- não é um único objeto sendo trocado;
-- são vários handles sendo atualizados numa operação centralizada;
-- os clientes não precisam recriar seus temas um por um.
-
-Ponto importante:
-
-- no **object tracking**, a factory quer observar objetos já criados;
-- no **bulk replacement**, a factory quer atualizar o objeto ativo visto por vários clientes.
-
-Por isso, o bulk replacement costuma usar algum rastreamento internamente, mas com outro foco:
-
-- no tracking, a factory rastreia para inspecionar;
-- no bulk replacement, a factory rastreia para conseguir substituir.
-
-Leitura mais precisa:
-
-- factory é o mecanismo base de centralizar a criação;
-- object tracking é uma capacidade opcional baseada nessa centralização;
-- bulk replacement é outra capacidade opcional, também baseada nessa centralização.
-
-#### O que o GC faz nesse cenário?
-
-O Garbage Collector do .NET gerencia a memória dos objetos no heap gerenciado. Quando um objeto deixa de ser alcançável por referências fortes, ele se torna elegível para coleta. Se só restarem weak references, isso não é suficiente para preservar o objeto.
-
-Ponto crucial:
-
-- `WeakReference<T>` **não garante** que o objeto existirá no próximo acesso;
-- ela só permite **tentar** recuperar o alvo com `TryGetTarget(...)`.
-
-#### Como ler `TryGetTarget(...)`
-
-`TryGetTarget(out T target)` devolve:
-
-- `true` quando o objeto ainda existe e o `out` recebe uma referência forte temporária para uso imediato;
-- `false` quando o objeto já foi coletado.
-
-Isso explica por que o uso correto de weak reference quase sempre começa com um `if`.
-
-Depois de uma chamada bem-sucedida, use a variável `target` naquele escopo: chamar `TryGetTarget` novamente pode observar outro momento do GC. Nunca teste existência em uma etapa para buscar o alvo apenas mais tarde.
-
-#### Quando isso faz sentido?
-
-Casos clássicos:
+Casos adequados incluem:
 
 - caches em que você quer reaproveitar um objeto se ele ainda estiver vivo;
-- rastreamento de objetos sem "posse" deles;
-- estruturas auxiliares de observação, como no exemplo das factories do projeto.
+- rastreamento e observação sem estender artificialmente o tempo de vida;
+- tabelas auxiliares cujas entradas não devem manter os alvos vivos.
 
-Quando isso **não** faz sentido:
+Não use `WeakReference<T>`:
 
 - como substituto geral para referências comuns;
 - quando a lógica depende de o objeto continuar existindo com previsibilidade;
-- quando você quer controle determinístico de tempo de vida — isso é outra conversa (`IDisposable`, `using`, ownership explícito).
+- para controle determinístico de recursos, que pertence a `IDisposable`, `using` e ownership explícito.
 
 **Como interpretar o exemplo:** `WeakReference<T>` não é um "jeito avançado de guardar objetos". É um jeito específico de observá-los sem assumir propriedade de tempo de vida. A diferença entre "eu uso este objeto" e "eu só quero saber se ele ainda existe" é exatamente o que torna essa API importante.
 
@@ -6498,7 +6017,7 @@ internal static partial class NativeMethods
     [LibraryImport("kernel32.dll", EntryPoint = "DeleteFileW", SetLastError = true,
         StringMarshalling = StringMarshalling.Utf16)]
     [return: MarshalAs(UnmanagedType.Bool)]
-internal static partial bool DeleteFile(string fileName);
+    internal static partial bool DeleteFile(string fileName);
 }
 ```
 
@@ -6512,55 +6031,24 @@ Não use `string`, `bool`, arrays ou structs sem confirmar a ABI. Defina `String
 
 ---
 
-## Resumo Geral — Conceitos Fundamentais
+## Checkpoint — Fundamentos da Linguagem (Partes 1–22)
 
 [⬆️ Voltar ao Sumário](#sumário)
 
-| Conceito | Definição resumida |
+Este checkpoint evita repetir o glossário. Use-o para confirmar se o modelo mental está pronto antes dos capítulos de aplicação e engenharia:
+
+| Você consegue explicar ou fazer sem consultar uma receita? | Retome se necessário |
 |---|---|
-| **CLR** | Runtime do .NET que carrega assemblies, gerencia execução e normalmente compila IL para código nativo nas plataformas suportadas |
-| **IL / CIL** | Código intermediário produzido pelo compilador Roslyn |
-| **Tipo de valor** | Armazena dado diretamente; cópia na atribuição: `int`, `struct`, `enum` |
-| **Tipo de referência** | A atribuição copia uma referência; variáveis podem alcançar a mesma instância: `class`, `string`, arrays |
-| **Assembly** | Unidade compilada do .NET, normalmente `.dll` ou `.exe`, com IL, metadados e referências |
-| **Nullable type** | `T?` representa `Nullable<T>` para valores ou uma anotação de nulabilidade para referências |
-| **`const`** | Constante de compile-time permitida para tipos numéricos internos, `bool`, `char`, `string`, enums e `null` de referência |
-| **`readonly`** | Campo atribuível somente na declaração ou construtor |
-| **`sealed`** | Classe não herdável; método não sobrescrevível além deste ponto |
-| **`abstract`** | Classe não instanciável; método sem corpo, subclasses devem implementar |
-| **`virtual`/`override`** | Habilita polimorfismo em C# (métodos não são virtuais por padrão) |
-| **`this`** | Referência para a instância atual |
-| **`base`** | Referência para a classe base |
-| **`is`/`as`** | Verifica tipo (is) e faz cast seguro (as) |
-| **Property** | Encapsula get/set como construção nativa da linguagem |
-| **`var`** | Inferência de tipo local — tipo fixo em compile-time |
-| **`using`** | Import de namespace ou gerenciamento de recursos (IDisposable) |
-| **`private`** | Visível apenas no próprio tipo; menor superfície de acesso |
-| **`protected`** | Visível no tipo e em subclasses |
-| **`public`** | Visível por qualquer código que enxergue o tipo; maior superfície |
-| **`internal`** | Visível apenas dentro do mesmo assembly (≈ package-private do Java) |
-| **`protected internal`** | Visível no assembly + subclasses de qualquer assembly |
-| **`private protected`** | Visível apenas em subclasses dentro do mesmo assembly |
-| **`file`** | Tipo visível apenas no mesmo arquivo fonte |
-| **Interface** | Contrato de comportamento desacoplado da implementação concreta |
-| **Delegate** | Tipo que representa referência a método com assinatura específica |
-| **Event** | Delegate encapsulado para padrão publisher/subscriber |
-| **Lambda** | Função anônima convertível em delegate ou, quando compatível, em árvore de expressão |
-| **`IEnumerable<T>`** | Contrato básico de sequência enumerável, ideal para iteração |
-| **`IQueryable<T>`** | Contrato de query traduzível por um provider externo |
-| **LINQ** | Modelo de consulta integrada à linguagem sobre sequências e providers |
-| **`async`/`await`** | Sintaxe para compor operações assíncronas sem bloquear durante I/O assíncrono |
-| **`Task<T>`** | Representa operação assíncrona com resultado |
-| **Record** | Tipo orientado a dados com igualdade por valor e membros sintetizados; não é inerentemente imutável |
-| **Tuple** | Agrupamento de valores nomeados sem criar classe |
-| **Pattern Matching** | Inspeção e desconstrução de valores em `is` e `switch` |
-| **`lock`** | Exclusão mútua para um bloco de código (≈ `synchronized` do Java) |
-| **`Span<T>`** | `ref struct` que representa uma região contígua sem copiar seus elementos |
-| **Extension Method** | Método adicionado a tipo existente sem herança |
-| **Generics** | Tipos parametrizados com segurança em compile-time |
-| **Attribute** | Metadados declarativos processados por compilador, runtime ou framework |
-| **Reflection** | Inspeção e invocação dinâmica de tipos em runtime |
-| **Dependency Injection (DI)** | Entrega de dependências de fora para dentro da classe, em vez de criá-las internamente |
+| distinguir linguagem, compilador, assembly, CLR e BCL | Partes [1](#parte-1--introdução-e-contextualização) e [28](#parte-28--catálogo-da-linguagem-e-da-biblioteca-padrão) |
+| prever cópia, identidade, nulabilidade e tempo de vida de um valor | [Parte 3](#parte-3--variáveis-e-tipos) e [20.5](#205-memória-gerenciada-gc-e-ownership-de-recursos) |
+| projetar um tipo com acesso, propriedades, invariantes e igualdade coerentes | Partes [5](#parte-5--modificadores-de-acesso), [6](#parte-6--propriedades-properties) e [11](#parte-11--classes-e-objetos) |
+| escolher composição, interface, herança, delegate ou evento pelo contrato | Partes [12](#parte-12--herança-e-polimorfismo) e [13](#parte-13--delegates-events-e-lambdas) |
+| escolher coleção e operador LINQ sem esconder custo ou execução adiada | Partes [14](#parte-14--linq-language-integrated-query) e [15](#parte-15--coleções) |
+| compor I/O assíncrono com cancelamento e descarte corretos | [Parte 16](#parte-16--asyncawait-e-programação-assíncrona) |
+| tratar falhas sem capturar demais nem perder contexto | [Parte 18](#parte-18--tratamento-de-exceções) |
+| reconhecer quando reflection, concorrência, `unsafe` ou interop exigem garantias extras | Partes [21](#parte-21--threads-e-concorrência) e [22](#parte-22--interoperabilidade-e-recursos-avançados) |
+
+Para definições curtas, use o [Glossário](#glossário); para detalhes, siga os links da tabela. Se alguma resposta depender apenas de memorização, volte ao exemplo correspondente e explique também o custo e o erro comum.
 
 ---
 
@@ -7370,11 +6858,7 @@ As afirmações desta parte são específicas de engine e versão. Consulte as p
 
 [⬆️ Voltar ao Sumário](#sumário)
 
-Esta parte não tenta transformar C# em uma "linguagem arquitetural". C# é uma linguagem; arquitetura é uma decisão de design sobre como organizar responsabilidades, dependências, dados, regras de negócio, integrações e deploy.
-
-O que existe, na prática, é um ecossistema .NET com padrões muito comuns: aplicações web ASP.NET Core, APIs, workers, bibliotecas, serviços, sistemas distribuídos, aplicações desktop, jogos e aplicações cloud-native. A documentação oficial da Microsoft trata várias dessas arquiteturas nos guias de [.NET Architecture](https://learn.microsoft.com/en-us/dotnet/architecture/).
-
-O objetivo aqui é dar ao leitor um mapa curto e tecnicamente honesto: entender quais padrões aparecem com frequência em projetos C#/.NET, que problema cada um tenta resolver e onde estudar pela fonte original ou oficial.
+Arquitetura organiza responsabilidades, dependências, dados, integrações e implantação; a linguagem apenas oferece mecanismos para expressar essas decisões. Esta parte apresenta os padrões mais recorrentes no ecossistema .NET, seus custos e as fontes originais reunidas nos guias de [.NET Architecture](https://learn.microsoft.com/en-us/dotnet/architecture/).
 
 ---
 
@@ -7454,7 +6938,7 @@ MyApp.Infrastructure
 
 Não é obrigatório separar em projetos diferentes desde o início, mas essa separação ajuda quando o sistema cresce.
 
-**Fonte oficial:** Microsoft Learn — [Common web application architectures](https://learn.microsoft.com/en-us/dotnet/architecture/modern-web-apps-azure/common-web-application-architectures).
+> **Referência oficial:** [Common web application architectures](https://learn.microsoft.com/en-us/dotnet/architecture/modern-web-apps-azure/common-web-application-architectures)
 
 ---
 
@@ -7511,7 +6995,7 @@ public sealed class EfOrderRepository : IOrderRepository
 
 O benefício é proteger regras de negócio contra detalhes técnicos. O custo é mais abstração. Em sistemas pequenos, isso pode ser exagero; em sistemas com domínio complexo, integrações e vida longa, costuma pagar o investimento.
 
-**Fonte oficial:** Microsoft Learn — [Common web application architectures](https://learn.microsoft.com/en-us/dotnet/architecture/modern-web-apps-azure/common-web-application-architectures).
+> **Referência oficial:** [Clean Architecture in ASP.NET Core applications](https://learn.microsoft.com/en-us/dotnet/architecture/modern-web-apps-azure/common-web-application-architectures)
 
 ---
 
@@ -7813,7 +7297,7 @@ dotnet list src/MinhaApp/MinhaApp.csproj package --outdated
 
 **Leitura guiada:** o primeiro comando cria o arquivo de solution; o segundo registra o projeto nela. `reference` cria uma dependência compilável entre `MinhaApp` e `MinhaLib`; `package` adiciona uma dependência NuGet externa; `list ... --outdated` consulta versões mais novas sem atualizar automaticamente. Os caminhos são relativos à pasta em que a CLI foi executada.
 
-Os comandos também possuem formas noun-first nos SDKs atuais; consulte `dotnet help` da versão fixada pelo projeto. Não edite manualmente `obj/project.assets.json`. Faça restore a partir de fontes confiáveis, fixe versões de dependências de forma revisável e trate atualizações e advisories como trabalho contínuo. Uma referência transitiva não deve virar contrato acidental: declare diretamente o pacote cuja API seu projeto usa.
+Os comandos também possuem formas noun-first nos SDKs atuais; consulte `dotnet help` da versão fixada pelo projeto. Não edite manualmente `obj/project.assets.json`. Avaliação, auditoria, atualização e controle de fontes de pacotes ficam centralizados em [29.9](#299-como-avaliar-e-adotar-uma-dependência).
 
 Assemblies, namespaces, projetos e pacotes são eixos diferentes. Um pacote pode conter vários assemblies; um assembly pode expor vários namespaces; uma solution pode conter projetos que não se referenciam.
 
@@ -8889,7 +8373,7 @@ As afirmações sobre C# e .NET continuam apoiadas na Microsoft Learn. Para proj
 
 [⬆️ Voltar ao Sumário](#sumário)
 
-NuGet é o mecanismo apoiado pela Microsoft para criar, hospedar e consumir pacotes .NET. Um `.nupkg` contém assemblies e um manifesto versionado; ao adicionar um pacote, o projeto registra uma `PackageReference` e o restore resolve também dependências transitivas compatíveis.
+A [seção 25.3](#253-soluções-referências-e-nuget) explica como `PackageReference` e restore entram no projeto. Aqui a pergunta muda: **quem mantém a capacidade e qual compromisso a dependência introduz?** Algo externo à BCL pode ser first-party, comunitário, pertencente a um fornecedor ou apenas uma ferramenta de desenvolvimento.
 
 | Categoria | Exemplo | Implicação |
 |---|---|---|
@@ -9259,7 +8743,7 @@ Sugestão de estudo: use este guia para construir o modelo mental e a documenta�
 | **Palavra-chave reservada** | Identificador predefinido que sempre possui significado especial para o compilador e exige `@` para ser usado como nome. | [28.2 Palavras reservadas](#282-todas-as-palavras-chave-reservadas) |
 | **Pattern matching** | Teste e extração declarativa de valores por tipo, forma, propriedade, posição ou relação. | [7.6 Pattern Matching](#76-is-as-e-pattern-matching) |
 | **`PriorityQueue<TElement,TPriority>`** | Fila que retira o item conforme a prioridade comparada, sem manter toda a coleção em ordem visível. | [28.6 Estruturas de dados](#286-estruturas-de-dados-e-coleções-prontas) |
-| **Property** | Membro com acessores `get`, `set` ou `init` que controla a exposição de um valor. | [6.1 Properties](#61-o-que-são-properties) |
+| **Propriedade (`property`)** | Membro com acessores `get`, `set` ou `init` que controla a exposição de um valor. | [6.1 Propriedades](#61-o-que-são-propriedades) |
 | **Record** | Classe ou estrutura orientada a dados com igualdade por valor e membros sintetizados. | [11.3 Records](#113-records-c-9) |
 | **Reflection** | Inspeção de metadados, tipos e membros em runtime, com possível invocação dinâmica. | [22.1 Reflection](#221-reflection) |
 | **`ref` / `out` / `in`** | Modos de passagem por referência com contratos diferentes de leitura, escrita e atribuição. | [7.8 Parâmetros por referência](#78-ref-out-e-in) |
