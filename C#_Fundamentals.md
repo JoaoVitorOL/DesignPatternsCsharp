@@ -295,6 +295,8 @@ public class CustomerService
 }
 ```
 
+**Leitura guiada:** `CustomerService`, `IRepository`, o construtor e `GetCustomerName` usam PascalCase porque são tipos ou membros. `_repository` começa com `_` e continua em camelCase porque é um campo privado. Os parâmetros `repository` e `customerId`, assim como a variável local `customerName`, usam camelCase. Os nomes mudam de forma conforme o papel do identificador, não conforme o tipo do valor armazenado.
+
 Essas convenções ajudam a tornar o código mais previsível e alinhado com o estilo adotado pela própria biblioteca base do .NET e pelos projetos oficiais da Microsoft.
 
 > **Referência oficial:** [C# identifier naming rules and conventions](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/coding-style/identifier-names)
@@ -533,17 +535,21 @@ Um **namespace** é um contêiner lógico que agrupa tipos relacionados, evitand
 Namespace não é pasta, assembly nem controle de acesso. A convenção de pastas pode acompanhá-lo, mas o compilador não exige essa correspondência. Dois projetos podem declarar o mesmo namespace, e um único assembly pode conter vários namespaces. O nome totalmente qualificado (`MinhaEmpresa.Projeto.Modelos.Usuario`) elimina a ambiguidade quando dois tipos têm o mesmo nome simples.
 
 ```csharp
-// Declaração de namespace — estilo moderno (C# 10+, file-scoped)
+// Usuario.cs — estilo moderno (C# 10+, file-scoped)
 namespace MinhaEmpresa.Projeto.Modelos;
 
 public class Usuario { }
+```
 
-// Declaração de namespace — estilo clássico (com chaves)
+```csharp
+// UsuarioServico.cs — outro arquivo, no estilo clássico (com chaves)
 namespace MinhaEmpresa.Projeto.Servicos
 {
     public class UsuarioServico { }
 }
 ```
+
+**Leitura guiada:** no primeiro arquivo, o ponto e vírgula após o namespace faz com que todas as declarações seguintes pertençam a ele. No segundo, apenas o que está entre as chaves pertence ao namespace. Os dois estilos têm o mesmo propósito, mas uma declaração file-scoped e uma declaração com bloco não podem ser misturadas no mesmo arquivo fonte; por isso o exemplo usa `Usuario.cs` e `UsuarioServico.cs`.
 
 Por convenção, namespaces seguem a estrutura: `Empresa.Produto.Camada`:
 
@@ -673,6 +679,8 @@ listaB[0] = 99;
 Console.WriteLine(listaA[0]); // 99 — o mesmo objeto foi modificado
 ```
 
+**Leitura guiada:** `b = a` copia o número `10`; mudar `b` não alcança `a`. Já `listaB = listaA` copia a referência para o array, não seus três elementos. Depois da atribuição, as duas variáveis chegam ao mesmo array, então escrever por `listaB[0]` também altera o valor observado por `listaA[0]`. O ponto do exemplo é a forma de cópia, não decidir se algo está fisicamente na stack ou no heap.
+
 **Tipos de valor primitivos do C#:**
 
 | Tipo C# | Alias .NET | Tamanho | Faixa de valores | Valor padrão | Uso |
@@ -787,6 +795,8 @@ int? tamanho = nome?.Length; // null se nome for null, sem NullReferenceExceptio
 string valor = nome!; // diz ao compilador: "confie em mim, não é null"
 ```
 
+**Leitura guiada:** `int?` é a forma abreviada de `Nullable<int>`. `HasValue` testa se há número, `Value` o obtém e `?? 0` escolhe zero quando não há. Em `nome?.Length`, o acesso a `Length` só ocorre se `nome` não for nulo. A última linha é propositalmente perigosa: `!` silencia o aviso, mas `valor` ainda recebe `null` em runtime; ela ensina o que o operador faz, não uma prática a copiar.
+
 **Nullable Reference Types (C# 8+ com `<Nullable>enable</Nullable>` no projeto):**
 
 ```csharp
@@ -804,6 +814,8 @@ void Processar(string? entrada)
         Console.WriteLine(entrada.Length); // OK
 }
 ```
+
+**Leitura guiada:** `string` declara a intenção de receber texto não nulo; `string?` declara que `null` faz parte do contrato. Dentro de `Processar`, o compilador avisa na primeira leitura de `entrada.Length` porque não existe teste. Depois de `entrada is not null`, a análise de fluxo sabe que o valor é seguro naquele ramo. Se warnings forem tratados como erro, a primeira leitura precisa ser removida ou corrigida.
 
 **Como interpretar o exemplo:** Os operadores mostrados existem para tornar a ausência de valor visível no contrato, em vez de deixar `null` circular de forma implícita. Em código profissional, isso reduz muito `NullReferenceException` e melhora a clareza das APIs.
 
@@ -851,9 +863,12 @@ Os dois modificadores impedem reatribuição em momentos diferentes. `const` rep
 ```csharp
 // const — constante de compile-time; deve ser inicializada na declaração
 // Tipos numéricos internos, bool, char, string, enum e null para referências são permitidos
-public const double PI    = 3.14159265358979;
-public const int    MAX   = 100;
-public const string VERSAO = "1.0.0";
+public static class AppInfo
+{
+    public const double Pi     = 3.14159265358979;
+    public const int Maximo    = 100;
+    public const string Versao = "1.0.0";
+}
 
 // readonly — campo que só pode ser atribuído na declaração ou no construtor
 public class Configuracao
@@ -870,10 +885,16 @@ public class Configuracao
 }
 
 // readonly permite tipos complexos (objetos, arrays)
-private readonly List<string> _itens = new();
-// _itens = new List<string>(); // ERRO — reatribuição da referência
-// _itens.Add("item");          // OK — modifica o objeto, não a referência
+public sealed class Carrinho
+{
+    private readonly List<string> _itens = new();
+
+    public void Adicionar(string item) => _itens.Add(item); // altera a lista, não o campo
+    // _itens = new List<string>(); // ERRO fora de um construtor: reatribuiria o campo
+}
 ```
+
+**Leitura guiada:** as constantes pertencem a `AppInfo` e já precisam ter valores conhecidos na compilação. Cada `Configuracao` pode receber `Host` e `Porta` diferentes no construtor, mas não reatribui esses campos depois. Em `Carrinho`, `readonly` protege o campo `_itens`, não congela o objeto `List<string>`: `Adicionar` pode alterar o conteúdo da mesma lista, enquanto trocar a referência por outra lista seria proibido fora do construtor.
 
 **Diferença entre `const` e `readonly`:**
 
@@ -926,11 +947,16 @@ public sealed class Ref<T> where T : class
     public T Value { get; set; }
     public Ref(T value) => Value = value;
 }
+```
 
+```csharp
+// Program.cs — uso das classes declaradas acima
 ITheme directTheme = new DarkTheme();
 var handle = new Ref<ITheme>(new DarkTheme());
 var weak = new WeakReference<ITheme>(directTheme);
 ```
+
+**Leitura guiada:** as três últimas linhas criam relações diferentes. `directTheme` guarda uma referência comum e forte para um tema. `handle` guarda uma caixa `Ref<ITheme>` cuja propriedade `Value` pode ser substituída posteriormente. `weak` guarda uma referência fraca para o mesmo objeto alcançado por `directTheme`; ela permite tentar reencontrá-lo, mas não é suficiente para mantê-lo vivo. `Ref<T>` é uma classe didática deste guia, não um recurso especial da linguagem.
 
 #### 3.6.1 Referência direta
 
@@ -1015,6 +1041,8 @@ else
 }
 ```
 
+**Leitura guiada:** `TryGetTarget` devolve duas informações: o `bool` indica sucesso e o parâmetro `out` recebe o objeto quando ele ainda existe. A variável `aliveTheme` só deve ser usada no ramo `true`. No ramo `false`, não existe alvo seguro para acessar. O GC pode executar em momentos diferentes, então o código nunca pressupõe que uma weak reference continuará válida.
+
 #### 3.6.4 A diferença certa: não confunda os eixos
 
 O ponto mais importante desta seção é este:
@@ -1073,6 +1101,8 @@ var resumo = new { Nome = "Ana", Total = 3 }; // tipo anônimo, somente leitura
 Console.WriteLine(resumo.Nome);
 ```
 
+**Leitura guiada:** apesar de conter uma string, `valor` tem tipo estático `object`; o pattern `is string texto` confirma o tipo e cria `texto` já convertido. `externo` usa `dynamic`, então a chamada `Processar()` é aceita agora e verificada apenas ao executar. `resumo` é um tipo anônimo criado pelo compilador, e `var` preserva esse tipo concreto sem precisar nomeá-lo.
+
 **Boxing** converte um tipo de valor para `object` ou para uma interface implementada por ele. Isso cria um objeto e copia o valor; **unboxing** exige conversão explícita para o tipo de valor compatível.
 
 ```csharp
@@ -1083,6 +1113,8 @@ int copia = (int)caixa;      // unboxing
 // Generics normalmente evitam o boxing que ocorreria numa coleção de object.
 var numeros = new List<int> { 1, 2, 3 };
 ```
+
+**Leitura guiada:** `object caixa = numero` cria uma representação empacotada do valor `42`; isso é boxing. `(int)caixa` exige que o conteúdo empacotado seja realmente compatível com `int`; tentar desempacotá-lo diretamente como outro tipo falha. `List<int>` armazena `int` de forma tipada e, no uso comum, evita o boxing que uma coleção baseada em `object` exigiria.
 
 Use `dynamic` apenas em fronteiras realmente dinâmicas, como certos modelos de interoperabilidade. Em código de domínio e APIs normais, interfaces, generics e pattern matching preservam melhor a verificação do compilador. Tipos anônimos são úteis para projeções locais, especialmente em LINQ; não são uma boa forma de contrato público.
 
@@ -1366,6 +1398,8 @@ File.WriteAllText(arquivo, $"Id={id}; Dado={dado}; NumeroValido={okNumero}");
 bool existe = File.Exists(arquivo);
 ```
 
+**Leitura guiada:** os três `using` tornam disponíveis tipos de namespaces diferentes. O programa lê uma linha que pode ser nula, usa métodos estáticos de `Math`, cria representações distintas de data, hora e duração, gera um `Guid` e sorteia um número de 1 a 6 porque o limite superior de `Random.Next` é exclusivo. Os dois `TryParse` devolvem `true` ou `false` e escrevem o resultado nos parâmetros `out`, sem usar exceção para uma entrada inválida. Por fim, `Path.Combine` monta um caminho apropriado ao sistema operacional, `File.WriteAllText` cria ou sobrescreve o arquivo e `File.Exists` verifica sua existência. Como há escrita real no Desktop, adapte o caminho ou use uma pasta temporária ao experimentar.
+
 | Tipo/API | Quando aparece no dia a dia | Membros comuns | Cuidado profissional |
 | --- | --- | --- | --- |
 | `Console` | Apps de terminal, demos, ferramentas internas | `WriteLine`, `Write`, `ReadLine`, `Error` | saída normal e erro podem seguir fluxos diferentes |
@@ -1628,12 +1662,14 @@ public class Pessoa
         TotalInstancias++;
     }
 }
+```
 
-// Uso
+```csharp
+// Program.cs — uso da classe Pessoa
 var p = new Pessoa("Ana", "ana@email.com") { Idade = 28 };
 Console.WriteLine(p.Nome);        // "Ana"
 Console.WriteLine(p.NomeCompleto); // "Ana (ID: ...)"
-p.Email = "novo@email.com";       // ERRO se Email for { get; init; } após construção
+// p.Email = "novo@email.com";    // ERRO: init só aceita atribuição durante a criação
 ```
 
 **Como interpretar o exemplo:** Properties parecem campos para quem consome a classe, mas se comportam como acessos controlados por `get`, `set` ou `init`. Esse recurso existe para encapsular validação, cálculo e evolução interna sem mudar o contrato externo.
@@ -1795,6 +1831,8 @@ public class Calculadora
     public Calculadora(string nome) => _nome = nome;
 }
 ```
+
+**Leitura guiada:** `Somar` e `Potencia` são métodos: recebem argumentos e devolvem o valor da expressão à direita de `=>`. `Descricao` é uma propriedade somente leitura e não usa parênteses. No construtor, a expressão é uma atribuição a `_nome`; construtores não retornam valor. Essa forma compacta é adequada quando uma única expressão permanece clara — ela não torna o membro automaticamente mais rápido.
 
 Antes de avançar, vale fixar uma leitura mental importante do operador `=>` em C#.
 
@@ -2025,7 +2063,10 @@ public class Cachorro : Animal
     // 'new' — oculta o método da classe base (diferente de override — sem polimorfismo)
     public new void Respirar() => Console.WriteLine("Respirando (Cachorro)");
 }
+```
 
+```csharp
+// Program.cs — observe o tipo estático da variável
 Animal a  = new Cachorro();
 a.EmitirSom(); // "Au au!" — polimorfismo funciona com virtual/override
 a.Respirar();  // "Respirando" — sem polimorfismo, chama a versão de Animal
@@ -2246,9 +2287,6 @@ public class PersonBuilder
         => builder._person;
 }
 
-PersonBuilder builder = new PersonBuilder();
-Person pessoa = builder; // chama implicit operator sem cast explícito
-
 public readonly struct Metros
 {
     public double Valor { get; }
@@ -2257,9 +2295,16 @@ public readonly struct Metros
     // Conversão explícita: exige cast no ponto de uso
     public static explicit operator double(Metros m) => m.Valor;
 }
+```
 
+```csharp
+// Program.cs — uso dos tipos declarados acima
+PersonBuilder builder = new PersonBuilder();
+Person pessoa = builder; // chama implicit operator sem cast explícito
 double distancia = (double)new Metros(12.5);
 ```
+
+**Leitura guiada:** na primeira atribuição, o destino é `Person`; como `PersonBuilder` declara uma conversão `implicit`, o compilador insere a chamada ao operador sem exigir cast. Na segunda, `Metros` só oferece conversão `explicit`, então `(double)` torna a transformação visível. `builder._person` é acessível porque o operador pertence à própria classe `PersonBuilder`. Os blocos foram separados porque, em um programa com instruções de nível superior, essas instruções devem aparecer antes das declarações de tipos no mesmo arquivo.
 
 Quando um tipo declara `public static implicit operator ...` ou `public static explicit operator ...`, ele está ensinando ao compilador como converter entre tipos customizados.
 
@@ -2291,22 +2336,32 @@ public class Usuario
     public string Nome { get; init; } = string.Empty;
 }
 
-void ValidarNome(string nome)
+public static class Utilitarios
 {
-    if (string.IsNullOrWhiteSpace(nome))
-        throw new ArgumentException("Nome inválido.", nameof(nome));
-}
+    public static void ValidarNome(string nome)
+    {
+        if (string.IsNullOrWhiteSpace(nome))
+            throw new ArgumentException("Nome inválido.", nameof(nome));
+    }
 
-Type tipoUsuario = typeof(Usuario);
+    public static T? PrimeiroOuPadrao<T>(IEnumerable<T> itens)
+    {
+        foreach (var item in itens)
+            return item;
 
-static T? PrimeiroOuPadrao<T>(IEnumerable<T> itens)
-{
-    foreach (var item in itens)
-        return item;
-
-    return default;
+        return default;
+    }
 }
 ```
+
+```csharp
+// Program.cs — uso dos tipos declarados acima
+Type tipoUsuario = typeof(Usuario);
+Utilitarios.ValidarNome("Ana");
+int primeiro = Utilitarios.PrimeiroOuPadrao(new[] { 10, 20 }); // 10
+```
+
+**Leitura guiada:** `nameof(nome)` é resolvido para a string `"nome"` em compilação e acompanha uma futura renomeação do parâmetro. `typeof(Usuario)` obtém os metadados do tipo sem criar um `Usuario`. No método genérico, o primeiro `return` encerra a execução assim que um item é encontrado; se a sequência estiver vazia, `default` produz o padrão de `T` — por exemplo, `0` para `int` e `null` para muitos tipos de referência. O `T?` precisa ser interpretado junto das restrições e da nulabilidade do código genérico, não como garantia universal de um `Nullable<T>`.
 
 Essas três palavras aparecem o tempo todo em código profissional, mas com papéis bem diferentes:
 
@@ -2492,13 +2547,18 @@ public class Cliente
     public required string Email { get; init; }
     public DateTime CriadoEm { get; init; } = DateTime.UtcNow;
 }
+```
 
+```csharp
+// Program.cs — criação de uma instância
 var cliente = new Cliente
 {
     Nome = "Ana",
     Email = "ana@empresa.com"
 };
 ```
+
+**Leitura guiada:** o inicializador de objeto atribui `Nome` e `Email` durante o `new`, satisfazendo os dois membros `required`. `CriadoEm` não precisa aparecer porque já possui um valor padrão. Depois que a inicialização termina, propriedades `init` não podem receber nova atribuição pelo consumidor. `required` é uma regra verificada pelo compilador para a construção do objeto; ele não valida se a string é vazia nem substitui validação em desserialização ou reflection.
 
 Essas palavras ajudam a modelar objetos mais corretos já no momento da criação:
 
@@ -2547,10 +2607,15 @@ public sealed class Produto
             : throw new ArgumentOutOfRangeException(nameof(value));
     }
 }
+```
 
+```csharp
+// Dentro de um método que usa Produto
 Produto? produto = ObterProduto();
 produto?.Preco = 19.90m; // nenhuma atribuição se produto for null
 ```
+
+**Leitura guiada:** `field` representa o campo oculto usado pela propriedade `Preco`; `value` representa o novo valor recebido pelo setter. O operador `?:` grava o preço quando ele é não negativo e lança uma exceção caso contrário. Na última linha, `?.` verifica `produto`: se houver instância, chama o setter e aplica a validação; se for `null`, não faz a atribuição nem avalia o lado direito.
 
 Não use `preview` por acidente em produção. A versão padrão da linguagem acompanha o target framework, e a Microsoft não recomenda `<LangVersion>latest</LangVersion>` porque máquinas com SDKs diferentes podem compilar conjuntos diferentes de recursos.
 
@@ -2749,6 +2814,8 @@ catch (OverflowException)
 }
 ```
 
+**Leitura guiada:** `5 / 2` usa divisão inteira porque ambos os operandos são `int`; trocar um deles por `2.0` seleciona divisão de ponto flutuante. Em `ativo && saldo > 0`, a comparação da direita nem é executada quando `ativo` é `false`. `cliente?.Nome` devolve `null` se `cliente` for nulo, e `??` então escolhe o texto alternativo. `^1` aponta para o último item; `1..^1` cria o intervalo do índice 1 até, mas sem incluir, o último. Por fim, `checked` transforma o estouro de `int.MaxValue + 1` em `OverflowException`, capturada pelo `catch`.
+
 Precedência define agrupamento, não necessariamente ordem temporal completa de todas as subexpressões. Quando a leitura não for óbvia, use parênteses. Em contexto `unchecked`, overflow integral pode truncar bits; `checked` pede verificação. Conversões e operações com `decimal` sempre podem lançar em overflow. Operadores também podem ser definidos por tipos customizados, mas devem preservar uma semântica previsível.
 
 `&&` e `||` não avaliam o operando direito quando o esquerdo decide o resultado; `&` e `|` aplicados a `bool` avaliam ambos. O operador `?.` também evita avaliar o restante da cadeia quando o receptor é nulo. Não dependa de efeitos colaterais escondidos em operandos: extraia passos para variáveis quando a ordem for relevante.
@@ -2761,7 +2828,7 @@ Precedência define agrupamento, não necessariamente ordem temporal completa de
 
 [⬆️ Voltar ao Sumário](#sumário)
 
-Um tipo pode definir a semântica de operadores quando seus valores se comportam naturalmente como números, medidas, vetores ou outros objetos matemáticos. A sobrecarga deve tornar o código mais previsível, não apenas mais curto. Se `a + b` exigir I/O, alterar objetos inesperadamente ou tiver significado ambíguo, um método nomeado comunica melhor.
+Um tipo pode ensinar ao compilador o que operadores como `+`, `-`, `<` e `>` significam para seus próprios valores. Isso é útil quando a leitura é natural: somar duas distâncias deve produzir outra distância com a soma dos metros. Quem lê `a + b` não espera acesso a arquivo, chamada de rede nem alteração escondida em `a` ou `b`; se a operação tiver um desses comportamentos, um método com nome explícito é mais claro.
 
 ```csharp
 public readonly record struct Distancia(double Metros) : IComparable<Distancia>
@@ -2777,14 +2844,29 @@ public readonly record struct Distancia(double Metros) : IComparable<Distancia>
 
     public int CompareTo(Distancia other) => Metros.CompareTo(other.Metros);
 }
+```
 
+```csharp
+// Program.cs — uso do tipo Distancia
 Distancia total = new Distancia(120) + new Distancia(30);
 Console.WriteLine(total.Metros); // 150
 ```
 
-Alguns operadores precisam ser declarados em pares: `==` com `!=`, `<` com `>` e `<=` com `>=`. Ao definir igualdade, mantenha coerentes `Equals`, `GetHashCode` e `IEquatable<T>`; um `record` já sintetiza esse contrato. Conversões `implicit` e `explicit` são operadores de conversão, estudados na seção 7.9. Desde C# 14 também existem formas de instância para `++`, `--` e atribuições compostas, mas elas devem ser usadas apenas quando a mutação do operando tiver semântica inequívoca.
+**Leitura guiada, linha por linha:**
 
-Teste leis esperadas do domínio, como simetria da igualdade e compatibilidade entre comparação e ordenação.
+| Trecho | O que significa |
+|---|---|
+| `readonly record struct Distancia(double Metros)` | Declara um pequeno tipo de valor. O parâmetro posicional cria o construtor e a propriedade `Metros`; `readonly` impede alterar seu estado depois da criação. |
+| `: IComparable<Distancia>` | Afirma que duas distâncias podem ser ordenadas. O tipo precisa, por isso, implementar `CompareTo`. |
+| `operator +` | Recebe a distância da esquerda em `a`, a da direita em `b` e devolve uma **nova** `Distancia` com os metros somados. O `new(...)` é `new Distancia(...)` abreviado porque o retorno esperado já informa o tipo. |
+| `operator -` | Faz a mesma leitura para subtração. O exemplo permite resultado negativo; um domínio que proíba isso deve validar e documentar a decisão. |
+| `operator <` e `operator >` | Comparam somente os valores em `Metros`. C# exige que `<` e `>` sejam declarados juntos. |
+| `CompareTo` | Devolve número negativo, zero ou positivo quando esta distância é menor, igual ou maior que `other`. Isso permite ordenação por APIs como `Sort`. |
+| `new Distancia(120) + new Distancia(30)` | Cria dois valores, chama o `operator +` e guarda o novo resultado, que contém `150`. |
+
+Alguns operadores precisam ser declarados em pares: `==` com `!=`, `<` com `>` e `<=` com `>=`. Se você implementar igualdade manualmente, todos os caminhos precisam concordar: se `a == b` for verdadeiro, `a.Equals(b)` também deve ser verdadeiro e os dois devem gerar o mesmo hash. Como `Distancia` é um `record struct`, o compilador já gera a igualdade por valor; o exemplo só adiciona ordenação e aritmética. Conversões `implicit` e `explicit` são estudadas na seção 7.9.
+
+Desde C# 14 também é possível criar formas de instância para `++`, `--` e atribuições compostas. Use-as somente quando o resultado for óbvio para quem lê. Em testes, verifique regras concretas: `a + b` deve produzir o mesmo total que `b + a`, e `a.CompareTo(b) < 0` deve concordar com `a < b`.
 
 > **Referências oficiais:** [Operator overloading](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/operator-overloading), [Equality operators](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/equality-operators), [User-defined conversion operators](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/user-defined-conversion-operators)
 
@@ -2866,10 +2948,6 @@ public static class StringExtensions
     }
 }
 
-// Uso — parece um método nativo de string
-bool eh   = "arara".EhPalindromo();    // true
-string cap = "jOão".Capitalizar();     // "João"
-
 // Métodos de extensão em IEnumerable
 public static class EnumerableExtensions
 {
@@ -2877,6 +2955,12 @@ public static class EnumerableExtensions
         where T : class
         => source.Where(x => x is not null).Select(x => x!);
 }
+```
+
+```csharp
+// Program.cs — parece um método nativo de string
+bool eh = "arara".EhPalindromo();       // true
+string cap = "jOão".Capitalizar();      // "João"
 ```
 
 **Como interpretar o exemplo:** Um método de extensão parece nativo do tipo alvo, mas continua sendo um método estático com sintaxe especial. Isso é excelente para criar APIs fluentes, desde que você não esconda dependências nem espalhe comportamento sem critério.
@@ -2938,6 +3022,8 @@ static void Registrar(params ReadOnlySpan<string> mensagens)
 }
 ```
 
+**Leitura guiada:** o bloco contém três recursos independentes. `Fatorial` declara `Calcular` dentro do próprio método porque ninguém de fora precisa chamá-lo; `static` garante que a função local não capture variáveis externas. `Maior` devolve `ref` para a variável original escolhida, então atribuir `99` por `maior` altera `y`, não uma cópia. Em `Registrar`, `params` permite chamar o método com vários argumentos separados, e o `ReadOnlySpan<string>` oferece ao método uma visão somente de leitura desses argumentos.
+
 Funções locais são ótimas para encapsular um algoritmo que pertence a um único método; se marcadas `static`, não capturam variáveis externas. Retornos `ref` e variáveis locais `ref` dão acesso ao local de armazenamento original e exigem disciplina de tempo de vida; são ferramentas especializadas, comuns em código de performance e APIs de baixo nível.
 
 Parâmetros opcionais merecem atenção de versionamento: o valor padrão é incorporado no código do **chamador** no momento da compilação. Alterar o default de uma biblioteca não muda clientes já compilados. Prefira sobrecarga quando essa evolução for relevante. Use `params` na última posição e não o combine com `ref`, `in` ou `out`.
@@ -2973,7 +3059,10 @@ public enum DiaDaSemana
     Sabado  = 6,
     Domingo = 7
 }
+```
 
+```csharp
+// Program.cs — uso do enum
 DiaDaSemana hoje = DiaDaSemana.Quarta;
 
 // Métodos utilitários
@@ -3025,7 +3114,10 @@ public enum Permissoes
     Admin     = 8,        // 1000
     Total     = Leitura | Escrita | Exclusao | Admin  // 1111
 }
+```
 
+```csharp
+// Program.cs — combinação e teste de flags
 Permissoes usuario = Permissoes.Leitura | Permissoes.Escrita; // 0011
 
 // Verificar se tem uma permissão
@@ -3164,7 +3256,10 @@ public class Produto
 
 // O compilador injeta, de forma implícita, o equivalente a:
 // public Produto() { }
+```
 
+```csharp
+// Program.cs — uso do construtor implícito
 var p = new Produto(); // válido — construtor implícito disponível
 ```
 
@@ -3198,7 +3293,10 @@ public class Produto
         Preco = preco;  // atribuição ao membro público (propriedade somente leitura)
     }
 }
+```
 
+```csharp
+// Program.cs — uso do construtor parametrizado
 var p = new Produto("Teclado", 199.90m);
 ```
 
@@ -3365,7 +3463,10 @@ public class Derivada : Base
         return retorno;
     }
 }
+```
 
+```csharp
+// Program.cs — criação que dispara a cadeia de inicialização
 var d = new Derivada();
 // Saída, na ordem:
 // Inicializador de campo (Derivada)
@@ -3425,7 +3526,10 @@ public sealed class ConfiguracaoGlobal
 
     public static ConfiguracaoGlobal Instancia => _instancia;
 }
+```
 
+```csharp
+// Program.cs — consumidor não pode chamar o construtor privado
 // var c = new ConfiguracaoGlobal(); // ERRO de compilação — construtor inacessível
 var c = ConfiguracaoGlobal.Instancia; // única forma válida de obter a instância
 ```
@@ -3450,7 +3554,10 @@ public class Produto(string nome, decimal preco)
     // O parâmetro 'preco' pode ser usado diretamente em métodos, sem precisar de campo próprio
     public decimal PrecoComDesconto(decimal percentual) => preco * (1 - percentual);
 }
+```
 
+```csharp
+// Program.cs — uso do construtor primário
 var p = new Produto("Teclado", 199.90m);
 ```
 
@@ -3492,16 +3599,6 @@ Records são tipos orientados a dados com igualdade por valor e implementações
 // Record de posicional — uma linha
 public record Ponto(double X, double Y);
 
-Ponto p1 = new Ponto(3.0, 4.0);
-Ponto p2 = new Ponto(3.0, 4.0);
-
-Console.WriteLine(p1.X);          // 3.0
-Console.WriteLine(p1);            // "Ponto { X = 3, Y = 4 }"
-Console.WriteLine(p1 == p2);      // true — comparação por valor
-
-// 'with' expression — cria uma cópia não destrutiva
-Ponto p3 = p1 with { X = 10.0 };  // p3 = (10, 4); p1 não muda
-
 // Record nominal com validação explícita no construtor
 public sealed record Temperatura
 {
@@ -3528,6 +3625,19 @@ public sealed record Temperatura
 
 // record struct é mutável por padrão; readonly torna a estrutura somente leitura.
 public readonly record struct Coordenada(double Latitude, double Longitude);
+```
+
+```csharp
+// Program.cs — igualdade e cópia de um record
+Ponto p1 = new Ponto(3.0, 4.0);
+Ponto p2 = new Ponto(3.0, 4.0);
+
+Console.WriteLine(p1.X);          // 3.0
+Console.WriteLine(p1);            // "Ponto { X = 3, Y = 4 }"
+Console.WriteLine(p1 == p2);      // true — comparação por valor
+
+// 'with' expression — cria uma cópia não destrutiva
+Ponto p3 = p1 with { X = 10.0 };  // p3 = (10, 4); p1 não muda
 ```
 
 **Como interpretar o exemplo:** Records são ideais quando o foco do tipo está nos dados e não na identidade da instância. O exemplo destaca igualdade por valor, cópia não destrutiva com `with` e sintaxe compacta. Para invariantes fortes, não exponha `init` que permita a uma expressão `with` contornar a validação.
@@ -3580,8 +3690,10 @@ public class Pedido
         public Pedido  Build()                       => new Pedido(this);
     }
 }
+```
 
-// Uso
+```csharp
+// Program.cs — montagem fluente
 var pedido = new Pedido.Builder("Ana", "Teclado")
     .ComQuantidade(2)
     .ComEndereco("Rua das Flores, 100")
@@ -3661,9 +3773,14 @@ public sealed class Catalogo
         set => _precos[sku] = value;
     }
 }
+```
 
+```csharp
+// Program.cs — o inicializador chama o setter do indexador
 var catalogo = new Catalogo { ["ABC"] = 19.90m }; // inicializador de indexador
 ```
+
+**Leitura guiada:** `Dinheiro` é um valor composto por quantia e moeda. `Equals(Dinheiro)` compara os dois componentes; `Equals(object?)` faz a ponte para APIs não genéricas; `GetHashCode` combina os mesmos componentes para uso em tabelas hash. `CompareTo` ordena primeiro por moeda e, quando as moedas são iguais, por valor. Os operadores `==` e `!=` reutilizam a mesma regra, evitando três definições de igualdade diferentes. Já `Catalogo` encapsula um dicionário: `this[string sku]` permite a sintaxe `catalogo["ABC"]`, e o inicializador chama o setter desse indexador.
 
 `Equals`, `GetHashCode` e os comparadores formam um contrato. Objetos iguais devem produzir o mesmo hash durante o período em que são usados como chave. Não altere os dados que participam da igualdade enquanto o objeto estiver em `Dictionary` ou `HashSet`. Para igualdade de referência explícita, use `ReferenceEquals`; para tipos orientados a dados, avalie `record` ou implemente `IEquatable<T>`.
 
@@ -3727,6 +3844,8 @@ public class Cachorro : Animal
         Console.WriteLine($"{Nome} foi buscar o objeto!");
 }
 ```
+
+**Leitura guiada:** o construtor de `Cachorro` chama `base(nome, idade)` antes de atribuir `Raca`, garantindo que a parte `Animal` seja inicializada. `virtual` autoriza especialização e `override` substitui o comportamento para instâncias de `Cachorro`. `Nome` continua acessível porque é público na classe base. Já `BuscarObjeto` existe somente em `Cachorro`; uma variável tipada como `Animal` não expõe esse membro sem verificar/converter o tipo concreto.
 
 Quando você escreve:
 
@@ -3821,10 +3940,15 @@ public static class CheckoutService
         pagavel.ProcessarPagamento(metodo);
     }
 }
+```
 
+```csharp
+// Program.cs — consumo pela abstração
 IPagavel pedido = new Pedido(199.90m);
 CheckoutService.Finalizar(pedido, "PIX");
 ```
+
+**Leitura guiada:** `Finalizar` recebe `IPagavel`, e não `Pedido`, portanto só usa capacidades prometidas pela interface. O membro estático é chamado no próprio contrato (`IPagavel.ValidarMetodo`); os membros de instância são despachados para o objeto concreto guardado em `pedido`. O formato `:C` exibe moeda conforme a cultura atual. A validação ocorre antes do cálculo e do efeito de processar o pagamento.
 
 Perceba o papel da variável `IPagavel pedido`: quando você usa uma referência do tipo interface, o compilador deixa acessível apenas o que faz parte do contrato. Isso reduz acoplamento e força o consumidor a depender somente do que foi prometido pela abstração.
 
@@ -3847,6 +3971,8 @@ public interface IParsableId<TSelf> where TSelf : IParsableId<TSelf>
     static abstract TSelf Parse(string value);
 }
 ```
+
+**Leitura guiada:** `TSelf` representa o próprio tipo que implementará a interface. A restrição `where TSelf : IParsableId<TSelf>` liga esse parâmetro ao contrato. `static abstract` exige que cada implementador forneça um método estático `Parse`; a chamada poderá ser feita em código genérico por meio de `TSelf.Parse(...)`. É um recurso avançado: para serviços comuns, membros de instância em interfaces continuam sendo a opção mais simples.
 
 Esse tipo de recurso aparece em cenários mais avançados, como matemática genérica, factories tipadas e APIs orientadas a constraints. Para júnior e pleno, o mais importante é entender que a ideia central da interface continua sendo: **definir um contrato reutilizável e implementável por múltiplos tipos**.
 
@@ -3878,11 +4004,16 @@ public class Distancia : IMetric, IImperial
     double IMetric.GetDistance()   => _metros;
     double IImperial.GetDistance() => _metros * 3.28084;
 }
+```
 
+```csharp
+// Program.cs — o cast escolhe o contrato e a unidade
 var distancia = new Distancia(10);
 Console.WriteLine(((IMetric)distancia).GetDistance());   // 10
 Console.WriteLine(((IImperial)distancia).GetDistance()); // 32.8084
 ```
+
+**Leitura guiada:** a classe mantém um único valor em metros, mas oferece duas interpretações do mesmo nome de método. `double IMetric.GetDistance()` pertence somente ao contrato métrico; a versão `IImperial` converte metros em pés. Como as implementações são explícitas, `distancia.GetDistance()` não compila. O cast para `IMetric` ou `IImperial` informa qual contrato — e, portanto, qual unidade — o chamador deseja.
 
 Quando a implementação é explícita:
 
@@ -4142,8 +4273,10 @@ public class BotaoComDados
     public void Enviar(string msg) =>
         MensagemEnviada?.Invoke(this, new MensagemEventArgs(msg));
 }
+```
 
-// Assinando e cancelando assinatura
+```csharp
+// Program.cs — assinando e cancelando assinatura
 var botao = new Botao();
 
 void Handler(object? sender, EventArgs e) =>
@@ -4182,6 +4315,8 @@ for (int i = 0; i < 3; i++)
 }
 ```
 
+**Leitura guiada:** `multiplicar` não guarda uma cópia do número `2`; ele captura a variável `fator`. Como `fator` muda para `3` antes da chamada, o resultado é `30`. No laço, `copia` cria uma variável diferente a cada iteração, e cada lambda captura a sua; ao executar `acoes`, os valores impressos serão `0`, `1` e `2`. Sem entender a captura, callbacks podem observar valores diferentes dos esperados.
+
 Capturas podem alocar e manter objetos vivos por mais tempo. Em callbacks duradouros, loops quentes e eventos, saiba o que está sendo capturado; uma lambda `static` proíbe captura e torna a intenção explícita.
 
 A mesma sintaxe de lambda também pode ser convertida em uma árvore de expressão, uma representação de dados inspecionável por bibliotecas:
@@ -4194,6 +4329,8 @@ Console.WriteLine(filtro.Body); // estrutura da expressão, não só código exe
 
 Func<Produto, bool> compilado = filtro.Compile();
 ```
+
+**Leitura guiada:** `Expression<Func<Produto, bool>>` não guarda apenas uma função pronta; guarda uma árvore que descreve “produto cujo preço é pelo menos 100”. `filtro.Body` permite inspecionar essa descrição. `Compile()` transforma a árvore em um delegate executável em memória. Providers de banco normalmente traduzem a árvore diretamente e não precisam chamar `Compile()`.
 
 Delegates representam comportamento executável. `Expression<TDelegate>` representa a estrutura da expressão e pode ser traduzida, por exemplo, por um provider `IQueryable<T>`. Nem toda construção da linguagem pode ser representada por expression trees; respeite as limitações e a capacidade do provider de traduzir a expressão.
 
@@ -4344,6 +4481,8 @@ var listas = new List<List<int>> { new(){1,2}, new(){3,4}, new(){5} };
 var flat   = listas.SelectMany(l => l).ToList(); // [1,2,3,4,5]
 ```
 
+**Leitura guiada:** cada grupo do bloco responde a uma pergunta diferente. `Where` preserva itens; `Select` muda seu formato; `OrderBy`/`ThenBy` definem critérios sucessivos; agregadores produzem um valor; `Any`/`All` respondem perguntas booleanas; `FirstOrDefault` tolera vários resultados, enquanto `SingleOrDefault` rejeita mais de um. `GroupBy` cria grupos, `Join` relaciona chaves das duas fontes, `To*` materializa em outra coleção, `Skip`/`Take` recorta posições e `SelectMany` achata as listas internas. A maioria das variáveis sem `To*` ainda representa uma consulta adiada.
+
 | Operador | Tipo | O que faz |
 |---|---|---|
 | `Where` | Filtro | Mantém elementos que satisfazem a condição |
@@ -4420,6 +4559,8 @@ foreach (int numero in NumerosParesAte(10))
     Console.WriteLine(numero);
 ```
 
+**Leitura guiada:** chamar `NumerosParesAte(10)` cria uma sequência, mas não executa todo o `for` imediatamente. Cada avanço do `foreach` retoma o método até o próximo `yield return`; somente os valores pares são entregues. Depois de `10`, o laço termina e a enumeração se encerra. Enumerar novamente executa o método novamente.
+
 O `yield return` é importante porque mostra que uma sequência pode ser **gerada sob demanda**, em vez de completamente construída antes do uso.
 
 #### Quando expor `IEnumerable<T>`?
@@ -4444,6 +4585,8 @@ public sealed class CatalogoProdutos
     public IEnumerable<string> Listar() => _produtos;
 }
 ```
+
+**Leitura guiada:** a classe usa `List<string>` internamente porque precisa adicionar itens. O método `Listar` expõe apenas `IEnumerable<string>`, então o consumidor pode percorrer os produtos, mas não recebe pela assinatura operações como `Add` ou acesso por índice. Isso reduz o que a API promete; não torna a lista internamente imutável nem cria uma cópia automática.
 
 Isso é melhor do que retornar `List<T>` quando o chamador não precisa de operações específicas da lista.
 
@@ -4572,6 +4715,8 @@ Console.WriteLine("Query criada.");
 foreach (int item in consulta)
     Console.WriteLine($"Resultado: {item}");
 ```
+
+**Leitura guiada:** `Where` guarda a fonte e a função de filtro, mas ainda não percorre `origem`. Por isso `"Query criada."` aparece antes das mensagens `"Filtrando ..."`. O `foreach` dispara a enumeração; para cada número, a lambda escreve a mensagem e devolve se ele é par. Uma segunda enumeração repetiria esses efeitos, enquanto `ToList()` executaria uma vez e guardaria os resultados.
 
 A saída mostra que a filtragem só acontece durante a enumeração.
 
@@ -4732,6 +4877,8 @@ origem.Add("C");
 Console.WriteLine(somenteLeitura.Count); // 3
 ```
 
+**Leitura guiada:** `Add` inclui no fim, `Insert` desloca os elementos a partir do índice escolhido e `AddRange` adiciona uma sequência. `Remove("Ana")` procura pelo valor; depois dessa remoção, `RemoveAt(0)` elimina o elemento que passou a ocupar o primeiro índice. As duas chamadas de `Sort` alteram a própria lista: a segunda usa um comparador que ordena pelo comprimento das strings. Definir `capacity: 1000` reserva espaço interno, mas mantém `Count` igual a zero. Por fim, `AsReadOnly` cria uma visão sem métodos de escrita; como ela ainda observa `origem`, a contagem passa para 3 após `origem.Add("C")`.
+
 Quando `List<T>` é excelente:
 
 - você precisa de uma sequência ordenada por posição;
@@ -4877,6 +5024,8 @@ foreach (int item in matriz)
     Console.WriteLine(item);
 ```
 
+**Leitura guiada:** `vetor` é linear; `matriz` é um único array com duas dimensões; `irregular` é um array cujos elementos são outros arrays e, por isso, as linhas podem ter tamanhos diferentes. `^1` significa “último índice”. O range `1..3` inclui os índices 1 e 2, mas exclui 3. Em `[0, .. vetor, 50]`, `.. vetor` espalha todos os elementos entre o primeiro e o último valor.
+
 Não confunda **somente leitura** com **imutabilidade**:
 
 - `IReadOnlyList<T>` e `ReadOnlyCollection<T>` restringem a API visível, mas a fonte subjacente pode continuar mudando;
@@ -4897,6 +5046,8 @@ var fila = new ConcurrentQueue<int>();
 fila.Enqueue(1);
 fila.TryDequeue(out int primeiro);
 ```
+
+**Leitura guiada:** `nomes.Add("Carlos")` não modifica `nomes`; ele devolve a nova coleção `outros`. `ToFrozenSet` constrói um conjunto preparado para muitas leituras e usa comparação ordinal. `ConcurrentQueue<T>` permite enfileirar e retirar com operações thread-safe; `TryDequeue` informa pelo `bool` se encontrou um item e grava esse item no parâmetro `out`. Isso não torna uma sequência de várias decisões automaticamente atômicas.
 
 Índices `^` contam a partir do fim e ranges `..` descrevem intervalos com limite final exclusivo. Em arrays, uma fatia cria outro array e copia elementos; em `Span<T>`, a fatia continua sendo uma visão. Essa diferença importa em caminhos de alta frequência e deve ser escolhida conscientemente.
 
@@ -5069,6 +5220,8 @@ await foreach (int numero in ContarAsync(10))
     Console.WriteLine(numero);
 ```
 
+**Leitura guiada:** `ContarAsync` não monta uma lista de dez itens. A cada volta, verifica cancelamento, espera sem bloquear com `Task.Delay` e entrega um item com `yield return`. `[EnumeratorCancellation]` conecta o token fornecido pelo consumidor à enumeração. `await foreach` pede o próximo item, aguarda quando necessário e imprime cada número assim que ele chega.
+
 Cancelamento é cooperativo. Quem cria um `CancellationTokenSource` controla e descarta essa fonte; métodos consumidores recebem um `CancellationToken`, propagam-no às operações internas e não o transformam silenciosamente em “sucesso”. Para timeout mais cancelamento externo, crie uma fonte vinculada e use `CancelAfter`.
 
 Use `await using` para `IAsyncDisposable`, quando a liberação também exige I/O. `async void` deve ficar restrito a event handlers exigidos pelo contrato; ele não pode ser aguardado e suas exceções não são observadas como as de `Task`. Em bibliotecas gerais, não presuma que existe `SynchronizationContext`; `ConfigureAwait(false)` é uma decisão de biblioteca, não uma regra obrigatória para todo aplicativo moderno.
@@ -5106,7 +5259,10 @@ public class Repositorio<T> where T : class
     public T? Buscar(Predicate<T> criterio)   => _itens.Find(criterio);
     public IEnumerable<T> BuscarTodos()      => _itens.AsReadOnly();
 }
+```
 
+```csharp
+// Program.cs — o cliente escolhe o argumento de tipo
 // O código cliente especifica o tipo concreto entre parênteses angulares
 var repo = new Repositorio<Usuario>();
 repo.Adicionar(new Usuario()); // Compila normalmente
@@ -5141,27 +5297,28 @@ As restrições (*constraints*) informam ao compilador sobre as capacidades que 
 // where T : default       — resolve override/implementação ambígua entre class e struct
 // where T : allows ref struct — anti-constraint: T também pode ser byref-like
 
-public T Criar<T>() where T : new() => new T();
-
-// Combinação de múltiplas restrições (new() fica por último, salvo anti-constraints)
-public void Processar<T>(T item)
-    where T : class, IComparable<T>, new()
+public static class UtilitariosGenericos
 {
-    // O compilador permite o uso de CompareTo e instanciação direta porque T foi restringido
-    if (item.CompareTo(new T()) > 0) { }
-}
+    public static T Criar<T>() where T : new() => new T();
 
-// Método genérico independente de classe
-public static T PrimeiroOuPadrao<T>(IEnumerable<T> colecao, T valorPadrao)
-{
-    foreach (var item in colecao)
-        return item;
-    return valorPadrao;
-}
+    // Combinação de múltiplas restrições (new() fica por último, salvo anti-constraints)
+    public static void Processar<T>(T item)
+        where T : class, IComparable<T>, new()
+    {
+        // O compilador permite CompareTo e new T() porque T foi restringido.
+        if (item.CompareTo(new T()) > 0) { }
+    }
 
+    public static T PrimeiroOuPadrao<T>(IEnumerable<T> colecao, T valorPadrao)
+    {
+        foreach (var item in colecao)
+            return item;
+        return valorPadrao;
+    }
+}
 ```
 
-**Como interpretar o exemplo:** Aplicar uma restrição aumenta o espectro de operações permitidas dentro do escopo genérico. Ao declarar `where T : IComparable<T>`, você estabelece um contrato mecânico com o compilador: o universo de tipos aceitos diminui, mas em contrapartida, o código ganha o direito de chamar `.CompareTo()` diretamente na variável do tipo `T`, eliminando a necessidade de reflexão ou *casts* inseguros em tempo de execução.
+**Leitura guiada:** em `Criar<T>`, `where T : new()` garante que `new T()` é possível. Em `Processar<T>`, `class` aceita apenas tipos de referência, `IComparable<T>` garante a existência de `CompareTo` e `new()` garante o construtor sem parâmetros. `PrimeiroOuPadrao<T>` não precisa de restrição porque apenas recebe, percorre e devolve valores; ele não chama nenhum membro específico de `T`. Restringir `T` diminui os tipos aceitos, mas permite ao compilador liberar operações que agora são comprovadamente seguras.
 
 Interfaces com membros `static abstract` permitem algoritmos genéricos que usam operadores e outros membros estáticos, base da generic math:
 
@@ -5171,6 +5328,8 @@ using System.Numerics;
 static T Somar<T>(T esquerda, T direita)
     where T : IAdditionOperators<T, T, T> => esquerda + direita;
 ```
+
+**Leitura guiada:** a interface `IAdditionOperators<T, T, T>` declara que dois valores `T` podem ser somados e produzir outro `T`. Por causa dessa restrição, o operador `esquerda + direita` compila sem saber antecipadamente se `T` será `int`, `decimal` ou um tipo numérico próprio. Sem a restrição, o compilador não poderia presumir que todo tipo possui `+`.
 
 Restrições não são só documentação: elas determinam quais operações o corpo genérico pode compilar e fazem parte do contrato da API. `notnull` produz aviso no contexto anulável; `class`, `class?`, `struct` e `unmanaged` têm regras de exclusão e ordem próprias.
 
@@ -5443,6 +5602,8 @@ Attributes gravam metadados declarativos para compiladores, ferramentas, reflect
 Attributes anexam metadados declarativos a assemblies, módulos, tipos, membros, parâmetros, retornos e outros alvos permitidos. O compilador grava esses dados no assembly; a ferramenta que reconhece o atributo decide o efeito. `[Obsolete]` é interpretado pelo compilador, enquanto os atributos de JSON são interpretados pelo serializador. Portanto, decorar um membro não executa automaticamente uma lógica em runtime.
 
 ```csharp
+using System.Text.Json.Serialization;
+
 public class Exemplo
 {
     [Obsolete("Use NovoMetodo() em vez deste.", error: false)] // error: true lança erro de compilação
@@ -5450,14 +5611,6 @@ public class Exemplo
 
     public void NovoMetodo() { }
 }
-
-// Suprime aviso específico do compilador
-#pragma warning disable CS0618
-new Exemplo().MetodoAntigo();
-#pragma warning restore CS0618
-
-// Atributos de serialização
-using System.Text.Json.Serialization;
 
 public class Produto
 {
@@ -5469,6 +5622,13 @@ public class Produto
 
     public DateTime DataCriacao { get; set; }
 }
+```
+
+```csharp
+// Program.cs — supressão estreita ao redor do uso legado
+#pragma warning disable CS0618
+new Exemplo().MetodoAntigo();
+#pragma warning restore CS0618
 ```
 
 **Como interpretar o exemplo:** Attribute é metadado declarativo: ele não muda o comportamento por si só, mas informa a compiladores, bibliotecas e frameworks como tratar aquele membro. O exemplo mostra usos comuns como orientação do compilador com `[Obsolete]` e orientação de serialização com `System.Text.Json`.
@@ -5499,20 +5659,26 @@ public class LogAttribute : Attribute
     public LogAttribute(string descricao) => Descricao = descricao;
 }
 
-// Uso
-[Log("Operação de busca", Cronometrar = true)]
-public Usuario BuscarUsuario(int id)
+public sealed class MinhaClasse
 {
-    // ...
-    return new Usuario();
+    [Log("Operação de busca", Cronometrar = true)]
+    public Usuario BuscarUsuario(int id)
+    {
+        // Consulta omitida para destacar o atributo.
+        return new Usuario();
+    }
 }
+```
 
-// Lendo via Reflection em tempo de execução
+```csharp
+// Program.cs — leitura do atributo por reflection
 var metodo = typeof(MinhaClasse).GetMethod("BuscarUsuario");
 var attr   = metodo?.GetCustomAttribute<LogAttribute>();
 if (attr != null)
     Console.WriteLine($"Log: {attr.Descricao}, Cronometrar: {attr.Cronometrar}");
 ```
+
+**Leitura guiada:** `AttributeUsage` permite aplicar `LogAttribute` a métodos ou classes, no máximo uma vez por alvo, e permite herança do metadado. `"Operação de busca"` alimenta o construtor; `Cronometrar = true` é um argumento nomeado que atribui a propriedade. A aplicação do atributo não cria logs sozinha. No segundo bloco, reflection localiza o método, instancia/lê o atributo e só então uma infraestrutura poderia agir sobre seus valores.
 
 **Como interpretar o exemplo:** Criar um atributo customizado é enriquecer o código com intenção que pode ser lida depois por reflexão, tooling ou infraestrutura própria. Esse padrão é valioso quando você quer descrever comportamento de forma declarativa em vez de espalhar configurações manuais.
 
@@ -5546,6 +5712,8 @@ static void Exigir(
 int quantidade = -1;
 Exigir(quantidade >= 0); // o compilador fornece "quantidade >= 0" e a origem
 ```
+
+**Leitura guiada:** o chamador informa apenas a condição. Como ela é falsa, `Exigir` lança uma exceção. Antes da chamada, o compilador preenche os parâmetros opcionais: `expressao` recebe o texto `"quantidade >= 0"`, `membro` recebe o nome do método chamador, `arquivo` recebe o caminho do fonte e `linha` recebe o número da linha. `Path.GetFileName` reduz o caminho para apenas o nome do arquivo antes de montar a mensagem.
 
 `CallerArgumentExpression` deve referenciar outro parâmetro e captura a expressão textual enviada a ele; não avalia o argumento novamente. `CallerMemberName`, `CallerFilePath` e `CallerLineNumber` capturam nome, caminho e linha da chamada. O caminho pode revelar detalhes do ambiente de build, então avalie o que chega aos logs. Atributos genéricos, disponíveis desde C# 11, permitem declarar `MeuAtributo<T>` quando o tipo é parte natural do metadado. `[ModuleInitializer]` oferece inicialização antecipada de um módulo, mas cria comportamento implícito e deve ficar restrito a infraestrutura que realmente precise dele.
 
@@ -5603,7 +5771,10 @@ public class Tema
 {
     public string Nome { get; set; } = string.Empty;
 }
+```
 
+```csharp
+// Program.cs — observação sem manter o objeto vivo
 Tema? tema = new Tema { Nome = "DarkTheme" };
 var weak = new WeakReference<Tema>(tema);
 
@@ -5625,6 +5796,8 @@ else
     Console.WriteLine("O objeto já foi coletado.");
 }
 ```
+
+**Leitura guiada:** `weak` recebe uma referência fraca ao mesmo objeto inicialmente guardado por `tema`. `TryGetTarget` testa e recupera o alvo em uma única operação segura; dentro do `if`, `alvoVivo` é uma referência forte temporária. A atribuição `tema = null` remove apenas aquela referência forte. Ela não força uma coleta e, por isso, a segunda consulta pode entrar em qualquer um dos ramos. Não escreva lógica funcional que dependa de o GC coletar o objeto em um momento específico.
 
 Para entender `WeakReference<T>`, primeiro vale separar dois conceitos:
 
@@ -5818,8 +5991,10 @@ public abstract record Resultado<T>
     public sealed record Sucesso(T Valor) : Resultado<T>;
     public sealed record Falha(string Mensagem, Exception? Causa = null) : Resultado<T>;
 }
+```
 
-// Uso com pattern matching
+```csharp
+// Program.cs — uso com pattern matching
 Resultado<int> resultado = new Resultado<int>.Sucesso(42);
 
 string descricao = resultado switch
@@ -5864,10 +6039,15 @@ public sealed class ArquivoDeSaida : IDisposable
         _stream = null; // descarte idempotente
     }
 }
+```
 
+```csharp
+// Program.cs — uso da classe descartável
 using var saida = new ArquivoDeSaida("dados.bin");
 saida.Escrever([1, 2, 3]);
 ```
+
+**Leitura guiada:** o construtor abre o stream e a classe passa a ser sua proprietária. `Escrever` verifica se o objeto já foi descartado antes de usar o stream. `Dispose` fecha o stream e grava `null`; por isso uma segunda chamada não tenta fechar o mesmo recurso novamente. `using var` garante a chamada a `Dispose` ao sair do escopo, inclusive quando ocorre uma exceção. O GC cuidaria da memória do objeto, mas não oferece esse momento determinístico para fechar o arquivo.
 
 Ownership responde “quem deve descartar?”. A API que cria ou recebe um recurso precisa documentar se transfere essa responsabilidade. Implemente `IDisposable` quando o tipo possui recursos descartáveis; use `IAsyncDisposable` quando a liberação precisa ser assíncrona. Finalizers são caros e só devem existir quando o tipo possui diretamente recurso nativo que exige fallback; prefira encapsular handles nativos com `SafeHandle`. Não chame `GC.Collect()` como otimização rotineira.
 
@@ -6046,6 +6226,8 @@ await foreach (int item in canal.Reader.ReadAllAsync())
     Console.WriteLine(item);
 ```
 
+**Leitura guiada:** `Lock` protege o dicionário compartilhado enquanto `Atualizar` grava uma chave. O canal limitado aceita no máximo 100 itens pendentes; quando estiver cheio, `WriteAsync` pode aguardar espaço, aplicando *backpressure*. `Complete` informa que nenhum novo item será escrito, e `ReadAllAsync` continua lendo os itens restantes até o canal terminar. O `await foreach` espera assincronamente por novos valores sem manter uma thread bloqueada apenas para a espera.
+
 `ConcurrentDictionary`, `ConcurrentQueue` e semelhantes oferecem operações individuais thread-safe. Para uma regra que envolve ler, decidir e escrever, use as operações atômicas da coleção (`GetOrAdd`, `AddOrUpdate`) ou sincronização externa; não componha chamadas independentes supondo atomicidade. `Channel<T>` modela produtor/consumidor assíncrono e, quando limitado, fornece backpressure.
 
 Deadlocks surgem quando fluxos aguardam recursos uns dos outros. Mantenha ordem global de aquisição, reduza a região crítica, não execute I/O nem callbacks arbitrários dentro de `lock` e nunca use `await` no corpo de um `lock`. Para exclusão assíncrona, `SemaphoreSlim` costuma ser a primitiva adequada. Imutabilidade e isolamento de estado frequentemente são melhores que adicionar mais locks.
@@ -6206,7 +6388,10 @@ O gerador recebe uma visão do código e de entradas adicionais durante o build;
 [JsonSerializable(typeof(Usuario))]
 [JsonSerializable(typeof(List<Usuario>))]
 public partial class MeuJsonContext : JsonSerializerContext { }
+```
 
+```csharp
+// Program.cs — consumo dos metadados gerados
 // O contexto gerado fornece metadados conhecidos em compile-time.
 string json = JsonSerializer.Serialize(usuario, MeuJsonContext.Default.Usuario);
 ```
@@ -6265,6 +6450,8 @@ public static unsafe class OperacaoBaixoNivel
 }
 ```
 
+**Leitura guiada:** `[InlineArray(16)]` manda o compilador tratar `Buffer16` como armazenamento contíguo para 16 bytes; `_element0` é o único campo que o autor declara, e os demais elementos são projetados pelo compilador. Em `delegate* unmanaged[Cdecl]<byte*, int, int>`, os tipos antes do último são parâmetros (`byte*` e `int`) e o último `int` é o retorno. `unmanaged[Cdecl]` informa a convenção de chamada nativa. O campo apenas declara a assinatura; antes de invocá-lo, código de interop teria de atribuir um endereço válido.
+
 > **Referências oficiais:** [Unsafe code, pointers and function pointers](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/unsafe-code), [`fixed` statement](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/statements/fixed), [Inline arrays](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/struct#inline-arrays)
 
 ---
@@ -6284,9 +6471,11 @@ internal static partial class NativeMethods
     [LibraryImport("kernel32.dll", EntryPoint = "DeleteFileW", SetLastError = true,
         StringMarshalling = StringMarshalling.Utf16)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    internal static partial bool DeleteFile(string fileName);
+internal static partial bool DeleteFile(string fileName);
 }
 ```
+
+**Leitura guiada:** `LibraryImport` associa o método C# à função nativa `DeleteFileW` de `kernel32.dll`. `StringMarshalling.Utf16` define como a string cruza a fronteira. `[return: MarshalAs(UnmanagedType.Bool)]` descreve como converter o retorno nativo para `bool`. O método é `partial` porque o source generator cria a implementação que faz a chamada; o código escrito aqui fornece o contrato, não o corpo. É um exemplo específico de Windows e não deve ser executado com um caminho real sem intenção de excluir o arquivo.
 
 Quando disponível, prefira `[LibraryImport]` a `[DllImport]` em .NET moderno: o source generator cria o código de marshalling em compilação, melhora diagnósticos e é mais adequado a trimming e Native AOT. O projeto precisa permitir unsafe blocks para o gerador. Nem todo tipo ou opção de `[DllImport]` tem tradução direta; leia as diferenças oficiais.
 
@@ -6766,6 +6955,8 @@ private void Awake() => _rb = GetComponent<Rigidbody2D>();
 private void Update() => _rb.linearVelocity = Vector2.zero; // direto ao campo
 ```
 
+**Leitura guiada:** `Update` é chamado uma vez por frame. Na primeira versão, `GetComponent<Rigidbody2D>()` procura o componente repetidamente. Na segunda, `Awake` faz a procura uma única vez e guarda a referência em `_rb`; os `Update` seguintes acessam diretamente esse campo. O ganho deve ser confirmado no Profiler, sobretudo quando há muitos objetos ou uma chamada muito frequente.
+
 **2. Evitar alocações no loop de jogo:**
 
 ```csharp
@@ -6785,6 +6976,8 @@ if (vida != _ultimaVida)
 }
 ```
 
+**Leitura guiada:** `Vector3` é um `struct`; criar o valor local `pos` não significa, por si só, criar um objeto no heap gerenciado. Já strings são imutáveis: a concatenação e a interpolação produzem um novo texto. `_ultimaVida` funciona como uma memória do valor exibido; a UI só recebe uma nova string quando `vida` realmente muda. Em um script completo, o segundo `if` também precisa estar dentro de um método, como `Update`.
+
 **3. Comparação de tags pela API específica:**
 
 ```csharp
@@ -6794,6 +6987,8 @@ if (colisao.gameObject.tag == "Inimigo") { }
 // Preferível: expressa a operação diretamente e valida a tag configurada.
 if (colisao.gameObject.CompareTag("Inimigo")) { }
 ```
+
+**Leitura guiada:** as duas condições perguntam se o objeto possui a tag `Inimigo`. `CompareTag` comunica essa intenção diretamente à engine e sinaliza uma tag inexistente ou não configurada, evitando que a comparação seja confundida com uma operação genérica entre strings.
 
 **4. Object Pooling — reutilização de objetos:**
 
@@ -6856,6 +7051,15 @@ public class AtirarProjeteis : MonoBehaviour
 }
 ```
 
+**Leitura guiada:**
+
+1. O construtor cria `tamanhoInicial` instâncias, desativa cada uma e as coloca na fila `_pool`.
+2. `Obter` retira (`Dequeue`) um item e o ativa. Se a fila estiver vazia, cria outro antes de retirá-lo.
+3. `Devolver` desativa o item e o coloca no fim da fila (`Enqueue`) para reutilização.
+4. `AtirarProjeteis.Awake` prepara um pool de 20 projéteis; `Atirar` pede um deles e delega a inicialização ao próprio `Projetil`.
+
+O exemplo pressupõe que `Projetil.Iniciar` saiba devolver o projétil quando ele terminar. Em um projeto real, também restaure posição, velocidade, temporizadores, inscrições em eventos e qualquer outro estado antes da reutilização. Pooling troca picos de `Instantiate`/`Destroy` por memória reservada e gestão de ciclo de vida; ele não é automaticamente melhor para objetos raros.
+
 **5. Jobs System e Burst Compiler — computação paralela de alta performance:**
 
 ```csharp
@@ -6914,6 +7118,8 @@ public class SistemaParticulas : MonoBehaviour
 }
 ```
 
+**Leitura guiada:** `IJobParallelFor.Execute(int i)` processa um índice; por isso cada execução atualiza `Posicoes[i]` com velocidade multiplicada pelo tempo do frame. `Schedule` agenda o trabalho, e `64` é o tamanho de lote usado pelo agendador — não uma promessa de 64 itens por thread. `Complete` espera o job terminar antes de o código continuar a usar os dados. Como `NativeArray<T>` usa memória nativa, o GC não a libera: `OnDestroy` verifica `IsCreated` e chama `Dispose`. O atributo `[BurstCompile]` permite que o Burst otimize código compatível, mas não torna qualquer API do Unity válida dentro de um job.
+
 **Como interpretar o exemplo:** Todos os exemplos desta seção giram em torno da mesma regra: o frame loop amplifica pequenos custos porque eles se repetem o tempo todo. Cache de componentes, redução de alocação, pooling e jobs existem para tirar trabalho caro do caminho mais quente do jogo.
 
 ---
@@ -6944,10 +7150,14 @@ public class GerenciadorDeJogo : MonoBehaviour
 
     public void CarregarProximaFase() { /* ... */ }
 }
+```
 
-// Uso em outros scripts
+```csharp
+// Dentro de um método de outro script:
 GerenciadorDeJogo.Instancia.CarregarProximaFase();
 ```
+
+**Leitura guiada:** `Instancia` é compartilhada pela classe inteira. No `Awake`, uma segunda instância destrói o próprio `GameObject`; a primeira se registra e `DontDestroyOnLoad` a preserva durante a troca de cenas. O `null!` apenas silencia a análise de nulabilidade do compilador: ele não cria o objeto nem impede acesso antes de `Awake`. Por isso, ordem de inicialização, reinício de play mode e testes precisam fazer parte do contrato desse Singleton.
 
 **State Machine:**
 
@@ -6973,14 +7183,14 @@ public class EstadoEmPe : EstadoJogador
     {
         if (Input.GetButton("Jump"))
             Jogador.TrocarEstado(new EstadoPulando(Jogador));
-        if (Mathf.Abs(Input.GetAxisRaw("Horizontal")) > 0.1f)
+        else if (Mathf.Abs(Input.GetAxisRaw("Horizontal")) > 0.1f)
             Jogador.TrocarEstado(new EstadoCorrendo(Jogador));
     }
 }
 
 public class Jogador : MonoBehaviour
 {
-    public Animator Animator { get; private set; }
+    public Animator Animator { get; private set; } = null!;
     private EstadoJogador _estado;
 
     private void Awake()
@@ -7000,6 +7210,8 @@ public class Jogador : MonoBehaviour
     }
 }
 ```
+
+**Leitura guiada:** `EstadoJogador` define as três operações que todo estado deve oferecer: entrar, atualizar e sair. `Jogador.Update` não contém todas as regras; ele encaminha a execução ao estado atual. `TrocarEstado` preserva uma ordem importante: encerra o estado antigo, troca a referência e inicializa o novo. Em `EstadoEmPe`, `else if` impede duas transições no mesmo frame. `EstadoPulando` e `EstadoCorrendo` representam classes análogas omitidas para manter o exemplo curto.
 
 **Observer com C# Events:**
 
@@ -7025,6 +7237,8 @@ public class PainelPontuacao : MonoBehaviour
     private void AtualizarPainel(int novos) => /* atualizar UI */ Debug.Log(novos);
 }
 ```
+
+**Leitura guiada:** `event Action<int>?` permite que assinantes recebam a nova pontuação sem que `EventosCentral` conheça cada painel. O operador `?.Invoke(pontos)` só dispara o evento quando existe ao menos um assinante. `PainelPontuacao` adiciona seu método com `+=` em `OnEnable` e remove exatamente o mesmo método com `-=` em `OnDisable`; esse pareamento evita callbacks duplicados e chamadas para um componente desativado. Como o publicador é `static`, ele também cria estado global e exige cuidado extra em reinícios, testes e troca de cenas.
 
 **Como interpretar o exemplo:** Os padrões apresentados aparecem muito em jogos porque estados, eventos e objetos de vida curta precisam ser coordenados o tempo inteiro. O mais importante não é decorar os nomes, e sim entender o problema que cada padrão resolve e o custo que ele traz.
 
@@ -7094,6 +7308,8 @@ public partial class Inimigo : Node2D
     }
 }
 ```
+
+**Leitura guiada:** `[Export]` expõe valores ao editor, enquanto os métodos `_Ready`, `_Process` e `_PhysicsProcess` são callbacks chamados pela engine em momentos diferentes. O movimento lê a propriedade `Velocity`, altera a cópia local e a atribui de volta antes de `MoveAndSlide`. No segundo tipo, `[Signal]` faz o gerador de código criar o signal `Morreu`; `EmitSignal` publica o evento com `100` pontos. São duas classes independentes e normalmente ficam em arquivos próprios, com nome compatível com o script associado pela engine.
 
 **Como interpretar o exemplo:** Mudar de engine não apaga os fundamentos da linguagem; o que muda é o vocabulário do runtime e do editor. Quem entende bem ciclo de vida, callbacks e composição em C# se adapta muito melhor às diferenças entre Unity e Godot.
 
@@ -7264,6 +7480,8 @@ public sealed class EfOrderRepository : IOrderRepository
 }
 ```
 
+**Leitura guiada:** a interface fica no núcleo e usa apenas conceitos do domínio (`Order`, `OrderId`) e abstrações gerais (`Task`). A classe de infraestrutura declara `: IOrderRepository`, assumindo a responsabilidade de traduzir essas operações para o mecanismo de persistência. Os `NotImplementedException` são marcadores didáticos, não uma implementação de repositório: devem ser substituídos por consulta, rastreamento, transação e cancelamento adequados antes de produção.
+
 O benefício é proteger regras de negócio contra detalhes técnicos. O custo é mais abstração. Em sistemas pequenos, isso pode ser exagero; em sistemas com domínio complexo, integrações e vida longa, costuma pagar o investimento.
 
 **Fonte oficial:** Microsoft Learn — [Common web application architectures](https://learn.microsoft.com/en-us/dotnet/architecture/modern-web-apps-azure/common-web-application-architectures).
@@ -7308,6 +7526,8 @@ public readonly record struct Money
     }
 }
 ```
+
+**Leitura guiada:** `readonly record struct` cria um valor pequeno, não anulável por padrão e com igualdade baseada nos componentes. O construtor impede quantia negativa e moeda ausente antes de atribuir as propriedades somente leitura. Assim, uma instância válida não pode ser alterada depois. O exemplo ainda é mínimo: operações entre moedas diferentes exigiriam uma regra explícita, e códigos de moeda reais merecem normalização e validação de domínio.
 
 O ponto não é usar `record` porque é moderno. O ponto é representar um conceito do domínio com igualdade por valor e invariantes claras.
 
@@ -7468,6 +7688,8 @@ public interface ICustomerRepository
 }
 ```
 
+**Leitura guiada:** os nomes dos métodos descrevem consultas relevantes ao negócio em vez de repetir operações genéricas como `Add` ou `GetAll`. `Task<Customer?>` informa que a busca é assíncrona e pode não encontrar cliente; `Task<IReadOnlyList<Customer>>` promete uma lista consultável por índice sem expor mutação pelo contrato. Em uma API real, operações de I/O também costumam aceitar `CancellationToken`.
+
 O critério é simples:
 
 - se o padrão dá nome a uma responsabilidade real, ele ajuda;
@@ -7508,6 +7730,8 @@ dotnet test
 dotnet publish -c Release
 ```
 
+**Leitura guiada:** `--info` diagnostica SDKs, runtimes e ambiente; `--list-sdks` mostra apenas SDKs instalados. `dotnet new` cria o projeto `MinhaApp`. Em seguida, `restore` resolve pacotes, `build` compila, `run --project` executa o projeto indicado e `test` procura projetos de teste no escopo atual. `publish -c Release` produz os arquivos de implantação. Os comandos são independentes: a lista apresenta um mapa da CLI, não uma sequência obrigatória para todo repositório.
+
 O SDK pode construir projetos para runtimes que não estão instalados como runtime compartilhado, desde que os targeting packs estejam disponíveis. Fixe a família de SDK para builds reproduzíveis com `global.json` quando o repositório exigir isso. Arquivos C# isolados também podem ser executados como file-based apps nos SDKs que oferecem esse recurso, mas projetos continuam sendo a unidade adequada para aplicações maiores.
 
 `dotnet run` é conveniência de desenvolvimento: restaura e compila quando necessário antes de executar. Em automação, separe as etapas para localizar falhas e use `--no-restore`/`--no-build` apenas quando a etapa anterior já produziu exatamente os ativos esperados. A versão do SDK selecionada não é necessariamente igual ao TFM nem ao runtime instalado no destino.
@@ -7536,6 +7760,8 @@ Projetos SDK-style usam MSBuild e deixam grande parte das convenções implícit
 </Project>
 ```
 
+**Leitura guiada:** `Project` seleciona o SDK base. Dentro de `PropertyGroup`, `OutputType=Exe` cria uma aplicação executável, e `TargetFramework=net10.0` escolhe o contrato de APIs do .NET 10. `Nullable` habilita a análise de referências anuláveis; `ImplicitUsings` injeta imports comuns; `TreatWarningsAsErrors` faz warnings falharem o build; `AnalysisLevel` seleciona regras recomendadas; e `GenerateDocumentationFile` gera o XML dos comentários `///`. Cada propriedade configura o build — nenhuma delas instala o runtime no computador de destino.
+
 `TargetFramework` escolhe as APIs disponíveis e influencia a versão C# padrão. `RuntimeIdentifier`, como `linux-x64`, identifica um destino concreto de publicação; não é um TFM. `Nullable` e `ImplicitUsings` são independentes. Em bibliotecas que atendem vários consumidores, `TargetFrameworks` permite multi-targeting, mas cada alvo aumenta a matriz de build e teste.
 
 Prefira a versão de linguagem padrão associada ao TFM. Não use `latest` para “ter sempre o mais novo”: builds podem mudar conforme a máquina. `preview` deve ser uma escolha explícita, com seus riscos de suporte. Propriedades comuns a vários projetos pertencem frequentemente a `Directory.Build.props`; versões centralizadas de pacotes podem ficar em `Directory.Packages.props`.
@@ -7557,6 +7783,8 @@ dotnet add src/MinhaApp/MinhaApp.csproj reference src/MinhaLib/MinhaLib.csproj
 dotnet add src/MinhaApp/MinhaApp.csproj package Microsoft.Extensions.Hosting
 dotnet list src/MinhaApp/MinhaApp.csproj package --outdated
 ```
+
+**Leitura guiada:** o primeiro comando cria o arquivo de solution; o segundo registra o projeto nela. `reference` cria uma dependência compilável entre `MinhaApp` e `MinhaLib`; `package` adiciona uma dependência NuGet externa; `list ... --outdated` consulta versões mais novas sem atualizar automaticamente. Os caminhos são relativos à pasta em que a CLI foi executada.
 
 Os comandos também possuem formas noun-first nos SDKs atuais; consulte `dotnet help` da versão fixada pelo projeto. Não edite manualmente `obj/project.assets.json`. Faça restore a partir de fontes confiáveis, fixe versões de dependências de forma revisável e trate atualizações e advisories como trabalho contínuo. Uma referência transitiva não deve virar contrato acidental: declare diretamente o pacote cuja API seu projeto usa.
 
@@ -7610,6 +7838,8 @@ dotnet_diagnostic.CA2016.severity = warning
 dotnet_style_require_accessibility_modifiers = always:suggestion
 ```
 
+**Leitura guiada:** `root = true` impede que outro `.editorconfig` de uma pasta superior continue sendo combinado. `[*.cs]` limita as regras aos arquivos C#. As duas primeiras opções usam quatro espaços; `CA2000` e `CA2016` são elevadas a warning; a última regra sugere modificadores de acesso explícitos. A parte antes de `:` define o valor da preferência e a parte depois define sua severidade.
+
 `.editorconfig` controla estilo e regras por diretório/arquivo. Propriedades MSBuild, como `AnalysisLevel`, controlam o conjunto de análise. Não transforme todo warning em erro sem uma política de baseline e atualização; também não suprima diagnósticos sem registrar a justificativa mais estreita possível.
 
 Em APIs públicas, use comentários XML (`///`) para propósito, parâmetros, retornos, nulabilidade, exceções e requisitos de thread safety relevantes. Documentação não compensa nomes ruins, mas preserva decisões que a assinatura sozinha não consegue expressar.
@@ -7622,11 +7852,19 @@ Em APIs públicas, use comentários XML (`///`) para propósito, parâmetros, re
 /// <exception cref="ArgumentOutOfRangeException">
 /// Lançada quando um argumento está fora do intervalo documentado.
 /// </exception>
-public static decimal AplicarDesconto(decimal subtotal, decimal percentual) =>
-    subtotal >= 0m && percentual is >= 0m and <= 1m
-        ? subtotal * (1m - percentual)
-        : throw new ArgumentOutOfRangeException();
+public static decimal AplicarDesconto(decimal subtotal, decimal percentual)
+{
+    if (subtotal < 0m)
+        throw new ArgumentOutOfRangeException(nameof(subtotal));
+
+    if (percentual is < 0m or > 1m)
+        throw new ArgumentOutOfRangeException(nameof(percentual));
+
+    return subtotal * (1m - percentual);
+}
 ```
+
+**Leitura guiada:** as tags XML descrevem propósito, parâmetros, retorno e exceção para IntelliSense e geradores de documentação. O método valida cada argumento separadamente, de modo que `ParamName` identifique a entrada incorreta. O pattern `is < 0m or > 1m` aceita apenas valores entre 0 e 1, inclusive; `1m - percentual` calcula a fração restante e o sufixo `m` mantém a aritmética em `decimal`.
 
 > **Referências oficiais:** [Code analysis configuration files](https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/configuration-files), [Code analysis configuration options](https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/configuration-options), [Recommended rules](https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/overview#recommended-rules), [XML documentation comments](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/)
 
@@ -7655,6 +7893,8 @@ UsarFallback();
 ChamarApiLegada();
 #pragma warning restore CS0618
 ```
+
+**Leitura guiada:** `#nullable enable` liga a análise de nulabilidade a partir daquele ponto. O primeiro `#if` inclui a mensagem somente quando `DEBUG` está definido. O segundo escolhe exatamente um caminho conforme o TFM. O par `disable`/`restore` suspende apenas o warning `CS0618` ao redor da chamada legada; uma supressão tão estreita deixa visível que a exceção foi deliberada. Diretivas excluem ou configuram código durante a compilação — não são `if` executados em runtime.
 
 TFMs geram símbolos como `NET10_0` e `NET10_0_OR_GREATER`; TFMs específicos de plataforma geram símbolos adicionais. `#error` e `#warning` ajudam a impor condições de build; `#line` afeta informações de linha, sobretudo em código gerado; `#region` organiza visualmente, mas não corrige tipos grandes demais.
 
@@ -7704,6 +7944,8 @@ static async Task CopiarAsync(
 }
 ```
 
+**Leitura guiada:** os dois `FileStream` têm ownership local e são fechados por `await using`, inclusive se a cópia falhar. A origem abre para leitura e permite que outros leitores compartilhem o arquivo; o destino usa `FileMode.Create`, portanto cria ou sobrescreve o arquivo e impede compartilhamento enquanto estiver aberto. `FileOptions.Asynchronous` habilita o caminho assíncrono e `SequentialScan` informa o padrão esperado de leitura. `CopyToAsync` transfere em blocos e observa o `CancellationToken`, sem carregar o arquivo inteiro de uma vez na memória.
+
 Use `Path.Combine`/`Path.Join` em vez de concatenar separadores. Valide caminhos recebidos externamente e confirme que o caminho normalizado continua dentro da raiz permitida. `File.ReadAllText` é ótimo para arquivo pequeno; para conteúdo grande ou ilimitado, leia por stream/linha e estabeleça limites. Encodings precisam ser explícitos em protocolos e arquivos compartilhados; UTF-8 é um default comum, não uma licença para ignorar BOM, dados inválidos ou contrato externo.
 
 `System.IO.Pipelines` e pools de buffer são ferramentas de alto desempenho para parsing de streams; use-as quando perfis mostrarem necessidade. Todo buffer alugado deve ser devolvido e nenhum consumidor pode reter uma região depois do fim de seu ownership.
@@ -7727,7 +7969,10 @@ using System.Text.Json.Serialization;
 public sealed record CriarPedidoDto(
     [property: JsonPropertyName("customer_id")] Guid CustomerId,
     [property: JsonPropertyName("total")] decimal Total);
+```
 
+```csharp
+// Program.cs — serialização e desserialização do contrato
 var opcoes = new JsonSerializerOptions(JsonSerializerDefaults.Web)
 {
     WriteIndented = false
@@ -7738,6 +7983,8 @@ string json = JsonSerializer.Serialize(
 
 CriarPedidoDto? dto = JsonSerializer.Deserialize<CriarPedidoDto>(json, opcoes);
 ```
+
+**Leitura guiada:** `[property: ...]` aplica cada atributo à propriedade gerada pelo record, fixando os nomes JSON `customer_id` e `total`. As mesmas `opcoes` são usadas nas duas direções para manter o contrato consistente. `Serialize` transforma a instância em texto; `Deserialize<T>` tenta reconstruir `T` e retorna um valor anulável porque o JSON literal `null` é possível. Desserializar com sucesso só confirma a forma técnica do payload — regras como total positivo ainda precisam ser validadas.
 
 Não desserialize payload ilimitado sem cotas de transporte e profundidade. Serialização não substitui validação de negócio. Mudanças de nome/tipo podem quebrar consumidores; adicionar membro opcional costuma ser mais compatível que tornar um membro obrigatório. Para Native AOT, trimming, startup ou throughput crítico, use um `JsonSerializerContext` gerado e teste o contrato publicado.
 
@@ -7756,24 +8003,31 @@ Conversores customizados resolvem formatos que o contrato padrão não represent
 O pool pertence ao handler, e é nele que conexões e resolução DNS interagem. Renovar conexões com `PooledConnectionLifetime` permite observar mudanças de DNS sem recriar o cliente a cada chamada. `IHttpClientFactory` centraliza handlers, configuração e clientes nomeados/tipados, mas cookies podem exigir atenção porque handlers e seus `CookieContainer` podem ser compartilhados ou reciclados.
 
 ```csharp
-private static readonly HttpClient Http = new(new SocketsHttpHandler
-{
-    PooledConnectionLifetime = TimeSpan.FromMinutes(5)
-})
-{
-    Timeout = TimeSpan.FromSeconds(30)
-};
+using System.Text.Json;
 
-static async Task<T?> ObterJsonAsync<T>(Uri uri, CancellationToken ct)
+public static class PedidosHttp
 {
-    using HttpResponseMessage response = await Http.GetAsync(
-        uri, HttpCompletionOption.ResponseHeadersRead, ct);
+    private static readonly HttpClient Http = new(new SocketsHttpHandler
+    {
+        PooledConnectionLifetime = TimeSpan.FromMinutes(5)
+    })
+    {
+        Timeout = TimeSpan.FromSeconds(30)
+    };
 
-    response.EnsureSuccessStatusCode();
-    await using Stream body = await response.Content.ReadAsStreamAsync(ct);
-    return await JsonSerializer.DeserializeAsync<T>(body, cancellationToken: ct);
+    public static async Task<T?> ObterJsonAsync<T>(Uri uri, CancellationToken ct)
+    {
+        using HttpResponseMessage response = await Http.GetAsync(
+            uri, HttpCompletionOption.ResponseHeadersRead, ct);
+
+        response.EnsureSuccessStatusCode();
+        await using Stream body = await response.Content.ReadAsStreamAsync(ct);
+        return await JsonSerializer.DeserializeAsync<T>(body, cancellationToken: ct);
+    }
 }
 ```
+
+**Leitura guiada:** o `HttpClient` está em um campo estático para reutilizar seu pool de conexões. `PooledConnectionLifetime` renova conexões antigas após cinco minutos, enquanto `Timeout` limita a operação do cliente. `ResponseHeadersRead` devolve o controle assim que os cabeçalhos chegam, sem primeiro armazenar todo o corpo. `using` descarta a resposta, `await using` fecha o stream, `EnsureSuccessStatusCode` rejeita status HTTP fora da faixa de sucesso e o mesmo `CancellationToken` percorre toda a cadeia. O retorno `T?` lembra que um corpo JSON pode representar `null`.
 
 Defina timeout, cancelamento, política de retry e idempotência conscientemente; retry cego pode duplicar efeitos e piorar uma falha. Descarte `HttpRequestMessage`, `HttpResponseMessage` e streams que você possui. Não registre tokens, cookies, corpos sensíveis ou URLs com segredos. Trate códigos de status antes de assumir um payload válido.
 
@@ -7808,6 +8062,8 @@ TimeZoneInfo zona = TimeZoneInfo.FindSystemTimeZoneById("America/Sao_Paulo");
 DateTimeOffset local = TimeZoneInfo.ConvertTime(restaurado, zona);
 ```
 
+**Leitura guiada:** `TryParse` interpreta separadores conforme `pt-BR`, grava `1234,56` em `valor` e informa sucesso em `valido`. O formato padrão `"O"` preserva um instante em representação *round-trip* com cultura invariável; `ParseExact` exige esse mesmo formato ao restaurar. `FindSystemTimeZoneById` carrega as regras históricas do fuso de São Paulo, e `ConvertTime` calcula a representação local daquele mesmo instante. `instante`, `restaurado` e `local` apontam para o mesmo momento; o que muda é o offset/representação.
+
 Use `DateOnly` para data civil sem hora, `TimeOnly` para horário recorrente sem data, `TimeSpan` para duração e `DateTimeOffset` para um instante com offset. Um offset não é um fuso: regras de horário podem mudar ao longo do tempo. Converta com `TimeZoneInfo` e armazene o identificador do fuso quando a intenção do usuário depender dele. Não aplique `ToLower()` para comparação de segurança; escolha `StringComparison` explicitamente.
 
 Parsing de entrada humana deve usar a cultura esperada e `TryParse`; protocolos devem especificar formato e cultura invariável. Horários locais podem ser ambíguos ou inválidos em transições de horário de verão. Se a regra for “todo dia às 9h em São Paulo”, preserve data/hora civil e identificador do fuso, não apenas o offset observado hoje.
@@ -7837,6 +8093,8 @@ public static partial class Validadores
     public static bool PareceEmail(string valor) => EmailSimplesRegex().IsMatch(valor);
 }
 ```
+
+**Leitura guiada:** a classe e o método são `partial` porque o source generator fornece a implementação de `EmailSimplesRegex` durante o build. No padrão, `^` e `$` prendem a correspondência ao texto inteiro, `[^@\s]+` exige um ou mais caracteres que não sejam `@` nem espaço, e `\.` representa um ponto literal. `CultureInvariant` evita regras dependentes da cultura e `500` limita uma tentativa a meio segundo. `PareceEmail` reutiliza a instância gerada; ele faz apenas uma triagem sintática simples, não prova que a caixa postal exista nem implementa toda a especificação de e-mail.
 
 O source generator de regex produz código em compilação e bons diagnósticos. `RegexOptions.NonBacktracking` oferece tempo linear para padrões compatíveis, mas não substitui limites de tamanho, revisão do padrão e timeout. Para procurar texto literal, use APIs de `string` ou `Regex.Escape` quando incorporar entrada externa a um padrão confiável.
 
@@ -7891,6 +8149,8 @@ public sealed class CalculadoraTests
 }
 ```
 
+**Leitura guiada:** `[TestClass]` registra a classe no MSTest e cada `[TestMethod]` registra um caso. No primeiro, *Arrange* cria o objeto, *Act* executa uma única operação e *Assert* compara o resultado observado com `5`. O segundo retorna `Task`, usa `await` e verifica a ausência de pedido com `Assert.IsNull`. `Calculadora` e `CriarRepositorioDeTeste` são colaboradores do sistema sob teste e foram omitidos; o projeto de testes precisa fornecê-los e referenciar o projeto de produção.
+
 Teste comportamento observável, não detalhes privados. Controle relógio, aleatoriedade e I/O por dependências explícitas. Não use `Thread.Sleep` para sincronizar teste assíncrono. Testes async retornam `Task`/`ValueTask` conforme o framework; evite `async void`. Nomeie o cenário e a expectativa, inclua casos-limite e execute `dotnet test` no CI. Cobertura indica código exercitado, não qualidade de assertions.
 
 No .NET 10, `dotnet test` pode operar com VSTest ou Microsoft.Testing.Platform conforme configuração; runner, framework de testes e adaptador são conceitos distintos.
@@ -7929,6 +8189,8 @@ public sealed class Importador(ILogger<Importador> logger)
 }
 ```
 
+**Leitura guiada:** o construtor primário recebe um logger já configurado por injeção de dependência. `{LoteId}` é uma propriedade estruturada do evento de log, não interpolação de string. O filtro `when (ct.IsCancellationRequested)` trata como cancelamento apenas a exceção associada ao token do chamador; outras falhas entram no segundo `catch`, que registra também `ex`. Os dois ramos usam `throw;` para preservar a exceção e sua stack original. `ExecutarAsync` representa a operação de domínio da classe, omitida para concentrar o exemplo no tratamento e no logging.
+
 Configuração vem de providers, como JSON, variáveis de ambiente e linha de comando. Providers posteriores podem sobrescrever anteriores. O Options pattern vincula uma seção a um tipo, centraliza validação e torna dependências de configuração explícitas.
 
 ```csharp
@@ -7938,13 +8200,18 @@ public sealed class ServicoOptions
     public required Uri Endpoint { get; init; }
     public int Tentativas { get; init; } = 3;
 }
+```
 
+```csharp
+// Program.cs de uma aplicação com Host/ASP.NET Core
 builder.Services
     .AddOptions<ServicoOptions>()
     .Bind(builder.Configuration.GetSection(ServicoOptions.SectionName))
     .Validate(o => o.Tentativas is >= 0 and <= 10, "Tentativas deve estar entre 0 e 10.")
     .ValidateOnStart();
 ```
+
+**Leitura guiada:** `SectionName` evita repetir a string usada para localizar a seção. `Bind` copia valores de configuração compatíveis para `Endpoint` e `Tentativas`; o valor 3 vale quando a fonte não informa outro. `Validate` exige um número entre 0 e 10, e `ValidateOnStart` antecipa a falha para a inicialização em vez de descobri-la no primeiro uso. `required` ajuda quem constrói o objeto em C#, mas a validação de configuração continua necessária para dados vindos de providers externos.
 
 Não commite segredos em `appsettings.json`, fonte ou histórico Git. User Secrets serve para desenvolvimento e não é cofre de produção. Em produção, use a solução segura da plataforma, identidade gerenciada quando disponível e rotação. Nunca escreva credenciais, tokens ou dados pessoais desnecessários em logs.
 
@@ -7964,15 +8231,24 @@ Observabilidade combina **logs**, **métricas** e **traces distribuídos**. Em .
 using System.Diagnostics;
 using System.Diagnostics.Metrics;
 
-private static readonly ActivitySource Activities = new("MinhaEmpresa.Pedidos");
-private static readonly Meter Meter = new("MinhaEmpresa.Pedidos");
-private static readonly Counter<long> PedidosCriados =
-    Meter.CreateCounter<long>("pedidos.criados");
+public static class TelemetriaPedidos
+{
+    private static readonly ActivitySource Activities = new("MinhaEmpresa.Pedidos");
+    private static readonly Meter Meter = new("MinhaEmpresa.Pedidos");
+    private static readonly Counter<long> PedidosCriados =
+        Meter.CreateCounter<long>("pedidos.criados");
 
-using Activity? activity = Activities.StartActivity("CriarPedido");
-activity?.SetTag("pedido.tipo", "normal");
-PedidosCriados.Add(1);
+    public static void RegistrarCriacao()
+    {
+        using Activity? activity = Activities.StartActivity("CriarPedido");
+        activity?.SetTag("pedido.tipo", "normal");
+        PedidosCriados.Add(1);
+        // Execute aqui a operação que pertence a esse span.
+    }
+}
 ```
+
+**Leitura guiada:** `ActivitySource` nomeia a fonte de traces; `Meter` nomeia a fonte de métricas; e `CreateCounter<long>` cria um contador monotônico. `StartActivity` pode retornar `null` quando nenhum listener está coletando o span, daí o uso de `Activity?` e `?.`. O `using` encerra a atividade ao sair do método, delimitando sua duração. A tag adiciona contexto ao span e `Add(1)` incrementa a métrica; em código real, só conte depois do ponto que corresponda à semântica escolhida, como criação confirmada.
 
 Investigue performance com dados representativos e build `Release`. Primeiro estabeleça objetivo e baseline; depois use profiler, traces e counters para localizar CPU, alocação, contenção, I/O ou GC. Otimizações especulativas frequentemente pioram legibilidade sem mudar o gargalo.
 
@@ -8014,10 +8290,16 @@ using System.Security.Cryptography;
 byte[] token = RandomNumberGenerator.GetBytes(32);
 string tokenTexto = Convert.ToHexString(token);
 
-// Para comparar material secreto de mesmo tamanho sem early exit:
-bool iguais = CryptographicOperations.FixedTimeEquals(hashRecebido, hashEsperado);
-CryptographicOperations.ZeroMemory(token); // limpe buffers sensíveis quando fizer sentido
+// Compare material secreto já codificado em bytes e de mesmo tamanho.
+static bool SegredosIguais(
+    ReadOnlySpan<byte> recebido,
+    ReadOnlySpan<byte> esperado) =>
+    CryptographicOperations.FixedTimeEquals(recebido, esperado);
+
+CryptographicOperations.ZeroMemory(token); // limpa esta cópia mutável em bytes
 ```
+
+**Leitura guiada:** `GetBytes(32)` usa um gerador criptograficamente seguro para produzir 256 bits aleatórios; `ToHexString` cria a representação textual. `FixedTimeEquals` compara os bytes sem encerrar no primeiro valor diferente, reduzindo vazamento por tempo, mas exige comprimentos iguais para uma comparação significativa. `ZeroMemory` sobrescreve o array mutável `token`; ele não apaga `tokenTexto`, porque strings são imutáveis e podem continuar na memória. O método não faz hashing nem armazenamento de senha.
 
 O exemplo não define um protocolo de token nem armazenamento de senha; esses problemas exigem bibliotecas e padrões próprios. Em aplicações web, siga as orientações oficiais de ASP.NET Core para HTTPS, antiforgery, CORS, Data Protection, autenticação e autorização.
 
@@ -8047,6 +8329,8 @@ dotnet publish -c Release
 dotnet publish -c Release -r linux-x64 --self-contained true
 ```
 
+**Leitura guiada:** o primeiro comando produz uma publicação *framework-dependent* para a configuração `Release`; o destino precisa ter um runtime compatível. No segundo, `-r linux-x64` seleciona Linux x64 e `--self-contained true` inclui o runtime correspondente. Em ambos os casos, examine a pasta indicada pela saída do comando: publicar prepara artefatos, mas não os instala nem os envia ao ambiente.
+
 Habilite opções estruturais no `.csproj` para que analisadores rodem também durante desenvolvimento:
 
 ```xml
@@ -8059,6 +8343,8 @@ Habilite opções estruturais no `.csproj` para que analisadores rodem também d
   <!-- <PublishAot>true</PublishAot> -->
 </PropertyGroup>
 ```
+
+**Leitura guiada:** `RuntimeIdentifier` fixa sistema operacional e arquitetura; `SelfContained` inclui o runtime; `PublishSingleFile` solicita empacotamento em arquivo único; e `PublishTrimmed` permite remover código considerado não usado. `PublishAot`, se habilitado, compila para código nativo antecipadamente. Essas opções não são meras otimizações intercambiáveis: alteram compatibilidade, tamanho e análise, portanto devem ser testadas no RID real.
 
 Trimming e AOT precisam enxergar estaticamente os membros usados. Reflection por string, assembly scanning, serializers dinâmicos e geração de código podem exigir anotações, descritores, source generation ou redesenho. Não suprima warnings de trim/AOT sem provar a preservação correta e testar o **artefato publicado** em cada RID suportado.
 
