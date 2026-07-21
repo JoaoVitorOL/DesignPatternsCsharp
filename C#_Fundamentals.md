@@ -4,7 +4,7 @@
 > **Linguagem:** C# (C-Sharp)
 > **Fonte de referência principal:** [Microsoft Learn — C#](https://learn.microsoft.com/en-us/dotnet/csharp/)
 > **Versão de referência:** C# 14 / .NET 10 (LTS), com observações compatíveis com .NET 8+ quando relevante
-> **Atualizado em:** 24/06/2026
+> **Atualizado em:** 21/07/2026
 
 ---
 
@@ -59,10 +59,11 @@ Ao longo do texto, pense sempre nestas quatro perguntas:
   - [3.1 O que é uma variável?](#31-o-que-é-uma-variável)
   - [3.2 Tipos de valor vs tipos de referência](#32-tipos-de-valor-vs-tipos-de-referência)
   - [3.2.1 Conversões implícitas e explícitas](#321-conversões-implícitas-e-explícitas)
-  - [3.3 Nullable Types — tipos que aceitam null](#33-nullable-types-tipos-que-aceitam-null)
-  - [3.4 `var` — inferência de tipo](#34-var-inferência-de-tipo)
+  - [3.3 Nullable Types — tipos que aceitam null](#33-nullable-types--tipos-que-aceitam-null)
+  - [3.4 `var` — inferência de tipo](#34-var--inferência-de-tipo)
   - [3.5 `const` e `readonly`](#35-const-e-readonly)
   - [3.6 Referências diretas, indiretas e fracas](#36-referências-diretas-indiretas-e-fracas)
+  - [3.7 `object`, `dynamic`, tipos anônimos e boxing](#37-object-dynamic-tipos-anônimos-e-boxing)
 - **Parte 4 — String e suas Peculiaridades**
   - [4.1 String é um tipo de referência imutável](#41-string-é-um-tipo-de-referência-imutável)
   - [4.2 Imutabilidade e StringBuilder](#42-imutabilidade-e-stringbuilder)
@@ -91,30 +92,35 @@ Ao longo do texto, pense sempre nestas quatro perguntas:
   - [7.13 `lock`](#713-lock)
   - [7.14 `async` e `await`](#714-async-e-await)
   - [7.15 `required` e `init`](#715-required-e-init)
+  - [7.16 Recursos essenciais do C# 14](#716-recursos-essenciais-do-c-14)
 - **Parte 8 — Controle de Fluxo**
-  - [8.1 `if / else if / else`](#81-if-else-if-else)
+  - [8.1 `if / else if / else`](#81-if--else-if--else)
   - [8.2 `switch` e switch expressions](#82-switch-e-switch-expressions)
   - [8.3 Loops](#83-loops)
+  - [8.4 Operadores, precedência e overflow](#84-operadores-precedência-e-overflow)
 - **Parte 9 — Métodos**
   - [9.1 Declaração de métodos](#91-declaração-de-métodos)
   - [9.2 Métodos de extensão (Extension Methods)](#92-métodos-de-extensão-extension-methods)
   - [9.3 Sobrecarga de métodos](#93-sobrecarga-de-métodos)
+  - [9.4 Funções locais, retornos por referência e contratos de parâmetros](#94-funções-locais-retornos-por-referência-e-contratos-de-parâmetros)
 - **Parte 10 — Enums**
   - [10.1 Enums básicos](#101-enums-básicos)
-  - [10.2 Flags enum — bitmask](#102-flags-enum-bitmask)
+  - [10.2 Flags enum — bitmask](#102-flags-enum--bitmask)
 - **Parte 11 — Classes e Objetos**
   - [11.1 Estrutura completa de uma classe](#111-estrutura-completa-de-uma-classe)
   - [11.2 Construtores em Profundidade](#112-construtores-em-profundidade)
   - [11.3 Records (C# 9+)](#113-records-c-9)
   - [11.4 Padrão Builder](#114-padrão-builder)
+  - [11.5 Structs, inicializadores, indexadores e igualdade](#115-structs-inicializadores-indexadores-e-igualdade)
 - **Parte 12 — Herança e Polimorfismo**
   - [12.1 Herança em C#](#121-herança-em-c)
   - [12.2 Interfaces](#122-interfaces)
 - **Parte 13 — Delegates, Events e Lambdas**
-  - [13.1 Delegates — ponteiros de método tipados](#131-delegates-ponteiros-de-método-tipados)
+  - [13.1 Delegates — ponteiros de método tipados](#131-delegates--ponteiros-de-método-tipados)
   - [13.2 Func, Action e Predicate](#132-func-action-e-predicate)
   - [13.3 Expressões Lambda](#133-expressões-lambda)
   - [13.4 Eventos (Events)](#134-eventos-events)
+  - [13.5 Closures e árvores de expressão](#135-closures-e-árvores-de-expressão)
 - **Parte 14 — LINQ (Language Integrated Query)**
   - [14.1 O que é LINQ?](#141-o-que-é-linq)
   - [14.2 Operadores LINQ principais](#142-operadores-linq-principais)
@@ -126,43 +132,49 @@ Ao longo do texto, pense sempre nestas quatro perguntas:
   - [15.2 List<T>](#152-listt)
   - [15.3 Dictionary<TKey, TValue>](#153-dictionarytkey-tvalue)
   - [15.4 Como escolher a coleção certa](#154-como-escolher-a-coleção-certa)
+  - [15.5 Arrays, coleções imutáveis, congeladas e concorrentes](#155-arrays-coleções-imutáveis-congeladas-e-concorrentes)
 - **Parte 16 — Async/Await e Programação Assíncrona**
   - [16.1 O modelo assíncrono do C#](#161-o-modelo-assíncrono-do-c)
   - [16.2 Padrões de uso](#162-padrões-de-uso)
   - [16.3 Task vs ValueTask](#163-task-vs-valuetask)
+  - [16.4 Streams assíncronos, cancelamento e descarte](#164-streams-assíncronos-cancelamento-e-descarte)
 - **Parte 17 — Generics**
   - [17.1 Tipos parametrizados](#171-tipos-parametrizados)
   - [17.2 Constraints (restrições)](#172-constraints-restrições)
   - [17.3 Covariância e contravariância](#173-covariância-e-contravariância)
 - **Parte 18 — Tratamento de Exceções**
-  - [18.1 `try / catch / finally`](#181-try-catch-finally)
+  - [18.1 `try / catch / finally`](#181-try--catch--finally)
   - [18.2 Exceções customizadas](#182-exceções-customizadas)
   - [18.3 Hierarquia de exceções](#183-hierarquia-de-exceções)
   - [18.4 Exceções de argumento e implementação comuns](#184-exceções-de-argumento-e-implementação-comuns)
+  - [18.5 Práticas de tratamento e desenho de exceções](#185-práticas-de-tratamento-e-desenho-de-exceções)
 - **Parte 19 — Attributes (Annotations)**
   - [19.1 Attributes embutidos](#191-attributes-embutidos)
   - [19.2 Criando Attributes customizados](#192-criando-attributes-customizados)
 - **Parte 20 — Tipos Especiais Modernos do C#**
   - [20.1 Tuple e ValueTuple](#201-tuple-e-valuetuple)
   - [20.2 `WeakReference<T>` e referências fracas no GC](#202-weakreferencet-e-referências-fracas-no-gc)
-  - [20.3 Span<T> e Memory<T> — zero-allocation slicing](#203-spant-e-memoryt-zero-allocation-slicing)
+  - [20.3 Span<T> e Memory<T> — fatias de memória](#203-spant-e-memoryt--fatias-de-memória)
   - [20.4 Sealed classes com Pattern Matching (como Discriminated Union)](#204-sealed-classes-com-pattern-matching-como-discriminated-union)
+  - [20.5 Memória gerenciada, GC e ownership de recursos](#205-memória-gerenciada-gc-e-ownership-de-recursos)
 - **Parte 21 — Threads e Concorrência**
   - [21.1 Thread básico e ThreadPool](#211-thread-básico-e-threadpool)
   - [21.2 Task Parallel Library (TPL)](#212-task-parallel-library-tpl)
   - [21.3 Sincronização](#213-sincronização)
+  - [21.4 Memória compartilhada, coleções concorrentes e canais](#214-memória-compartilhada-coleções-concorrentes-e-canais)
 - **Parte 22 — Interoperabilidade e Recursos Avançados**
   - [22.1 Reflection](#221-reflection)
   - [22.2 Dependency Injection (DI)](#222-dependency-injection-di)
   - [22.3 Source Generators (C# 9+)](#223-source-generators-c-9)
   - [22.4 Unsafe code e ponteiros](#224-unsafe-code-e-ponteiros)
-- [Resumo Geral — Conceitos Fundamentais](#resumo-geral-conceitos-fundamentais)
+  - [22.5 Interoperabilidade nativa e marshalling](#225-interoperabilidade-nativa-e-marshalling)
+- [Resumo Geral — Conceitos Fundamentais](#resumo-geral--conceitos-fundamentais)
 - **Parte 23 — C# no Contexto de Game Development**
-  - [23.1 C# e Unity — a combinação dominante](#231-c-e-unity-a-combinação-dominante)
-  - [23.2 MonoBehaviour — a classe base dos scripts Unity](#232-monobehaviour-a-classe-base-dos-scripts-unity)
+  - [23.1 C# e Unity](#231-c-e-unity)
+  - [23.2 MonoBehaviour — a classe base dos scripts Unity](#232-monobehaviour--a-classe-base-dos-scripts-unity)
   - [23.3 Ciclo de vida do MonoBehaviour](#233-ciclo-de-vida-do-monobehaviour)
-  - [23.4 ScriptableObject — dados desacoplados do GameObject](#234-scriptableobject-dados-desacoplados-do-gameobject)
-  - [23.5 Coroutines — execução assíncrona sem async/await](#235-coroutines-execução-assíncrona-sem-asyncawait)
+  - [23.4 ScriptableObject — dados desacoplados do GameObject](#234-scriptableobject--dados-desacoplados-do-gameobject)
+  - [23.5 Coroutines — execução cooperativa ao longo de frames](#235-coroutines--execução-cooperativa-ao-longo-de-frames)
   - [23.6 Unity Events e C# Events](#236-unity-events-e-c-events)
   - [23.7 Boas práticas de performance no Unity](#237-boas-práticas-de-performance-no-unity)
   - [23.8 Padrões de design comuns em jogos com C#](#238-padrões-de-design-comuns-em-jogos-com-c)
@@ -177,7 +189,27 @@ Ao longo do texto, pense sempre nestas quatro perguntas:
   - [24.6 Event-Driven Architecture](#246-event-driven-architecture)
   - [24.7 Microservices em .NET](#247-microservices-em-net)
   - [24.8 Padrões enterprise clássicos](#248-padrões-enterprise-clássicos)
-- [Anexo A — Plataformas de Prática Recomendadas](#anexo-a--plataformas-de-prática-recomendadas)
+- **Parte 25 — SDK, Projetos, Dependências e Qualidade**
+  - [25.1 SDK, runtime e CLI](#251-sdk-runtime-e-cli)
+  - [25.2 `.csproj`, TFM e versão da linguagem](#252-csproj-tfm-e-versão-da-linguagem)
+  - [25.3 Soluções, referências e NuGet](#253-soluções-referências-e-nuget)
+  - [25.4 Build, testes, empacotamento e publicação](#254-build-testes-empacotamento-e-publicação)
+  - [25.5 Analisadores, EditorConfig e documentação de API](#255-analisadores-editorconfig-e-documentação-de-api)
+  - [25.6 Diretivas de pré-processador e compilação condicional](#256-diretivas-de-pré-processador-e-compilação-condicional)
+- **Parte 26 — I/O, Serialização, HTTP e Globalização**
+  - [26.1 Arquivos, streams e buffers](#261-arquivos-streams-e-buffers)
+  - [26.2 JSON com System.Text.Json](#262-json-com-systemtextjson)
+  - [26.3 HTTP e tempo de vida do HttpClient](#263-http-e-tempo-de-vida-do-httpclient)
+  - [26.4 Cultura, parsing, datas e fusos horários](#264-cultura-parsing-datas-e-fusos-horários)
+  - [26.5 Expressões regulares com limite de tempo](#265-expressões-regulares-com-limite-de-tempo)
+- **Parte 27 — Engenharia para Produção**
+  - [27.1 Estratégia de testes](#271-estratégia-de-testes)
+  - [27.2 Logging, configuração, opções e segredos](#272-logging-configuração-opções-e-segredos)
+  - [27.3 Diagnóstico, observabilidade e performance](#273-diagnóstico-observabilidade-e-performance)
+  - [27.4 Segurança essencial](#274-segurança-essencial)
+  - [27.5 Publicação, trimming, single-file e Native AOT](#275-publicação-trimming-single-file-e-native-aot)
+  - [27.6 APIs públicas, compatibilidade e evolução](#276-apis-públicas-compatibilidade-e-evolução)
+- [Anexo A — Trilhas Oficiais de Estudo e Prática](#anexo-a--trilhas-oficiais-de-estudo-e-prática)
 - [Anexo B — Referências Oficiais Consultadas](#anexo-b--referências-oficiais-consultadas)
 - [Glossário](#glossário)
 
@@ -199,7 +231,7 @@ As diretrizes oficiais de nomenclatura do .NET recomendam uma convenção simple
 - **Métodos, propriedades e eventos** também usam **PascalCase**. Exemplo: `CalculateTotal()`, `CustomerName`, `OnChanged`.
 - **Variáveis locais, parâmetros e campos privados** costumam usar **camelCase**. Exemplo: `customerName`, `totalAmount`, `orderId`.
 - **Campos privados** são comumente escritos com um underscore inicial, como `_customerName` ou `_totalAmount`.
-- **Constantes** normalmente usam **PascalCase** ou, em alguns cenários, `ALL_CAPS` em código legado; em projetos modernos, o mais comum é **PascalCase**.
+- **Constantes** usam **PascalCase** nas convenções do .NET. Exemplo: `MaxRetries`.
 - **Acrônimos** devem ser tratados de forma consistente: preferir `HttpClient` em vez de `HTTPClient`, e `Url` em vez de `URL` quando o estilo for o padrão do .NET.
 - **Namespaces** usam **PascalCase** e tendem a refletir a estrutura do domínio ou da camada da aplicação.
 
@@ -225,27 +257,31 @@ public class CustomerService
 
 Essas convenções ajudam a tornar o código mais previsível e alinhado com o estilo adotado pela própria biblioteca base do .NET e pelos projetos oficiais da Microsoft.
 
+> **Referência oficial:** [C# identifier naming rules and conventions](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/coding-style/identifier-names)
+
 ---
 
 ### 1.1 O que é C#?
 
 [⬆️ Voltar ao Sumário](#sumário)
 
-C# é uma **linguagem de programação orientada a objetos, estaticamente tipada, de propósito geral e fortemente tipada**, criada pela Microsoft em 2000, liderada por Anders Hejlsberg (o mesmo criador do Delphi e TypeScript). É a linguagem principal do ecossistema **.NET**.
+C# é uma **linguagem de programação multiparadigma, estaticamente tipada, de propósito geral e fortemente tipada**, criada pela Microsoft e apresentada em 2000. Seu desenvolvimento inicial foi liderado por Anders Hejlsberg, que também teve papel central no Delphi e no TypeScript. É uma das principais linguagens do ecossistema **.NET**.
 
-Assim como Java, C# compila para um formato intermediário — o **IL (Intermediate Language)**, também chamado de **CIL (Common Intermediate Language)** — que é executado sobre o **CLR (Common Language Runtime)**, a máquina virtual do .NET. O mesmo princípio "escreva uma vez, execute em qualquer lugar" se aplica dentro do ecossistema .NET.
+No fluxo gerenciado tradicional, C# é compilado para **IL (Intermediate Language)**, também chamado de **CIL (Common Intermediate Language)**. O **CLR (Common Language Runtime)** carrega o assembly, verifica metadados, gerencia a execução e normalmente usa compilação JIT para produzir código nativo. Aplicações também podem ser publicadas com **Native AOT**, que gera código nativo antecipadamente. A portabilidade depende das APIs usadas e da existência de runtime ou publicação compatível para o sistema-alvo.
 
 ```
 Código C# (.cs)
         ↓  compilador (csc / Roslyn)
     IL / CIL (assembly .dll ou .exe)
-        ↓  CLR — JIT (Just-In-Time) compila em tempo de execução
+        ↓  CLR — normalmente JIT; Native AOT é outra opção de publicação
   Instruções nativas do sistema operacional
 ```
 
-O compilador moderno do C# é chamado **Roslyn** e é open-source. O runtime moderno é o **.NET** (anteriormente chamado .NET Core), enquanto o **.NET Framework** é a versão legada, exclusiva do Windows.
+O compilador moderno do C# faz parte da plataforma **Roslyn** e é open source. O runtime multiplataforma atual é o **.NET** (nome adotado a partir do .NET 5 para a linha antes chamada .NET Core). O **.NET Framework** é específico do Windows e permanece em manutenção dentro do ciclo de vida do Windows, sem receber a evolução principal do .NET moderno.
 
-**Como interpretar o exemplo:** O diagrama mostra que o código C# não roda direto no sistema operacional; ele passa por compilação para IL e depois pelo runtime do .NET. Esse fluxo explica por que o ecossistema consegue oferecer coleta de lixo, verificação de tipos, tratamento consistente de exceções e portabilidade entre plataformas.
+**Como interpretar o exemplo:** O diagrama mostra o caminho gerenciado mais comum: código-fonte, IL e execução pelo runtime. Esse modelo explica recursos como coleta de lixo, metadados e verificação de tipos. Native AOT muda a etapa de geração do código nativo, mas continua usando as bibliotecas e os serviços compatíveis do runtime .NET.
+
+> **Referências oficiais:** [A tour of C#](https://learn.microsoft.com/en-us/dotnet/csharp/tour-of-csharp/overview), [Common Language Runtime](https://learn.microsoft.com/en-us/dotnet/standard/clr), [Native AOT deployment](https://learn.microsoft.com/en-us/dotnet/core/deploying/native-aot/)
 
 ---
 
@@ -264,11 +300,11 @@ Em termos bem diretos:
 Se você já viu este fluxo:
 
 ```text
-Codigo C# (.cs)
+Código C# (.cs)
         ↓ compilador
 Assembly .NET (.dll ou .exe)
         ↓ runtime do .NET
-Execucao
+Execução
 ```
 
 então o assembly é justamente o "pacote" que o compilador produz para o runtime consumir.
@@ -354,21 +390,23 @@ Entender assembly cedo ajuda você a compreender melhor:
 
 **Como interpretar o exemplo:** Se `class` e `interface` ajudam você a pensar em design dentro do código, `assembly` ajuda você a pensar em fronteiras do código depois que ele foi compilado. É um conceito de linguagem + runtime + arquitetura ao mesmo tempo.
 
+> **Referências oficiais:** [Assemblies in .NET](https://learn.microsoft.com/en-us/dotnet/standard/assembly/), [Assembly contents](https://learn.microsoft.com/en-us/dotnet/standard/assembly/contents)
+
 ---
 
 ### 1.3 Por que aprender C# em 2026?
 
 [⬆️ Voltar ao Sumário](#sumário)
 
-Em **24 de junho de 2026**, a Microsoft lista **.NET 10 (LTS)**, **.NET 9** e **.NET 8 (LTS)** como versões suportadas, e a documentação oficial marca o **C# 14** como a versão mais recente da linguagem. Isso importa porque C# não é uma linguagem parada: ela evolui sem perder compatibilidade com os fundamentos. Você investe no núcleo da linguagem e continua aproveitando esse conhecimento por muitos anos.
+Em **21 de julho de 2026**, a Microsoft lista **.NET 10 (LTS)**, **.NET 9** e **.NET 8 (LTS)** como versões suportadas, e a documentação oficial marca o **C# 14** como a versão estável mais recente da linguagem. Isso importa porque C# não é uma linguagem parada: ela evolui preservando os fundamentos, embora novas versões possam introduzir mudanças de compatibilidade que precisam ser avaliadas.
 
 C# tem um escopo extremamente amplo:
 
 | Contexto | Ferramentas/Frameworks |
 |---|---|
-| **Game Development** | Unity (motor mais usado no mundo), Godot (suporte C#) |
-| **Web Backend** | ASP.NET Core — alta performance, usado por empresas como Stack Overflow |
-| **Desktop (Windows)** | WPF, WinUI, MAUI |
+| **Game Development** | Unity e a edição .NET do Godot |
+| **Web Backend** | ASP.NET Core, Minimal APIs, MVC e SignalR |
+| **Desktop** | WPF, Windows Forms e WinUI (Windows); .NET MAUI multiplataforma |
 | **Mobile** | .NET MAUI (cross-platform iOS/Android) |
 | **Cloud / Serverless** | Azure Functions, AWS Lambda (.NET) |
 | **APIs REST e gRPC** | ASP.NET Core Web API |
@@ -378,6 +416,8 @@ C# tem um escopo extremamente amplo:
 C# continua sendo uma linguagem excelente para quem quer combinar **fundamentos fortes de engenharia** com **mercado amplo**. Ela tem um sistema de tipos maduro, uma biblioteca padrão extensa, tooling profissional e uma curva de crescimento muito boa: dá para começar com console apps simples e chegar em APIs distribuídas, engines de jogos, processamento assíncrono, tooling, automação e bibliotecas de alta performance.
 
 **Como interpretar o exemplo:** A tabela não serve apenas para listar mercados; ela mostra que a mesma base da linguagem reaparece em contextos muito diferentes, do backend ao desenvolvimento de jogos. Isso significa que estudar fundamentos de C# rende em várias áreas ao mesmo tempo, mesmo quando o framework muda.
+
+> **Referências oficiais:** [.NET releases and support](https://learn.microsoft.com/en-us/dotnet/core/releases-and-support), [What's new in C# 14](https://learn.microsoft.com/en-us/dotnet/csharp/whats-new/csharp-14), [.NET application architecture guides](https://learn.microsoft.com/en-us/dotnet/architecture/)
 
 ---
 
@@ -421,12 +461,14 @@ public class Program
 | Elemento | O que é | Por que existe |
 |---|---|---|
 | `namespace` | Agrupamento lógico de tipos | Evita colisões de nome entre bibliotecas |
-| `class NomeDaClasse` | Declaração de tipo | Todo código vive dentro de um tipo em C# |
+| `class NomeDaClasse` | Declaração de tipo | Membros pertencem a tipos; em top-level statements o compilador sintetiza o contêiner |
 | `static void Main` | Método de entrada | O CLR precisa de um ponto de partida conhecido |
-| Ponto e vírgula `;` | Delimitador de instrução | Indica o fim de cada instrução |
+| Ponto e vírgula `;` | Terminador sintático | Encerra muitas instruções e declarações; blocos de controle usam chaves |
 | Chaves `{}` | Delimitador de escopo | Define onde começa e termina um bloco |
 
 **Como interpretar o exemplo:** Os dois formatos existem porque a linguagem evoluiu para reduzir verbosidade sem abandonar compatibilidade com projetos antigos. Entender tanto `top-level statements` quanto a forma clássica com `Program` e `Main` ajuda você a ler código moderno e legado com a mesma naturalidade.
+
+> **Referências oficiais:** [Top-level statements](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/program-structure/top-level-statements), [`Main` and command-line arguments](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/program-structure/main-command-line)
 
 ---
 
@@ -506,7 +548,7 @@ public class Exemplo
 }
 ```
 
-> ⚠️ Projetos .NET modernos (SDK-style) incluem `global using` implícitos para namespaces comuns (`System`, `System.Collections.Generic`, etc.) quando `<Nullable>enable</Nullable>` está configurado no `.csproj`. Isso significa que muitos `using` são desnecessários em projetos novos.
+> ⚠️ Projetos .NET modernos (SDK-style) podem incluir `global using` implícitos para namespaces comuns (`System`, `System.Collections.Generic` etc.) quando `<ImplicitUsings>enable</ImplicitUsings>` está configurado no `.csproj`. Essa propriedade é independente de `<Nullable>enable</Nullable>`, que controla a análise de referências anuláveis.
 
 **Como interpretar o exemplo:** `using` reduz ruído visual ao esconder nomes totalmente qualificados que não agregam valor a toda leitura. Aliás, `using static` e `global using` mostram que C# trata legibilidade e ergonomia como parte do desenho da linguagem.
 
@@ -522,13 +564,13 @@ public class Exemplo
 
 [⬆️ Voltar ao Sumário](#sumário)
 
-Uma variável é um **espaço nomeado na memória** que armazena um valor. Em C#, todo valor tem um tipo definido em tempo de compilação.
+Uma variável é um nome associado a um local de armazenamento ou valor. Em C#, cada variável possui um tipo conhecido pelo compilador; `dynamic` continua sendo um tipo de compilação especial, mas adia a resolução de certas operações para runtime.
 
 ```csharp
 // Sintaxe: Tipo nomeDaVariavel = valor;
 string nome    = "Ana";
 int    idade   = 28;
-double preco   = 49.90;
+decimal preco  = 49.90m; // decimal é a escolha usual para dinheiro
 bool   ativo   = true;
 
 // Inferência de tipo com 'var'
@@ -546,9 +588,9 @@ var total  = 150.75;      // compilador infere: double
 
 Esta é a distinção fundamental do sistema de tipos do C#.
 
-**Tipos de valor** armazenam o dado diretamente onde a variável está alocada (geralmente na stack). Quando você atribui um tipo de valor a outro, uma **cópia** é feita.
+**Tipos de valor** contêm o próprio valor. Quando você atribui um tipo de valor a outro, uma **cópia** é feita.
 
-**Tipos de referência** armazenam um endereço (referência) para um objeto no heap. Quando você atribui um tipo de referência a outro, ambas as variáveis apontam para o **mesmo objeto**.
+**Tipos de referência** contêm uma referência para um objeto. Quando você atribui uma referência a outra, ambas passam a alcançar o **mesmo objeto**. Não use “valor sempre na stack, objeto sempre no heap” como regra: a localização física depende do contexto, de boxing, de campos, de closures e de decisões do runtime. A distinção garantida pela linguagem é a **semântica de cópia**.
 
 ```csharp
 // Tipo de valor — cópia
@@ -576,13 +618,17 @@ Console.WriteLine(listaA[0]); // 99 — o mesmo objeto foi modificado
 | `uint` | `UInt32` | 32 bits | `0` a `4294967295` | `0` | Inteiro sem sinal |
 | `long` | `Int64` | 64 bits | `-9223372036854775808` a `9223372036854775807` | `0L` | Inteiros grandes (ex: IDs, timestamps) |
 | `ulong` | `UInt64` | 64 bits | `0` a `18446744073709551615` | `0UL` | Inteiro sem sinal grande |
-| `float` | `Single` | 32 bits | aproximadamente `±3.402823e38` | `0.0f` | Decimal com precisão menor |
-| `double` | `Double` | 64 bits | aproximadamente `±1.797693e308` | `0.0` | **Decimal — o mais comum** |
-| `decimal` | `Decimal` | 128 bits | aproximadamente `±7.922816251426433759354198725e28` | `0.0m` | **Precisão financeira (sem erro de ponto flutuante)** |
-| `char` | `Char` | 16 bits | `U+0000` a `U+FFFF` | `'\0'` | Um caractere Unicode |
-| `bool` | `Boolean` | 1 bit | `true` ou `false` | `false` | Verdadeiro ou falso |
+| `nint` | `IntPtr` | 32 ou 64 bits, conforme o processo | dependente da plataforma | `0` | Inteiro nativo para interop e código de baixo nível |
+| `nuint` | `UIntPtr` | 32 ou 64 bits, conforme o processo | dependente da plataforma | `0` | Inteiro nativo sem sinal |
+| `float` | `Single` | 32 bits | aproximadamente `±3.402823e38` | `0.0f` | Ponto flutuante binário de precisão simples |
+| `double` | `Double` | 64 bits | aproximadamente `±1.797693e308` | `0.0` | **Ponto flutuante binário mais comum** |
+| `decimal` | `Decimal` | 128 bits | aproximadamente `±7.922816251426433759354198725e28` | `0.0m` | Base decimal; comum em cálculos financeiros |
+| `char` | `Char` | 16 bits | `U+0000` a `U+FFFF` | `'\0'` | Uma unidade de código UTF-16 |
+| `bool` | `Boolean` | tamanho de armazenamento não definido pela linguagem | `true` ou `false` | `false` | Verdadeiro ou falso |
 
-> ⚠️ `decimal` é o tipo correto para cálculos monetários. `double` e `float` usam representação binária que pode acumular erros de arredondamento (`0.1 + 0.2 != 0.3`). `decimal` usa representação decimal de base 10, eliminando esse problema para a maioria dos casos financeiros.
+> ⚠️ `decimal` costuma ser o tipo apropriado para cálculos monetários. `double` e `float` usam representação binária e não representam exatamente muitas frações decimais. `decimal` representa exatamente muitos valores de base 10 dentro de sua escala, mas continua tendo faixa e precisão finitas: divisão e arredondamento ainda exigem regra de negócio explícita.
+
+`char` é uma unidade UTF-16, portanto um símbolo Unicode percebido pelo usuário pode ocupar dois `char` (par substituto) ou uma sequência de code points. Para processar escalares Unicode, conheça `System.Text.Rune`; para elementos de texto percebidos, use as APIs de globalização. `Half`, `Int128`, `UInt128` e `BigInteger` são tipos numéricos da biblioteca, sem keyword própria do C#.
 
 **Structs são tipos de valor:**
 
@@ -602,6 +648,8 @@ Console.WriteLine(p1.X); // ainda 10
 
 **Como interpretar o exemplo:** O que realmente importa aqui não é decorar `stack` e `heap`, mas entender a semântica de cópia e compartilhamento. Quando você domina isso, passa a prever melhor efeitos colaterais, mutabilidade e comportamento de parâmetros e coleções.
 
+> **Referências oficiais:** [The C# type system](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/types/), [Built-in types](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/built-in-types), [Boxing and unboxing](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/types/boxing-and-unboxing)
+
 ---
 
 ### 3.2.1 Conversões implícitas e explícitas
@@ -610,7 +658,7 @@ Console.WriteLine(p1.X); // ainda 10
 
 Em C#, uma conversão pode acontecer de duas formas principais:
 
-- **Conversão implícita**: o compilador aceita automaticamente porque a transformação é segura e não há perda de informação significativa.
+- **Conversão implícita**: a especificação permite a conversão sem cast. Isso normalmente evita falha de tipo, mas nem toda conversão numérica implícita preserva o valor exatamente — `long` para `double`, por exemplo, pode perder precisão.
 - **Conversão explícita**: o programador declara a conversão manualmente, geralmente porque ela pode perder dados, mudar o significado ou até falhar em tempo de execução.
 
 ```csharp
@@ -625,7 +673,7 @@ No exemplo acima, `int -> long` é seguro e natural, portanto a conversão é im
 
 #### Quando usar cada uma
 
-- Use **conversão implícita** quando o tipo de destino consegue representar o valor do tipo de origem sem risco real de perda.
+- Use a **conversão implícita** prevista pela linguagem quando sua semântica for adequada; ainda assim, conheça as regras de precisão numérica do par de tipos.
 - Use **conversão explícita** quando a transformação exige atenção, pode reduzir precisão ou pode não ser válida para todos os valores.
 
 #### Riscos principais
@@ -642,6 +690,8 @@ bool sucesso = int.TryParse(texto, out int resultado);
 ```
 
 **Como interpretar o exemplo:** cast é uma ferramenta poderosa, mas deve ser usada com intenção. O compilador ajuda quando a conversão é claramente segura; quando ela é potencialmente problemática, a leitura do código deve deixar isso evidente.
+
+> **Referências oficiais:** [Built-in numeric conversions](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/numeric-conversions), [Casting and type conversions](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/types/casting-and-type-conversions), [How to safely cast using pattern matching and operators](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/tutorials/safely-cast-using-pattern-matching-is-and-as-operators)
 
 ---
 
@@ -674,7 +724,7 @@ string valor = nome!; // diz ao compilador: "confie em mim, não é null"
 
 ```csharp
 // Com nullable habilitado, o compilador rastreia nullability
-string  naoNula = "texto";   // nunca null — compilador avisa se atribuir null
+string  naoNula = "texto";   // contrato não anulável; o compilador avisa sobre fluxos possivelmente nulos
 string? podeNula = null;      // pode ser null — deve ser verificado antes de usar
 
 void Processar(string? entrada)
@@ -689,6 +739,10 @@ void Processar(string? entrada)
 ```
 
 **Como interpretar o exemplo:** Os operadores mostrados existem para tornar a ausência de valor visível no contrato, em vez de deixar `null` circular de forma implícita. Em código profissional, isso reduz muito `NullReferenceException` e melhora a clareza das APIs.
+
+Nullable reference types são análise estática, não uma nova representação em runtime. O operador `!` apenas suprime o aviso do compilador: ele não valida nem transforma o valor, portanto `nome!` ainda pode ser `null` durante a execução.
+
+> **Referências oficiais:** [Nullable reference types](https://learn.microsoft.com/en-us/dotnet/csharp/nullable-references), [Nullable value types](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/nullable-value-types), [Null-forgiving operator](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/null-forgiving)
 
 ---
 
@@ -719,7 +773,7 @@ numero = "texto"; // ERRO DE COMPILAÇÃO — número é int, não string
 
 ```csharp
 // const — constante de compile-time; deve ser inicializada na declaração
-// Apenas tipos primitivos e string são permitidos
+// Tipos numéricos internos, bool, char, string, enum e null para referências são permitidos
 public const double PI    = 3.14159265358979;
 public const int    MAX   = 100;
 public const string VERSAO = "1.0.0";
@@ -749,7 +803,7 @@ private readonly List<string> _itens = new();
 | Característica | `const` | `readonly` |
 |---|---|---|
 | Quando é resolvido | Compile-time | Runtime |
-| Tipos permitidos | Primitivos e `string` | Qualquer tipo |
+| Tipos permitidos | Numéricos internos, `bool`, `char`, `string`, `enum` e constante `null` de referência | Qualquer tipo |
 | Onde pode ser inicializado | Apenas na declaração | Declaração ou construtor |
 | Pode ser `static` | Sempre é `static` implicitamente | Pode ser `static` ou de instância |
 
@@ -919,6 +973,42 @@ Se você guardar só uma frase desta seção, guarde esta:
 
 ---
 
+### 3.7 `object`, `dynamic`, tipos anônimos e boxing
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+`object` (`System.Object`) é a raiz comum dos tipos C#. Uma variável `object` continua estaticamente tipada: para acessar um membro específico, o código deve testar o tipo ou converter o valor. `dynamic` adia a resolução de membros para runtime; o compilador aceita a chamada, mas ela pode falhar com `RuntimeBinderException`.
+
+```csharp
+object valor = "C#";
+if (valor is string texto)
+    Console.WriteLine(texto.Length);
+
+dynamic externo = ObterObjetoDinamico();
+// Compila; a validade de Processar() só será verificada em runtime.
+externo.Processar();
+
+var resumo = new { Nome = "Ana", Total = 3 }; // tipo anônimo, somente leitura
+Console.WriteLine(resumo.Nome);
+```
+
+**Boxing** converte um tipo de valor para `object` ou para uma interface implementada por ele. Isso cria um objeto e copia o valor; **unboxing** exige conversão explícita para o tipo de valor compatível.
+
+```csharp
+int numero = 42;
+object caixa = numero;       // boxing
+int copia = (int)caixa;      // unboxing
+
+// Generics normalmente evitam o boxing que ocorreria numa coleção de object.
+var numeros = new List<int> { 1, 2, 3 };
+```
+
+Use `dynamic` apenas em fronteiras realmente dinâmicas, como certos modelos de interoperabilidade. Em código de domínio e APIs normais, interfaces, generics e pattern matching preservam melhor a verificação do compilador. Tipos anônimos são úteis para projeções locais, especialmente em LINQ; não são uma boa forma de contrato público.
+
+> **Referências oficiais:** [The C# type system](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/types/), [`dynamic`](https://learn.microsoft.com/en-us/dotnet/csharp/advanced-topics/interop/using-type-dynamic), [Anonymous types](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/types/anonymous-types), [Boxing and unboxing](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/types/boxing-and-unboxing)
+
+---
+
 ## Parte 4 — String e suas Peculiaridades
 
 [⬆️ Voltar ao Sumário](#sumário)
@@ -1060,7 +1150,7 @@ Console.WriteLine(string.IsNullOrWhiteSpace(" ")); // true
 Console.WriteLine(s.Contains("C#"));          // true
 Console.WriteLine(s.StartsWith("  Olá"));     // true
 Console.WriteLine(s.EndsWith("!  "));         // true
-Console.WriteLine(s.IndexOf("C#"));           // 6
+Console.WriteLine(s.IndexOf("C#", StringComparison.Ordinal)); // 7
 
 // Transformação
 Console.WriteLine(s.Trim());                  // "Olá, C#!"
@@ -1070,9 +1160,9 @@ Console.WriteLine(s.ToLower());               // "  olá, c#!  "
 Console.WriteLine(s.Replace("C#", "Java"));   // "  Olá, Java!  "
 
 // Extração
-Console.WriteLine(s.Substring(6));            // "C#!  "
-Console.WriteLine(s.Substring(6, 2));         // "C#"
-Console.WriteLine(s[6]);                      // 'C' — indexação direta
+Console.WriteLine(s.Substring(7));            // "C#!  "
+Console.WriteLine(s.Substring(7, 2));         // "C#"
+Console.WriteLine(s[7]);                      // 'C' — indexação direta
 
 // Divisão
 string   csv    = "Ana,Bruno,Carlos";
@@ -1116,8 +1206,7 @@ TimeSpan timeout    = TimeSpan.FromSeconds(30);
 
 Guid id = Guid.NewGuid();
 
-var random = new Random();
-int dado = random.Next(1, 7); // 1 a 6
+int dado = Random.Shared.Next(1, 7); // 1 a 6; reutilização thread-safe no .NET atual
 
 bool okNumero = int.TryParse("42", out int numero);
 bool okData = DateTime.TryParseExact(
@@ -1188,7 +1277,7 @@ C# possui mais modificadores de acesso do que Java, oferecendo controle mais gra
 
 #### 5.1.1 O que cada modificador permite na prática
 
-- **`private`**: só o próprio tipo acessa. É o mais fechado para membros e, por padrão, o mais seguro em termos de encapsulamento. Uso comum: campos, helpers internos, validações, partes sensíveis do estado e construtores que não devem ser chamados livremente.
+- **`private`**: só o próprio tipo acessa. É o mais restritivo para membros e oferece a fronteira de encapsulamento mais estreita. Uso comum: campos, helpers internos, validações, partes sensíveis do estado e construtores que não devem ser chamados livremente.
 - **`protected`**: o próprio tipo e classes derivadas acessam. Uso comum: pontos de extensão em herança, quando subclasses realmente precisam participar da implementação.
 - **`internal`**: qualquer código do mesmo assembly acessa. Uso comum: cooperação entre classes do mesmo projeto ou biblioteca, detalhes internos de framework e tipos auxiliares que não devem virar API pública.
 - **`protected internal`**: abre em duas direções ao mesmo tempo: mesmo assembly **ou** subclasses em qualquer assembly. Uso comum: raro; só faz sentido quando você quer permitir colaboração interna ampla e também extensão por herança fora da biblioteca.
@@ -1249,6 +1338,8 @@ Boa prática geral:
 - cada `public` novo vira parte do contrato que outros podem depender;
 - quanto mais aberta a API, maior a chance de abuso, mau uso, dificuldade de refatoração e bugs por acoplamento externo.
 
+> **Referências oficiais:** [Access modifiers](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/access-modifiers), [Accessibility levels](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/accessibility-levels), [File access modifier](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/file)
+
 ---
 
 ### 5.2 Boas práticas com modificadores
@@ -1258,8 +1349,8 @@ Boa prática geral:
 ```csharp
 public class ContaBancaria
 {
-    // Campos: sempre private
-    private double _saldo;
+    // Campos de implementação: prefira private
+    private decimal _saldo;
     private string _titular;
 
     // Propriedade pública com getter/setter encapsulado
@@ -1277,7 +1368,7 @@ public class ContaBancaria
     public DateTime DataAbertura { get; init; }
 
     // Construtor
-    public ContaBancaria(string titular, double saldoInicial)
+    public ContaBancaria(string titular, decimal saldoInicial)
     {
         Titular       = titular;
         _saldo        = saldoInicial;
@@ -1289,7 +1380,7 @@ public class ContaBancaria
     public bool EstaNegativa => _saldo < 0;
 
     // Método público
-    public bool Sacar(double valor)
+    public bool Sacar(decimal valor)
     {
         if (!ValorValido(valor) || valor > _saldo) return false;
         _saldo -= valor;
@@ -1297,7 +1388,7 @@ public class ContaBancaria
     }
 
     // Método privado auxiliar
-    private bool ValorValido(double valor) => valor > 0;
+    private bool ValorValido(decimal valor) => valor > 0;
 }
 ```
 
@@ -1654,12 +1745,12 @@ public class Contador
     }
 }
 
-// Construtor estático — executado uma única vez ao carregar o tipo
+// Construtor estático — executado no máximo uma vez, antes do primeiro uso relevante
 public class Configuracao
 {
     public static readonly Dictionary<string, string> Valores;
 
-    static Configuracao() // sem modificador de acesso — sempre chamado pelo CLR
+    static Configuracao() // sem modificador de acesso — invocado automaticamente pelo CLR
     {
         Valores = new Dictionary<string, string>
         {
@@ -1684,9 +1775,9 @@ Equivalente ao `final` de classe em Java — impede herança.
 // Classe sealed — não pode ser herdada
 public sealed class Singleton
 {
-    private static Singleton? _instancia;
+    private static readonly Singleton _instancia = new();
     private Singleton() { }
-    public static Singleton Instancia => _instancia ??= new Singleton();
+    public static Singleton Instancia => _instancia;
 }
 
 // Método sealed em override — impede sobrescrita na cadeia de herança
@@ -1869,9 +1960,19 @@ static string ClassificarPonto(int x, int y) => (x, y) switch
     (< 0, > 0)      => "Segundo quadrante",
     _               => "Outro"
 };
+
+// Property, relational e list patterns
+if (pedido is { Cliente.Ativo: true, Itens.Count: > 0 } pedidoValido)
+    Console.WriteLine(pedidoValido.Id);
+
+static bool ComecaComCabecalho(int[] dados) => dados is [0xCA, 0xFE, ..];
 ```
 
 **Como interpretar o exemplo:** O C# moderno prefere pattern matching porque ele combina teste, extração e classificação de forma mais segura e expressiva. Em vez de vários casts espalhados, você descreve a forma do valor e o compilador ajuda a manter o fluxo correto.
+
+Patterns também incluem constant, declaration, type, relational, logical (`and`, `or`, `not`), property, positional, tuple e list patterns. Um pattern testa e pode extrair dados; ele não executa conversões customizadas arbitrárias. Em `switch`, ordene braços específicos antes dos abrangentes e mantenha um caso de fallback quando o conjunto não é exaustivo.
+
+> **Referência oficial:** [Patterns](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/patterns)
 
 ---
 
@@ -1892,6 +1993,10 @@ using (var conexao = new SqlConnection(connectionString))
 using var reader = new StreamReader("arquivo.txt");
 string conteudo = reader.ReadToEnd();
 // reader.Dispose() é chamado ao final do método/bloco
+
+// Recurso assíncrono que implementa IAsyncDisposable
+await using var recurso = await AbrirRecursoAsync();
+await recurso.ProcessarAsync();
 ```
 
 **Como interpretar o exemplo:** Aqui `using` não tem a ver com importar namespaces; ele existe para descarte determinístico de recursos que o GC não fecha no tempo certo. Arquivos, conexões e streams são exemplos clássicos em que esperar a coleta de lixo não é uma estratégia aceitável.
@@ -1919,12 +2024,12 @@ bool TryParseCustom(string s, out int resultado)
 if (TryParseCustom("42", out int valor))
     Console.WriteLine(valor); // 42
 
-// in — passa por referência somente leitura (sem cópia, sem modificação)
+// in — referência somente leitura; não promete ganho de performance nem ausência de cópia
 void ImprimirPonto(in Ponto p) => Console.WriteLine($"({p.X}, {p.Y})");
 // p.X = 0; // ERRO — 'in' é somente leitura
 ```
 
-**Como interpretar o exemplo:** Os três modificadores deixam explícita a intenção de passagem por referência. `ref` compartilha leitura e escrita, `out` obriga preenchimento de saída, e `in` evita cópia sem permitir modificação do argumento pelo método chamado.
+**Como interpretar o exemplo:** Os três modificadores deixam explícita a intenção de passagem por referência. `ref` compartilha leitura e escrita, `out` obriga preenchimento de saída, e `in` impede que o método altere o argumento por essa referência. O compilador pode criar uma cópia defensiva em alguns usos; aplique `in` por semântica e valide qualquer benefício com medição.
 
 ---
 
@@ -2000,12 +2105,12 @@ void ValidarNome(string nome)
 
 Type tipoUsuario = typeof(Usuario);
 
-static T PrimeiroOuPadrao<T>(IEnumerable<T> itens)
+static T? PrimeiroOuPadrao<T>(IEnumerable<T> itens)
 {
     foreach (var item in itens)
         return item;
 
-    return default!;
+    return default;
 }
 ```
 
@@ -2153,7 +2258,7 @@ public async Task<string> LerArquivoAsync(string caminho)
 Essas duas palavras são centrais na vida profissional com C# moderno:
 
 - `async` marca que o método participa do modelo assíncrono;
-- `await` suspende a continuação daquele método até a operação terminar, sem bloquear a thread chamadora.
+- se o awaitable ainda não terminou, `await` suspende a continuação daquele método e devolve o controle ao chamador sem bloquear uma thread apenas para esperar; se já terminou, a execução pode continuar de forma síncrona.
 
 Quando isso aparece na prática:
 
@@ -2203,6 +2308,43 @@ Quando isso aparece na prática:
 **Como interpretar o exemplo:** `required` e `init` aproximam ergonomia e segurança de modelagem. Eles reduzem objetos parcialmente montados e ajudam a expressar melhor a intenção do domínio sem recorrer imediatamente a construtores gigantes.
 
 > **Referências oficiais:** [The `required` modifier](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/required), [Init only setters](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/init)
+
+---
+
+### 7.16 Recursos essenciais do C# 14
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+C# 14 é a versão estável associada ao .NET 10. Os recursos abaixo aparecem com maior probabilidade em código novo:
+
+- **extension members**: blocos `extension` podem declarar métodos e propriedades de extensão; a sintaxe clássica com `this` continua válida;
+- **`field` em propriedades**: permite validar ou transformar no `set`/`init` sem declarar manualmente um backing field;
+- **atribuição null-conditional**: `cliente?.Nome = "Ana"` só atribui quando o receptor não é nulo;
+- **modificadores em parâmetros de lambdas simples**: permitem, por exemplo, `ref`, `in`, `out`, `scoped` ou `ref readonly` sem exigir parênteses apenas por haver um parâmetro;
+- **membros parciais adicionais**: construtores e eventos também podem ser divididos em declaração e implementação;
+- **`nameof` com tipo genérico aberto**: `nameof(List<>)` produz `"List"` sem exigir um argumento de tipo concreto;
+- **operadores de atribuição compostos definidos pelo usuário** e conversões implícitas adicionais envolvendo `Span<T>`;
+- **diretivas para file-based apps**: `#:package`, `#:project` e `#:property`, detalhadas na Parte 25.
+
+```csharp
+public sealed class Produto
+{
+    public decimal Preco
+    {
+        get;
+        set => field = value >= 0
+            ? value
+            : throw new ArgumentOutOfRangeException(nameof(value));
+    }
+}
+
+Produto? produto = ObterProduto();
+produto?.Preco = 19.90m; // nenhuma atribuição se produto for null
+```
+
+Não use `preview` por acidente em produção. A versão padrão da linguagem acompanha o target framework, e a Microsoft não recomenda `<LangVersion>latest</LangVersion>` porque máquinas com SDKs diferentes podem compilar conjuntos diferentes de recursos.
+
+> **Referências oficiais:** [What's new in C# 14](https://learn.microsoft.com/en-us/dotnet/csharp/whats-new/csharp-14), [Configure C# language version](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/configure-language-version)
 
 ---
 
@@ -2337,6 +2479,50 @@ for (int i = 0; i < 10; i++)
 
 ---
 
+### 8.4 Operadores, precedência e overflow
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+Operadores são parte central da linguagem. O mapa mínimo é:
+
+| Família | Operadores comuns | Observação |
+|---|---|---|
+| Aritmética | `+ - * / % ++ --` | divisão inteira descarta a parte fracionária |
+| Comparação | `== != < > <= >=` | o resultado é `bool`; a semântica pode ser sobrecarregada |
+| Lógica condicional | `&& || !` | `&&` e `||` fazem curto-circuito |
+| Bit a bit e deslocamento | `& \| ^ ~ << >> >>>` | operam sobre bits; `>>>` é deslocamento sem sinal |
+| Atribuição | `= += -= *= /= ??=` | avaliam e gravam um novo valor |
+| Nulos | `?. ?[] ?? ??=` | navegação, fallback e atribuição condicionais |
+| Escolha | `condição ? a : b` | expressão condicional ternária |
+| Tipo | `is as typeof sizeof` | teste, conversão e metadados de tipo |
+| Acesso e fatia | `. [] ^ ..` | membro, índice a partir do fim e intervalo |
+
+```csharp
+int quociente = 5 / 2;             // 2
+double preciso = 5 / 2.0;          // 2.5
+bool permitido = ativo && saldo > 0; // saldo só é avaliado se ativo for true
+
+string nome = cliente?.Nome ?? "desconhecido";
+int ultimo = numeros[^1];
+int[] meio = numeros[1..^1];
+
+int limite = int.MaxValue;
+try
+{
+    int invalido = checked(limite + 1); // lança OverflowException
+}
+catch (OverflowException)
+{
+    Console.WriteLine("O resultado não cabe em Int32.");
+}
+```
+
+Precedência define agrupamento, não necessariamente ordem temporal completa de todas as subexpressões. Quando a leitura não for óbvia, use parênteses. Em contexto `unchecked`, overflow integral pode truncar bits; `checked` pede verificação. Conversões e operações com `decimal` sempre podem lançar em overflow. Operadores também podem ser definidos por tipos customizados, mas devem preservar uma semântica previsível.
+
+> **Referências oficiais:** [C# operators and expressions](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/), [Operator precedence](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/#operator-precedence), [`checked` and `unchecked`](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/statements/checked-and-unchecked), [Operator overloading](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/operator-overloading)
+
+---
+
 ## Parte 9 — Métodos
 
 [⬆️ Voltar ao Sumário](#sumário)
@@ -2414,7 +2600,7 @@ public static class EnumerableExtensions
 {
     public static IEnumerable<T> FiltrarNulos<T>(this IEnumerable<T?> source)
         where T : class
-        => source.Where(x => x != null)!;
+        => source.Where(x => x is not null).Select(x => x!);
 }
 ```
 
@@ -2434,6 +2620,44 @@ public class Geometria
     public double CalcularArea(double b, double h, bool triangulo) => b * h / 2;
 }
 ```
+
+O tipo de retorno **não faz parte** da assinatura usada para distinguir sobrecargas. Portanto, dois métodos que diferem apenas no retorno não podem coexistir. Nomes, quantidades, tipos, ordem e modo de passagem (`value`, `ref`, `in`, `out`) dos parâmetros participam da resolução, com regras específicas.
+
+---
+
+### 9.4 Funções locais, retornos por referência e contratos de parâmetros
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+```csharp
+static int Fatorial(int n)
+{
+    ArgumentOutOfRangeException.ThrowIfNegative(n);
+    return Calcular(n);
+
+    static int Calcular(int atual) => atual <= 1 ? 1 : atual * Calcular(atual - 1);
+}
+
+static ref int Maior(ref int a, ref int b)
+    => ref (a >= b ? ref a : ref b);
+
+int x = 10, y = 20;
+ref int maior = ref Maior(ref x, ref y);
+maior = 99; // altera y
+
+// Desde C# 13, params também aceita tipos de coleção reconhecidos, não apenas arrays.
+static void Registrar(params ReadOnlySpan<string> mensagens)
+{
+    foreach (string mensagem in mensagens)
+        Console.WriteLine(mensagem);
+}
+```
+
+Funções locais são ótimas para encapsular um algoritmo que pertence a um único método; se marcadas `static`, não capturam variáveis externas. Retornos `ref` e variáveis locais `ref` dão acesso ao local de armazenamento original e exigem disciplina de tempo de vida; são ferramentas especializadas, comuns em código de performance e APIs de baixo nível.
+
+Parâmetros opcionais merecem atenção de versionamento: o valor padrão é incorporado no código do **chamador** no momento da compilação. Alterar o default de uma biblioteca não muda clientes já compilados. Prefira sobrecarga quando essa evolução for relevante. Use `params` na última posição e não o combine com `ref`, `in` ou `out`.
+
+> **Referências oficiais:** [Methods](https://learn.microsoft.com/en-us/dotnet/csharp/methods), [Method parameters](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/method-parameters), [Local functions](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/local-functions), [Named and optional arguments](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/named-and-optional-arguments), [Reference variables and returns](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/statements/jump-statements#ref-returns)
 
 ---
 
@@ -2528,22 +2752,22 @@ usuario &= ~Permissoes.Escrita;  // remove
 public class ContaBancaria
 {
     // ─── CAMPOS privados ──────────────────────────────────────────────────
-    private double _saldo;
+    private decimal _saldo;
     private static int _totalContas = 0;
 
     // ─── CONSTANTE ────────────────────────────────────────────────────────
-    public const double TaxaOperacao = 0.02;
+    public const decimal TaxaOperacao = 0.02m;
 
     // ─── PROPRIEDADES ─────────────────────────────────────────────────────
     public string Titular    { get; }
     public string Numero     { get; }
-    public double Saldo      => _saldo; // propriedade calculada (read-only)
+    public decimal Saldo     => _saldo; // propriedade calculada (read-only)
     public bool   EstaNegativa => _saldo < 0;
 
     public static int TotalContas => _totalContas;
 
     // ─── CONSTRUTOR ───────────────────────────────────────────────────────
-    public ContaBancaria(string titular, double saldoInicial = 0)
+    public ContaBancaria(string titular, decimal saldoInicial = 0m)
     {
         Titular = titular ?? throw new ArgumentNullException(nameof(titular));
         _saldo  = saldoInicial;
@@ -2552,14 +2776,14 @@ public class ContaBancaria
     }
 
     // ─── MÉTODOS ──────────────────────────────────────────────────────────
-    public void Depositar(double valor)
+    public void Depositar(decimal valor)
     {
         if (valor <= 0)
             throw new ArgumentException("Valor deve ser positivo.", nameof(valor));
         _saldo += valor;
     }
 
-    public bool Sacar(double valor)
+    public bool Sacar(decimal valor)
     {
         if (valor <= 0 || valor > _saldo) return false;
         _saldo -= valor;
@@ -2622,7 +2846,7 @@ var p = new Produto(); // válido — construtor implícito disponível
 
 > Assim que se declara `public Produto(string nome) { ... }`, o construtor sem parâmetros desaparece e `new Produto()` passa a gerar erro de compilação, salvo se for declarado manualmente.
 
-**Como interpretar o exemplo:** O comportamento implícito do compilador resolve casos simples, mas também gera surpresa quando a classe ganha seu primeiro construtor explícito. Saber que o construtor sem parâmetros desaparece nessa hora evita muitos erros de instânciação.
+**Como interpretar o exemplo:** O comportamento implícito do compilador resolve casos simples, mas também gera surpresa quando a classe ganha seu primeiro construtor explícito. Saber que o construtor sem parâmetros desaparece nessa hora evita muitos erros de instanciação.
 
 #### 11.2.3 Construtor parametrizado
 
@@ -2632,10 +2856,10 @@ var p = new Produto(); // válido — construtor implícito disponível
 public class Produto
 {
     public string Nome { get; }
-    public double Preco { get; }
+    public decimal Preco { get; }
 
     // Construtor parametrizado — recebe valores para inicializar o estado do objeto
-    public Produto(string nome, double preco)
+    public Produto(string nome, decimal preco)
     {
         // Validação de pré-condição antes de atribuir o estado
         if (string.IsNullOrWhiteSpace(nome))
@@ -2646,12 +2870,12 @@ public class Produto
     }
 }
 
-var p = new Produto("Teclado", 199.90);
+var p = new Produto("Teclado", 199.90m);
 ```
 
 | Linha | Explicação |
 |---|---|
-| `public Produto(string nome, double preco)` | Construtor que exige dois argumentos para que o objeto seja criado. |
+| `public Produto(string nome, decimal preco)` | Construtor que exige dois argumentos para que o objeto seja criado. |
 | `if (string.IsNullOrWhiteSpace(nome)) throw ...` | Validação executada antes de qualquer atribuição — garante estado consistente. |
 | `Nome = nome;` | Inicializa a propriedade `Nome`, que só pode ser atribuída dentro da classe (`get;` sem `set`). |
 
@@ -2715,8 +2939,10 @@ public class Retangulo
     // Construtor "principal" — contém toda a lógica de inicialização e validação
     public Retangulo(double largura, double altura)
     {
-        if (largura <= 0 || altura <= 0)
-            throw new ArgumentOutOfRangeException("Dimensões devem ser positivas.");
+        if (largura <= 0)
+            throw new ArgumentOutOfRangeException(nameof(largura), "A largura deve ser positiva.");
+        if (altura <= 0)
+            throw new ArgumentOutOfRangeException(nameof(altura), "A altura deve ser positiva.");
 
         Largura = largura;
         Altura  = altura;
@@ -2773,7 +2999,7 @@ public class Funcionario : Pessoa
 
 > Caso a classe base não possua construtor sem parâmetros, toda classe derivada **deve** chamar explicitamente um construtor da base via `base(...)`; caso contrário ocorre erro de compilação.
 
-**Como interpretar o exemplo:** `base(...)` garante que a classe derivada respeite o processo de inicialização da base, em vez de tentar reconstruir isso manualmente. Em outras palavras, a subclasse não deve pular as invariantes da classe pai; ela deve completa-las.
+**Como interpretar o exemplo:** `base(...)` garante que a classe derivada respeite o processo de inicialização da base, em vez de tentar reconstruir isso manualmente. Em outras palavras, a subclasse não deve pular as invariantes da classe pai; ela deve completá-las.
 
 #### 11.2.7 Ordem de execução em uma hierarquia de herança
 
@@ -2781,10 +3007,10 @@ public class Funcionario : Pessoa
 
 | Ordem | Etapa |
 |---|---|
-| 1 | Inicializadores de campo da classe **base** (ex.: `private int _x = 10;`) |
-| 2 | Corpo do construtor da classe **base** |
-| 3 | Inicializadores de campo da classe **derivada** |
-| 4 | Corpo do construtor da classe **derivada** |
+| 1 | Todos os campos da instância recebem primeiro seus valores padrão (`0`, `false`, `null` etc.) |
+| 2 | Ao entrar no construtor derivado, seus inicializadores de campo executam antes da chamada ao construtor base |
+| 3 | A mesma regra ocorre recursivamente na base: inicializadores da base e, depois, corpo do construtor da base |
+| 4 | O controle retorna e executa o corpo do construtor derivado |
 
 ```csharp
 public class Base
@@ -2801,18 +3027,27 @@ public class Base
 
 public class Derivada : Base
 {
-    private int _valor2 = 99;
+    private int _valor2 = ImprimirEFazer("Inicializador de campo (Derivada)", 99);
     public Derivada() => Console.WriteLine("Construtor (Derivada)");
+
+    private static int ImprimirEFazer(string msg, int retorno)
+    {
+        Console.WriteLine(msg);
+        return retorno;
+    }
 }
 
 var d = new Derivada();
 // Saída, na ordem:
+// Inicializador de campo (Derivada)
 // Inicializador de campo (Base)
 // Construtor (Base)
 // Construtor (Derivada)
 ```
 
-**Como interpretar o exemplo:** A ordem mostrada explica por que certos membros ainda não estão prontos quando outro código da hierarquia tenta acessá-los cedo demais. Esse entendimento evita bugs sutis de inicialização, principalmente em classes derivadas.
+**Como interpretar o exemplo:** A ordem é deliberadamente surpreendente: os inicializadores da classe derivada rodam antes do corpo do construtor base, mas o corpo da derivada só roda depois da base. Por isso, evite chamar membros virtuais em construtores; um override pode observar uma instância cujo construtor derivado ainda não terminou.
+
+> **Referência oficial:** [C# language specification — constructor execution](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/classes#15114-constructor-execution)
 
 #### 11.2.8 Construtor estático
 
@@ -2823,7 +3058,7 @@ Já introduzido na [Parte 7.1](#71-static); reapresentado aqui no contexto espec
 | Característica | Descrição |
 |---|---|
 | Assinatura | Sem modificador de acesso, sem parâmetros: `static NomeDaClasse() { ... }` |
-| Execução | Uma única vez, automaticamente, antes do primeiro uso do tipo (acesso a membro estático ou primeira instânciação) — controlada pelo CLR, não pelo programador. |
+| Execução | Uma única vez, automaticamente, antes do primeiro uso do tipo (acesso a membro estático ou primeira instanciação) — controlada pelo CLR, não pelo programador. |
 | Finalidade | Inicializar campos `static` que exigem lógica não trivial. |
 
 ```csharp
@@ -2875,28 +3110,28 @@ var c = ConfiguracaoGlobal.Instancia; // única forma válida de obter a instân
 Recurso introduzido no C# 12: permite declarar os parâmetros do construtor diretamente na assinatura da classe, eliminando a necessidade de um bloco de construtor explícito para os casos simples de atribuição direta.
 
 ```csharp
-// Os parâmetros (nome, preco) ficam disponíveis em toda a classe,
-// não apenas dentro de um construtor — comportam-se como parâmetros de escopo de classe.
-public class Produto(string nome, double preco)
+// Os parâmetros ficam disponíveis no corpo da classe, mas continuam sendo parâmetros:
+// o compilador não gera propriedades públicas automaticamente.
+public class Produto(string nome, decimal preco)
 {
     // Propriedade que apenas expõe o parâmetro do construtor primário
     public string Nome  { get; } = nome;
-    public double Preco { get; } = preco;
+    public decimal Preco { get; } = preco;
 
     // O parâmetro 'preco' pode ser usado diretamente em métodos, sem precisar de campo próprio
-    public double PrecoComDesconto(double percentual) => preco * (1 - percentual);
+    public decimal PrecoComDesconto(decimal percentual) => preco * (1 - percentual);
 }
 
-var p = new Produto("Teclado", 199.90);
+var p = new Produto("Teclado", 199.90m);
 ```
 
 | Linha | Explicação |
 |---|---|
-| `public class Produto(string nome, double preco)` | Declara o construtor primário — `nome` e `preco` tornam-se parâmetros acessíveis em todo o corpo da classe. |
+| `public class Produto(string nome, decimal preco)` | Declara o construtor primário — `nome` e `preco` tornam-se parâmetros acessíveis em todo o corpo da classe. |
 | `public string Nome { get; } = nome;` | Atribuição de inicialização de propriedade a partir do parâmetro do construtor primário. |
 | `preco * (1 - percentual)` | Uso direto do parâmetro `preco` dentro de um método, sem necessidade de campo `_preco` intermediário. |
 
-> **Atenção:** Eu, Claude, não estou 100% certo de todos os detalhes finos de captura de parâmetros de construtores primários (por exemplo, regras exatas de quando o compilador gera um campo oculto versus reavalia o parâmetro a cada acesso) — recomenda-se validar esse comportamento específico na documentação oficial da Microsoft antes de aplicar em código de produção sensível a performance.
+> **Atenção:** parâmetros de construtor primário não são membros. O compilador pode sintetizar armazenamento privado quando um parâmetro precisa ser capturado para uso posterior. Se o mesmo parâmetro também inicializa uma propriedade, você pode manter duas cópias do estado; observe os avisos do compilador e prefira usar uma única fonte de verdade.
 
 **Como interpretar o exemplo:** O ganho aqui é reduzir boilerplate em classes cujo construtor apenas recebe e expõe dados. O cuidado é não sacrificar legibilidade: quando a classe cresce demais, a forma tradicional pode voltar a ser mais clara.
 
@@ -2922,7 +3157,7 @@ var p = new Produto("Teclado", 199.90);
 
 [⬆️ Voltar ao Sumário](#sumário)
 
-Records são tipos de dados imutáveis com `Equals`, `GetHashCode` e `ToString` gerados automaticamente. Equivalente e superior aos Records do Java 16+.
+Records são tipos orientados a dados com igualdade por valor e implementações sintetizadas de `Equals`, `GetHashCode` e `ToString`. Um `record class` é tipo de referência; um `record struct` é tipo de valor. Records **não são inerentemente imutáveis**: a imutabilidade depende dos membros declarados e dos objetos que eles referenciam.
 
 ```csharp
 // Record de posicional — uma linha
@@ -2935,33 +3170,38 @@ Console.WriteLine(p1.X);          // 3.0
 Console.WriteLine(p1);            // "Ponto { X = 3, Y = 4 }"
 Console.WriteLine(p1 == p2);      // true — comparação por valor
 
-// 'with' expression — cria cópia com campos alterados (imutável)
+// 'with' expression — cria uma cópia não destrutiva
 Ponto p3 = p1 with { X = 10.0 };  // p3 = (10, 4); p1 não muda
 
-// Record com validação e membros adicionais
-public record Temperatura(double Valor, string Unidade)
+// Record nominal com validação explícita no construtor
+public sealed record Temperatura
 {
-    // Construtor compacto com validação
-    public Temperatura
+    public decimal Valor { get; }
+    public string Unidade { get; }
+
+    public Temperatura(decimal valor, string unidade)
     {
-        if (!new[] { "C", "F", "K" }.Contains(Unidade))
-            throw new ArgumentException($"Unidade inválida: {Unidade}");
+        if (unidade is not ("C" or "F" or "K"))
+            throw new ArgumentException($"Unidade inválida: {unidade}", nameof(unidade));
+
+        Valor = valor;
+        Unidade = unidade;
     }
 
-    public double EmCelsius() => Unidade switch
+    public decimal EmCelsius() => Unidade switch
     {
         "C" => Valor,
-        "F" => (Valor - 32) * 5 / 9,
-        "K" => Valor - 273.15,
+        "F" => (Valor - 32m) * 5m / 9m,
+        "K" => Valor - 273.15m,
         _   => throw new InvalidOperationException()
     };
 }
 
-// Record struct (C# 10+) — tipo de valor imutável
-public record struct Coordenada(double Latitude, double Longitude);
+// record struct é mutável por padrão; readonly torna a estrutura somente leitura.
+public readonly record struct Coordenada(double Latitude, double Longitude);
 ```
 
-**Como interpretar o exemplo:** Records são ideais quando o foco do tipo está nos dados e não na identidade da instância. O exemplo destaca três ideias centrais: igualdade por valor, cópia imutável com `with` e sintaxe compacta para modelos orientados a dados.
+**Como interpretar o exemplo:** Records são ideais quando o foco do tipo está nos dados e não na identidade da instância. O exemplo destaca igualdade por valor, cópia não destrutiva com `with` e sintaxe compacta. Para invariantes fortes, não exponha `init` que permita a uma expressão `with` contornar a validação.
 
 ---
 
@@ -3032,11 +3272,69 @@ deve ser lida assim:
 
 - crie um novo `Pedido`;
 - passe o builder atual (`this`) para o construtor privado;
-- o construtor do `Pedido` cópia do builder os valores acumulados.
+- o construtor do `Pedido` copia do builder os valores acumulados.
 
 Em outras palavras, o builder funciona como uma "área de montagem temporária". O produto final só nasce no `Build()`.
 
 > Em C# moderno, o padrão builder frequentemente é substituído por **object initializers** e **init-only properties**, que oferecem sintaxe mais limpa sem classe auxiliar.
+
+---
+
+### 11.5 Structs, inicializadores, indexadores e igualdade
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+Use `class` quando identidade, compartilhamento da mesma instância, herança ou ciclo de vida gerenciado são importantes. Use `struct` para valores pequenos que têm semântica de cópia. Estruturas mutáveis grandes geram cópias caras e comportamento surpreendente; prefira `readonly struct` quando o valor deve ser estável. Um `ref struct`, como `Span<T>`, obedece a regras de tempo de vida que impedem seu escape para locais inseguros.
+
+```csharp
+public readonly struct Dinheiro : IEquatable<Dinheiro>, IComparable<Dinheiro>
+{
+    public decimal Valor { get; }
+    public string Moeda { get; }
+
+    public Dinheiro(decimal valor, string moeda)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(moeda);
+        Valor = valor;
+        Moeda = moeda;
+    }
+
+    public bool Equals(Dinheiro other) =>
+        Valor == other.Valor &&
+        string.Equals(Moeda, other.Moeda, StringComparison.Ordinal);
+
+    public override bool Equals(object? obj) => obj is Dinheiro other && Equals(other);
+    public override int GetHashCode() => HashCode.Combine(Valor, Moeda);
+    public int CompareTo(Dinheiro other)
+    {
+        int moeda = string.Compare(Moeda, other.Moeda, StringComparison.Ordinal);
+        return moeda != 0 ? moeda : Valor.CompareTo(other.Valor);
+    }
+
+    public static bool operator ==(Dinheiro left, Dinheiro right) => left.Equals(right);
+    public static bool operator !=(Dinheiro left, Dinheiro right) => !left.Equals(right);
+}
+
+public sealed class Catalogo
+{
+    private readonly Dictionary<string, decimal> _precos = new(StringComparer.Ordinal);
+
+    // Indexador: a instância pode ser acessada com sintaxe de colchetes.
+    public decimal this[string sku]
+    {
+        get => _precos[sku];
+        set => _precos[sku] = value;
+    }
+}
+
+var catalogo = new Catalogo { ["ABC"] = 19.90m }; // inicializador de indexador
+```
+
+`Equals`, `GetHashCode` e os comparadores formam um contrato. Objetos iguais devem produzir o mesmo hash durante o período em que são usados como chave. Não altere os dados que participam da igualdade enquanto o objeto estiver em `Dictionary` ou `HashSet`. Para igualdade de referência explícita, use `ReferenceEquals`; para tipos orientados a dados, avalie `record` ou implemente `IEquatable<T>`.
+
+Inicializadores de objeto e coleção executam **depois** do construtor. `required` exige que o chamador forneça o membro, mas não valida sozinho conteúdo nem substitui invariantes de runtime. Tipos aninhados são úteis quando sua utilidade pertence estritamente ao tipo externo; evite-os quando prejudicarem descoberta e reutilização.
+
+> **Referências oficiais:** [Structure types](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/struct), [Choose between class and struct](https://learn.microsoft.com/en-us/dotnet/standard/design-guidelines/choosing-between-class-and-struct), [Object and collection initializers](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/object-and-collection-initializers), [Indexers](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/indexers/), [Equality comparisons](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/statements-expressions-operators/equality-comparisons)
 
 ---
 
@@ -3264,8 +3562,8 @@ Quando a implementação é explícita:
 | Herança múltipla | Não (apenas uma) | Sim (várias) |
 | Campos de instância | Sim | Não |
 | Construtores | Sim | Não |
-| Métodos com implementação | Sim | Sim (`default`, C# 8+) |
-| Modificadores de acesso | Qualquer | `public` por padrão |
+| Métodos com implementação | Sim | Sim (default interface members, C# 8+) |
+| Modificadores de acesso | Qualquer permitido ao membro | Membros abstratos de instância são implicitamente `public`; membros com corpo e estáticos admitem outros acessos conforme as regras da linguagem |
 | Quando usar | Relação "é um", compartilhar estado e comportamento | Contrato de comportamento |
 
 Regras práticas para decidir:
@@ -3341,7 +3639,7 @@ C# fornece delegates genéricos pré-definidos para os casos mais comuns:
 // Func — transforma
 Func<string, int>    tamanho   = s => s.Length;
 Func<int, int, int>  somar     = (a, b) => a + b;
-Func<int>            aleatorio = () => new Random().Next(100);
+Func<int>            aleatorio = () => Random.Shared.Next(100);
 
 // Action — consome
 Action<string>       imprimir  = s => Console.WriteLine(s);
@@ -3480,12 +3778,18 @@ public class Botao
 }
 
 // Evento com dados customizados
+public sealed class MensagemEventArgs : EventArgs
+{
+    public string Mensagem { get; }
+    public MensagemEventArgs(string mensagem) => Mensagem = mensagem;
+}
+
 public class BotaoComDados
 {
-    public event EventHandler<string>? MensagemEnviada;
+    public event EventHandler<MensagemEventArgs>? MensagemEnviada;
 
     public void Enviar(string msg) =>
-        MensagemEnviada?.Invoke(this, msg);
+        MensagemEnviada?.Invoke(this, new MensagemEventArgs(msg));
 }
 
 // Assinando e cancelando assinatura
@@ -3499,7 +3803,46 @@ botao.Clicar();            // "Botão clicado!"
 botao.Clicado -= Handler;  // cancela assinatura
 ```
 
-**Como interpretar o exemplo:** `event` encapsula um delegate para permitir inscrição e cancelamento sem liberar disparo externo arbitrário. Assim, o publicador controla quando algo aconteceu, e os assinantes controlam apenas como reagir.
+**Como interpretar o exemplo:** `event` encapsula um delegate para permitir inscrição e cancelamento sem liberar disparo externo arbitrário. Assim, o publicador controla quando algo aconteceu, e os assinantes controlam apenas como reagir. Quando o publicador vive mais que o assinante, mantenha uma estratégia de cancelamento de inscrição; a referência do delegate pode prolongar a vida do assinante.
+
+---
+
+### 13.5 Closures e árvores de expressão
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+Uma lambda pode **capturar** variáveis do escopo externo. O compilador preserva esse estado numa closure, e todas as chamadas observam a variável capturada, não uma fotografia automática de seu valor.
+
+```csharp
+int fator = 2;
+Func<int, int> multiplicar = n => n * fator;
+fator = 3;
+Console.WriteLine(multiplicar(10)); // 30
+
+var acoes = new List<Action>();
+for (int i = 0; i < 3; i++)
+{
+    int copia = i;
+    acoes.Add(() => Console.WriteLine(copia));
+}
+```
+
+Capturas podem alocar e manter objetos vivos por mais tempo. Em callbacks duradouros, loops quentes e eventos, saiba o que está sendo capturado; uma lambda `static` proíbe captura e torna a intenção explícita.
+
+A mesma sintaxe de lambda também pode ser convertida em uma árvore de expressão, uma representação de dados inspecionável por bibliotecas:
+
+```csharp
+using System.Linq.Expressions;
+
+Expression<Func<Produto, bool>> filtro = p => p.Preco >= 100m;
+Console.WriteLine(filtro.Body); // estrutura da expressão, não só código executável
+
+Func<Produto, bool> compilado = filtro.Compile();
+```
+
+Delegates representam comportamento executável. `Expression<TDelegate>` representa a estrutura da expressão e pode ser traduzida, por exemplo, por um provider `IQueryable<T>`. Nem toda construção da linguagem pode ser representada por expression trees; respeite as limitações e a capacidade do provider de traduzir a expressão.
+
+> **Referências oficiais:** [Lambda expressions](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/lambda-expressions), [Expression trees](https://learn.microsoft.com/en-us/dotnet/csharp/advanced-topics/expression-trees/), [Expression tree restrictions](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/compiler-messages/expression-tree-restrictions)
 
 ---
 
@@ -4016,9 +4359,12 @@ nomes.Sort((a, b) => a.Length.CompareTo(b.Length)); // custom
 // Capacidade inicial ajuda quando você já sabe aproximadamente o tamanho
 var ids = new List<int>(capacity: 1000);
 
-// Listas imutáveis
-var imutavel = new List<string> { "A", "B" }.AsReadOnly();
-// imutavel.Add("C"); // NotSupportedException
+// Wrapper somente leitura: não permite mutação por esta referência,
+// mas reflete mudanças feitas na lista original.
+var origem = new List<string> { "A", "B" };
+IReadOnlyList<string> somenteLeitura = origem.AsReadOnly();
+origem.Add("C");
+Console.WriteLine(somenteLeitura.Count); // 3
 ```
 
 Quando `List<T>` é excelente:
@@ -4085,7 +4431,7 @@ estoque["Webcam"]    = 12;              // adiciona se não existe, atualiza se 
 estoque.TryAdd("Monitor", 99);          // adiciona apenas se não existir
 
 // Iteração
-foreach (var (chave, valor) in estoque) // desestruturação
+foreach (var (chave, valor) in estoque) // desconstrução
     Console.WriteLine($"{chave}: {valor}");
 
 // LINQ em dicionários
@@ -4141,13 +4487,57 @@ Essa distinção melhora encapsulamento e deixa o contrato mais honesto.
 
 Em código maduro, escolher coleção não é detalhe. É parte do design.
 
+**Como interpretar o exemplo:** A tabela resume um princípio central de design: escolha primeiro a semântica do acesso e só depois a estrutura concreta. A melhor coleção não é a mais famosa, e sim a que comunica com honestidade o que o consumidor poderá fazer com os dados.
+
+---
+
+### 15.5 Arrays, coleções imutáveis, congeladas e concorrentes
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+Arrays são tipos de referência, indexados a partir de zero e com comprimento fixo após a criação. O array pode ser unidimensional, multidimensional retangular ou jagged (array de arrays).
+
+```csharp
+int[] vetor = [10, 20, 30, 40];       // collection expression, C# 12+
+int[,] matriz = { { 1, 2 }, { 3, 4 } };
+int[][] irregular = [[1, 2], [3, 4, 5]];
+
+Console.WriteLine(vetor[^1]);          // 40
+int[] meio = vetor[1..3];              // novo array [20, 30]
+int[] combinado = [0, .. vetor, 50];   // spread em collection expression
+
+foreach (int item in matriz)
+    Console.WriteLine(item);
+```
+
+Não confunda **somente leitura** com **imutabilidade**:
+
+- `IReadOnlyList<T>` e `ReadOnlyCollection<T>` restringem a API visível, mas a fonte subjacente pode continuar mudando;
+- `ImmutableList<T>` e outras coleções de `System.Collections.Immutable` retornam uma nova coleção a cada alteração lógica e preservam a anterior;
+- `FrozenSet<T>` e `FrozenDictionary<TKey,TValue>` são construídos uma vez e otimizados para leitura; são bons para dados estáticos com muitas consultas;
+- coleções de `System.Collections.Concurrent` suportam operações concorrentes específicas, mas uma sequência de várias operações ainda pode precisar de desenho atômico próprio.
+
+```csharp
+using System.Collections.Concurrent;
+using System.Collections.Frozen;
+using System.Collections.Immutable;
+
+ImmutableList<string> nomes = ImmutableList.Create("Ana", "Bruno");
+ImmutableList<string> outros = nomes.Add("Carlos"); // nomes não muda
+
+FrozenSet<string> codigos = new[] { "A", "B" }.ToFrozenSet(StringComparer.Ordinal);
+var fila = new ConcurrentQueue<int>();
+fila.Enqueue(1);
+fila.TryDequeue(out int primeiro);
+```
+
+> **Referências oficiais:** [Arrays](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/arrays), [Collection expressions](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/collection-expressions), [Immutable collections](https://learn.microsoft.com/en-us/dotnet/api/system.collections.immutable), [Frozen collections](https://learn.microsoft.com/en-us/dotnet/api/system.collections.frozen), [Thread-safe collections](https://learn.microsoft.com/en-us/dotnet/standard/collections/thread-safe/)
+
 ---
 
 ## Parte 16 — Async/Await e Programação Assíncrona
 
 [⬆️ Voltar ao Sumário](#sumário)
-
-**Como interpretar o exemplo:** A tabela resume um princípio central de design: escolha primeiro a semântica do acesso e só depois a estrutura concreta. A melhor coleção não é a mais famosa, e sim a que comunica com honestidade o que o consumidor poderá fazer com os dados.
 
 ---
 
@@ -4160,16 +4550,20 @@ C# possui suporte nativo e profundo para programação assíncrona com `async`/`
 ```csharp
 using System.Net.Http;
 
-// Método assíncrono — deve retornar Task, Task<T> ou ValueTask<T>
-public async Task<string> BuscarDadosAsync(string url)
+private static readonly HttpClient Cliente = new(new SocketsHttpHandler
 {
-    using var cliente = new HttpClient();
+    PooledConnectionLifetime = TimeSpan.FromMinutes(10)
+});
 
-    // await libera a thread atual enquanto aguarda o resultado
-    // (não bloqueia — diferente de .Result que bloqueia)
-    string resposta = await cliente.GetStringAsync(url);
+// Método assíncrono — normalmente retorna Task ou Task<T>
+public async Task<string> BuscarDadosAsync(string url, CancellationToken ct = default)
+{
+    using HttpResponseMessage resposta = await Cliente.GetAsync(
+        url, HttpCompletionOption.ResponseHeadersRead, ct);
+    resposta.EnsureSuccessStatusCode();
 
-    return resposta.ToUpper();
+    string conteudo = await resposta.Content.ReadAsStringAsync(ct);
+    return conteudo.ToUpperInvariant();
 }
 
 // Método assíncrono sem retorno
@@ -4187,7 +4581,7 @@ public async Task ExemploAsync()
 }
 ```
 
-**Como interpretar o exemplo:** O ganho de `async` e `await` não é criar várias threads automaticamente, e sim permitir espera sem bloqueio da thread chamadora. Isso deixa o fluxo legível como código sequencial, mas com comportamento muito melhor para operações de I/O.
+**Como interpretar o exemplo:** O ganho de `async` e `await` não é criar várias threads automaticamente. Em I/O verdadeiramente assíncrono, `await` normalmente devolve o controle ao chamador enquanto a operação está pendente, sem manter uma thread bloqueada só para esperar. A continuação pode executar em outro contexto ou thread. Evite `.Result`, `.Wait()` e `GetAwaiter().GetResult()` no fluxo assíncrono.
 
 ---
 
@@ -4196,18 +4590,18 @@ public async Task ExemploAsync()
 [⬆️ Voltar ao Sumário](#sumário)
 
 ```csharp
-// Executar múltiplas tasks em paralelo
-public async Task ExemploParaleloAsync()
+// Coordenar múltiplas operações concorrentes
+public async Task ExemploConcorrenteAsync()
 {
     Task<string> task1 = BuscarDadosAsync("https://api1.com");
     Task<string> task2 = BuscarDadosAsync("https://api2.com");
 
-    // Aguarda ambas ao mesmo tempo (paralelo)
+    // Aguarda ambas; para I/O isto é concorrência, não necessariamente paralelismo de CPU.
     string[] resultados = await Task.WhenAll(task1, task2);
 
-    // Aguarda a primeira que completar
-    string primeiraResposta = await Task.WhenAny(task1, task2)
-                                        .ContinueWith(t => t.Result.Result);
+    // WhenAny retorna a própria Task concluída; aguarde-a para obter/propagar o resultado.
+    Task<string> concluida = await Task.WhenAny(task1, task2);
+    string primeiraResposta = await concluida;
 }
 
 // CancellationToken — permite cancelar operações assíncronas
@@ -4222,7 +4616,7 @@ public async Task OperacaoCancelavelAsync(CancellationToken ct = default)
 }
 
 // Uso com cancelamento
-var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5)); // cancela em 5s
+using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5)); // cancela em 5s
 try
 {
     await OperacaoCancelavelAsync(cts.Token);
@@ -4232,7 +4626,7 @@ catch (OperationCanceledException)
     Console.WriteLine("Operação cancelada.");
 }
 
-// ConfigureAwait(false) — evita retorno ao contexto original (útil em bibliotecas)
+// Em bibliotecas que não dependem do contexto do chamador, isto pode ser apropriado.
 string dados = await BuscarDadosAsync("url").ConfigureAwait(false);
 ```
 
@@ -4245,34 +4639,68 @@ string dados = await BuscarDadosAsync("url").ConfigureAwait(false);
 [⬆️ Voltar ao Sumário](#sumário)
 
 ```csharp
-// Task — aloca um objeto no heap; adequado para operações realmente assíncronas
+// Task — contrato padrão, simples de armazenar, combinar e aguardar mais de uma vez
 public async Task<int> OperacaoAsync() { await Task.Delay(100); return 42; }
 
-// ValueTask — evita alocação quando o resultado é frequentemente síncrono
+// ValueTask — o caminho síncrono pode evitar a criação de uma Task
 public async ValueTask<int> OperacaoRapidaAsync(bool usarCache)
 {
-    if (usarCache) return 42; // caminho síncrono — sem alocação de Task
+    if (usarCache) return 42;
     await Task.Delay(100);
     return 42;
 }
 ```
 
-**Como interpretar o exemplo:** `ValueTask` existe para cenários em que o caminho síncrono é frequente e a alocação de `Task` se torna custo relevante, mas isso não o transforma em escolha padrão. Em geral, prefira `Task` por simplicidade e só use `ValueTask` com benefício mensurável.
+**Como interpretar o exemplo:** `ValueTask` existe para cenários em que o caminho síncrono é frequente e a alocação de `Task` se torna custo relevante, mas não elimina toda alocação em qualquer execução. Em geral, prefira `Task` por simplicidade. Um `ValueTask` normalmente deve ser aguardado diretamente e uma única vez; armazenamento, múltiplos awaits e combinação exigem atenção ou conversão com `AsTask()`.
 
 ---
+
+### 16.4 Streams assíncronos, cancelamento e descarte
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+`IAsyncEnumerable<T>` representa uma sequência cujos próximos itens chegam de forma assíncrona. O consumidor usa `await foreach`, recebendo e processando elementos progressivamente em vez de esperar uma lista inteira.
+
+```csharp
+using System.Runtime.CompilerServices;
+
+static async IAsyncEnumerable<int> ContarAsync(
+    int limite,
+    [EnumeratorCancellation] CancellationToken ct = default)
+{
+    for (int i = 0; i < limite; i++)
+    {
+        ct.ThrowIfCancellationRequested();
+        await Task.Delay(100, ct);
+        yield return i;
+    }
+}
+
+await foreach (int numero in ContarAsync(10))
+    Console.WriteLine(numero);
+```
+
+Cancelamento é cooperativo. Quem cria um `CancellationTokenSource` controla e descarta essa fonte; métodos consumidores recebem um `CancellationToken`, propagam-no às operações internas e não o transformam silenciosamente em “sucesso”. Para timeout mais cancelamento externo, crie uma fonte vinculada e use `CancelAfter`.
+
+Use `await using` para `IAsyncDisposable`, quando a liberação também exige I/O. `async void` deve ficar restrito a event handlers exigidos pelo contrato; ele não pode ser aguardado e suas exceções não são observadas como as de `Task`. Em bibliotecas gerais, não presuma que existe `SynchronizationContext`; `ConfigureAwait(false)` é uma decisão de biblioteca, não uma regra obrigatória para todo aplicativo moderno.
+
+> **Referências oficiais:** [Asynchronous programming scenarios](https://learn.microsoft.com/en-us/dotnet/csharp/asynchronous-programming/async-scenarios), [Async return types](https://learn.microsoft.com/en-us/dotnet/csharp/asynchronous-programming/async-return-types), [Generate and consume async streams](https://learn.microsoft.com/en-us/dotnet/csharp/asynchronous-programming/generate-consume-asynchronous-stream), [Cancellation in managed threads](https://learn.microsoft.com/en-us/dotnet/standard/threading/cancellation-in-managed-threads), [`IAsyncDisposable`](https://learn.microsoft.com/en-us/dotnet/standard/garbage-collection/implementing-disposeasync)
+
+---
+
 ## Parte 17 — Generics
 
-[⬆️ Voltar ao Sumário](https://www.google.com/search?q=%23sum%C3%A1rio)
+[⬆️ Voltar ao Sumário](#sumário)
 
 Generics introduzem o conceito de **type parameters** (parâmetros de tipo) no .NET. Eles permitem projetar classes, estruturas, interfaces e métodos adiando a especificação do tipo de dado exato até que o membro seja declarado e instanciado pelo código cliente.
 
-Diferente dos templates de C++, os generics do C# são compilados e preservados como metadados na **Intermediate Language (IL)**. O runtime do .NET gera o código de máquina nativo sob demanda via **JIT Compiler**: tipos de referência compartilham a mesma implementação especializada (visto que ponteiros têm o mesmo tamanho), enquanto tipos de valor ganham uma representação nativa dedicada e otimizada na memória, eliminando custos de alocação e boxing.
+Diferente de uma simples substituição textual, os generics do C# são preservados nos metadados e conhecidos pelo runtime. O JIT pode compartilhar código entre certas instanciações de tipos de referência e especializar instanciações de tipos de valor; isso é detalhe de implementação. Usar APIs genéricas tipadas elimina muitos casts e casos de boxing que existiriam com `object`, mas generics não eliminam automaticamente toda alocação ou todo boxing.
 
 ---
 
 ### 17.1 Tipos parametrizados
 
-[⬆️ Voltar ao Sumário](https://www.google.com/search?q=%23sum%C3%A1rio)
+[⬆️ Voltar ao Sumário](#sumário)
 
 Um tipo parametrizado permite que uma classe ou estrutura manipule coleções ou algoritmos de forma genérica, mantendo a **segurança de tipo (type safety)** em tempo de compilação.
 
@@ -4296,7 +4724,7 @@ repo.Adicionar(new Usuario()); // Compila normalmente
 
 ```
 
-**Como interpretar o exemplo:** Generics resolvem o problema do reaproveitamento de código sem sacrificar a performance ou a segurança de tipos. Em implementações antigas (como .NET 1.0), para criar uma lista genérica era necessário manipular o tipo `object`, o que exigia conversões explícitas (*casts*) e causava *boxing/unboxing* ao lidar com tipos de valor. Com generics, o marcador `T` é substituído pelo tipo real em tempo de compilação, permitindo que o compilador valide os dados e impeça erros comuns antes da execução.
+**Como interpretar o exemplo:** Generics resolvem o reaproveitamento de código preservando segurança de tipos. Antes das coleções genéricas, APIs baseadas em `object` exigiam casts e podiam causar boxing de valores. O argumento de tipo continua presente no tipo construído e permite validação pelo compilador e pelo runtime.
 
 > **Referências oficiais:** [Generics in .NET](https://learn.microsoft.com/en-us/dotnet/standard/generics/), [Generic Classes (C# Programming Guide)](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/generics/generic-classes)
 
@@ -4304,7 +4732,7 @@ repo.Adicionar(new Usuario()); // Compila normalmente
 
 ### 17.2 Constraints (restrições)
 
-[⬆️ Voltar ao Sumário](https://www.google.com/search?q=%23sum%C3%A1rio)
+[⬆️ Voltar ao Sumário](#sumário)
 
 As restrições (*constraints*) informam ao compilador sobre as capacidades que o argumento de tipo deve possuir. Sem nenhuma restrição, o parâmetro de tipo `T` pode ser qualquer tipo do .NET, limitando o corpo da classe ou método a utilizar apenas os membros herdados de `System.Object`.
 
@@ -4315,11 +4743,14 @@ As restrições (*constraints*) informam ao compilador sobre as capacidades que 
 // where T : NomeClasse    — T deve herdar de ou ser a classe NomeClasse
 // where T : IInterface    — T deve implementar ou ser a interface especificada
 // where T : notnull       — T deve ser um tipo não anulável (C# 8+)
-// where T : unmanaged     — T deve ser um tipo não gerenciado (primitivos, enums ou structs simples)
+// where T : unmanaged     — T é um tipo de valor não anulável sem referências gerenciadas
+// where T : class?        — T é um tipo de referência, anulável ou não
+// where T : default       — resolve override/implementação ambígua entre class e struct
+// where T : allows ref struct — anti-constraint: T também pode ser byref-like
 
 public T Criar<T>() where T : new() => new T();
 
-// Combinação de múltiplas restrições (new() deve ser sempre a última)
+// Combinação de múltiplas restrições (new() fica por último, salvo anti-constraints)
 public void Processar<T>(T item)
     where T : class, IComparable<T>, new()
 {
@@ -4328,7 +4759,7 @@ public void Processar<T>(T item)
 }
 
 // Método genérico independente de classe
-public static T PrimeiroOuPadrao<T>(IEnumerable<T> colecao, T valorPadrao = default!)
+public static T PrimeiroOuPadrao<T>(IEnumerable<T> colecao, T valorPadrao)
 {
     foreach (var item in colecao)
         return item;
@@ -4339,15 +4770,26 @@ public static T PrimeiroOuPadrao<T>(IEnumerable<T> colecao, T valorPadrao = defa
 
 **Como interpretar o exemplo:** Aplicar uma restrição aumenta o espectro de operações permitidas dentro do escopo genérico. Ao declarar `where T : IComparable<T>`, você estabelece um contrato mecânico com o compilador: o universo de tipos aceitos diminui, mas em contrapartida, o código ganha o direito de chamar `.CompareTo()` diretamente na variável do tipo `T`, eliminando a necessidade de reflexão ou *casts* inseguros em tempo de execução.
 
-> **Referências oficiais:** [Constraints on type parameters (C# Programming Guide)](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/generics/constraints-on-type-parameters), [Generic Methods (C# Programming Guide)](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/generics/generic-methods)
+Interfaces com membros `static abstract` permitem algoritmos genéricos que usam operadores e outros membros estáticos, base da generic math:
+
+```csharp
+using System.Numerics;
+
+static T Somar<T>(T esquerda, T direita)
+    where T : IAdditionOperators<T, T, T> => esquerda + direita;
+```
+
+Restrições não são só documentação: elas determinam quais operações o corpo genérico pode compilar e fazem parte do contrato da API. `notnull` produz aviso no contexto anulável; `class`, `class?`, `struct` e `unmanaged` têm regras de exclusão e ordem próprias.
+
+> **Referências oficiais:** [Constraints on type parameters (C# Programming Guide)](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/generics/constraints-on-type-parameters), [Generic Methods (C# Programming Guide)](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/generics/generic-methods), [Generic math](https://learn.microsoft.com/en-us/dotnet/standard/generics/math)
 
 ---
 
 ### 17.3 Covariância e contravariância
 
-[⬆️ Voltar ao Sumário](https://www.google.com/search?q=%23sum%C3%A1rio)
+[⬆️ Voltar ao Sumário](#sumário)
 
-Covariância e contravariância tratam da preservação ou inversão da relação de herança entre tipos complexos gerados a partir de argumentos genéricos. Elas aplicam-se exclusivamente a **interfaces** e **delegates**, não sendo suportadas em classes genéricas puras.
+A variância genérica trata da preservação ou inversão da relação de conversão de referência entre tipos construídos. Os parâmetros `out` e `in` podem ser declarados em **interfaces** e **delegates**, não em classes, e a conversão de variância vale apenas para argumentos de tipo de referência. Arrays também possuem covariância própria, anterior aos generics, mas ela pode falhar em runtime com `ArrayTypeMismatchException`.
 
 * **Covariância (`out`)**: Permite que você use um tipo mais derivado (subclasse) do que o originalmente especificado pelo parâmetro genérico. É segura apenas para posições de **saída** (valores retornados por métodos).
 * **Contravariância (`in`)**: Permite que você use um tipo mais genérico (classe base) do que o originalmente especificado pelo parâmetro genérico. É segura apenas para posições de **entrada** (parâmetros recebidos por métodos).
@@ -4364,48 +4806,24 @@ Action<Animal>   processarAnimal   = a => Console.WriteLine(a.Nome);
 Action<Cachorro> processarCachorro = processarAnimal; // OK — Contravariante
 
 // Interface Covariante (T só sai do objeto)
-public interface ILeitor<out T> 
-{ 
+public interface ILeitor<out T>
+{
     T Ler(); // Permitido: T na posição de saída
     // void Escrever(T item); // ERRO DE COMPILAÇÃO se descomentado!
 }
 
 // Interface Contravariante (T só entra no objeto)
-public interface IEscritor<in T> 
-{ 
+public interface IEscritor<in T>
+{
     void Escrever(T item); // Permitido: T na posição de entrada
     // T Ler(); // ERRO DE COMPILAÇÃO se descomentado!
 }
 
 ```
 
-**Como interpretar o exemplo:** O compilador do C# proíbe o uso cruzado dessas palavras-chave para blindar o sistema contra falhas de violação de tipo em tempo de execução (*runtime type pollution*). Se o parâmetro for marcado como `out`, a interface promete que nunca receberá uma inserção de dados inválida. Se for marcado como `in`, ela garante que o tipo fornecido externamente atuará estritamente como argumento de processamento interno, mantendo a previsibilidade do design de software orientado a objetos.
+**Como interpretar o exemplo:** As regras de posição tornam essas conversões seguras: um parâmetro `out` pode aparecer apenas em posições de saída permitidas, enquanto um parâmetro `in` pode aparecer apenas em posições de entrada permitidas. O compilador verifica essas restrições na declaração da interface ou do delegate.
 
 > **Referências oficiais:** [Covariance and Contravariance in Generics](https://learn.microsoft.com/en-us/dotnet/standard/generics/covariance-and-contravariance), [Variance in Generic Interfaces (C#)](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/concepts/covariance-contravariance/variance-in-generic-interfaces)
-
----
-
-### 17.3 Covariância e contravariância
-
-[⬆️ Voltar ao Sumário](#sumário)
-
-```csharp
-// Covariância (out) — pode usar tipo mais derivado
-// Ex: IEnumerable<Cachorro> pode ser atribuído a IEnumerable<Animal>
-IEnumerable<Cachorro> cachorros = new List<Cachorro>();
-IEnumerable<Animal>   animais   = cachorros; // OK — covariante
-
-// Contravariância (in) — pode usar tipo menos derivado
-// Ex: Action<Animal> pode ser atribuído a Action<Cachorro>
-Action<Animal>   processarAnimal   = a => Console.WriteLine(a.Nome);
-Action<Cachorro> processarCachorro = processarAnimal; // OK — contravariante
-
-// Interface covariante
-public interface ILeitor<out T> { T Ler(); }
-
-// Interface contravariante
-public interface IEscritor<in T> { void Escrever(T item); }
-```
 
 ---
 
@@ -4443,7 +4861,7 @@ catch (Exception ex)
 }
 finally
 {
-    Console.WriteLine("Executado sempre");
+    Console.WriteLine("Executado quando o fluxo deixa o try/catch normalmente ou por unwind");
 }
 ```
 
@@ -4459,10 +4877,10 @@ finally
 // Exceção customizada
 public class SaldoInsuficienteException : InvalidOperationException
 {
-    public double SaldoAtual      { get; }
-    public double ValorSolicitado { get; }
+    public decimal SaldoAtual      { get; }
+    public decimal ValorSolicitado { get; }
 
-    public SaldoInsuficienteException(double saldoAtual, double valorSolicitado)
+    public SaldoInsuficienteException(decimal saldoAtual, decimal valorSolicitado)
         : base($"Saldo insuficiente. Atual: {saldoAtual:C} | Solicitado: {valorSolicitado:C}")
     {
         SaldoAtual      = saldoAtual;
@@ -4577,6 +4995,25 @@ Boa prática moderna:
 
 ---
 
+### 18.5 Práticas de tratamento e desenho de exceções
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+- Não use exceções para fluxo normal esperado; prefira `TryParse`, `TryGetValue` e resultados explícitos quando a ausência/falha faz parte do contrato cotidiano.
+- Capture a exceção mais específica que você consegue realmente tratar. Se só puder adicionar contexto útil, preserve a original como `InnerException`.
+- Use filtros `catch (...) when (...)` para decidir antes de entrar no handler; evite filtros com efeitos colaterais.
+- Use `throw;` para relançar preservando o stack trace. Não use `throw ex;`.
+- Nunca deixe `catch` vazio. Registre, traduza, compense ou propague; “engolir” falhas torna o sistema impossível de diagnosticar.
+- Trate cancelamento separadamente. `OperationCanceledException` com o token esperado não representa necessariamente defeito da aplicação.
+- `finally` é apropriado para liberar estado no unwind comum, mas não é garantia contra encerramento abrupto do processo, fail-fast ou certas falhas catastróficas. Para recursos, prefira `using`/`await using`.
+- Exceções de argumento validam o contrato público; falhas internas de estado geralmente usam `InvalidOperationException`. Não exponha detalhes sensíveis em mensagens.
+
+Uma exceção customizada deve existir quando o chamador ganha uma forma útil e estável de distinguir ou inspecionar a falha. Não crie uma classe diferente para cada texto. Em bibliotecas modernas, derive de uma exceção apropriada, forneça construtores necessários ao seu contrato e documente as exceções públicas relevantes.
+
+> **Referências oficiais:** [Exceptions and exception handling](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/exceptions/), [Best practices for exceptions](https://learn.microsoft.com/en-us/dotnet/standard/exceptions/best-practices-for-exceptions), [Exception-handling statements](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/statements/exception-handling-statements)
+
+---
+
 ## Parte 19 — Attributes (Annotations)
 
 [⬆️ Voltar ao Sumário](#sumário)
@@ -4598,7 +5035,7 @@ public class Exemplo
 
 // Suprime aviso específico do compilador
 #pragma warning disable CS0618
-MetodoAntigo();
+new Exemplo().MetodoAntigo();
 #pragma warning restore CS0618
 
 // Atributos de serialização
@@ -4607,12 +5044,11 @@ using System.Text.Json.Serialization;
 public class Produto
 {
     [JsonPropertyName("product_name")]  // nome no JSON
-    public string Nome { get; set; }
+    public string Nome { get; set; } = string.Empty;
 
     [JsonIgnore]                         // não serializa este campo
-    public string Senha { get; set; }
+    public string Senha { get; set; } = string.Empty;
 
-    [JsonConverter(typeof(DateTimeConverter))] // conversor customizado
     public DateTime DataCriacao { get; set; }
 }
 ```
@@ -4644,7 +5080,7 @@ public class LogAttribute : Attribute
 public Usuario BuscarUsuario(int id)
 {
     // ...
-    return null!;
+    return new Usuario();
 }
 
 // Lendo via Reflection em tempo de execução
@@ -4674,7 +5110,7 @@ if (attr != null)
 Console.WriteLine(pessoa.Nome);  // "Ana"
 Console.WriteLine(pessoa.Idade); // 28
 
-// Desestruturação
+// Desconstrução
 var (nome, idade) = pessoa;
 Console.WriteLine(nome); // "Ana"
 
@@ -4828,7 +5264,7 @@ Leitura mais precisa:
 
 #### O que o GC faz nesse cenário?
 
-O Garbage Collector do .NET gerência a memória dos objetos no heap gerenciado. Quando um objeto deixa de ser alcançável por referências fortes, ele se torna elegível para coleta. Se só restarem weak references, isso não é suficiente para preservar o objeto.
+O Garbage Collector do .NET gerencia a memória dos objetos no heap gerenciado. Quando um objeto deixa de ser alcançável por referências fortes, ele se torna elegível para coleta. Se só restarem weak references, isso não é suficiente para preservar o objeto.
 
 Ponto crucial:
 
@@ -4864,12 +5300,12 @@ Quando isso **não** faz sentido:
 
 ---
 
-### 20.3 Span\<T\> e Memory\<T\> — zero-allocation slicing
+### 20.3 Span\<T\> e Memory\<T\> — fatias de memória
 
 [⬆️ Voltar ao Sumário](#sumário)
 
 ```csharp
-// Span<T> — fatia de memória sem alocação (stack only)
+// Span<T> é um ref struct; a fatia não copia os elementos.
 int[] array = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
 
 Span<int> fatia = array.AsSpan(2, 5); // elementos 2 a 6, sem nova alocação
@@ -4880,12 +5316,22 @@ foreach (int n in fatia)
 fatia[0] = 99;
 Console.WriteLine(array[2]); // 99
 
-// String sem alocação
+// A comparação abaixo não exige criar uma substring.
 ReadOnlySpan<char> texto = "Olá, Mundo!".AsSpan(5, 5);
-Console.WriteLine(texto.ToString()); // "Mundo"
+Console.WriteLine(texto.SequenceEqual("Mundo")); // true
+
+// Memory<T> pode ser armazenado e atravessar uma fronteira async.
+Memory<int> memoria = array.AsMemory(2, 5);
+await ProcessarAsync(memoria);
+
+// stackalloc reserva um buffer pequeno no frame atual; Span mantém acesso indexado seguro.
+Span<int> temporario = stackalloc int[4] { 1, 2, 3, 4 };
+Console.WriteLine(temporario[0]);
 ```
 
-**Como interpretar o exemplo:** `Span<T>` mostra que é possível trabalhar com janelas de memória sem copiar dados, algo muito útil em parsing e processamento de buffers. A contrapartida é lidar com regras mais rígidas de tempo de vida e segurança.
+**Como interpretar o exemplo:** `Span<T>` é uma visão contígua que pode apontar para memória gerenciada, stack ou memória nativa. O próprio valor `Span<T>` é stack-only por ser um `ref struct`, mas isso não significa que os dados estejam sempre na stack. `Memory<T>` e `ReadOnlyMemory<T>` não são `ref struct` e podem ser armazenados ou usados entre awaits. Criar a fatia normalmente não copia os elementos; operações posteriores, como `ToString()` ou `ToArray()`, podem alocar. Use `stackalloc` apenas para buffers pequenos e com tamanho controlado: a memória deixa de ser válida ao sair do frame e alocações grandes podem causar `StackOverflowException`.
+
+> **Referências oficiais:** [Memory and spans](https://learn.microsoft.com/en-us/dotnet/standard/memory-and-spans/), [`stackalloc` expression](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/stackalloc)
 
 ---
 
@@ -4897,6 +5343,7 @@ Console.WriteLine(texto.ToString()); // "Mundo"
 // Hierarquia fechada representando resultado de operação
 public abstract record Resultado<T>
 {
+    private Resultado() { } // só os casos aninhados podem derivar diretamente
     public sealed record Sucesso(T Valor) : Resultado<T>;
     public sealed record Falha(string Mensagem, Exception? Causa = null) : Resultado<T>;
 }
@@ -4912,7 +5359,46 @@ string descricao = resultado switch
 };
 ```
 
-**Como interpretar o exemplo:** A combinação de `record`, tipos fechados e pattern matching cria uma forma elegante de modelar estados possíveis sem deixar brechas para formatos inválidos. O resultado é um fluxo de tratamento mais explícito e mais seguro.
+**Como interpretar o exemplo:** O construtor privado impede derivação externa direta e aproxima a hierarquia de uma união discriminada. C# não possui uma union nativa para esse modelo nem garante análise exaustiva dessa hierarquia; por isso o braço `_` continua necessário. A combinação de records e pattern matching ainda é útil para tornar estados possíveis explícitos.
+
+---
+
+### 20.5 Memória gerenciada, GC e ownership de recursos
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+O GC recupera memória **gerenciada**, não encerra deterministicamente arquivos, sockets, conexões ou handles. Objetos jovens costumam começar na geração 0; sobreviventes podem ser promovidos às gerações 1 e 2. Objetos grandes seguem tratamento próprio no Large Object Heap. Essas são estratégias do runtime: escreva código correto sem depender do instante exato de uma coleta.
+
+```csharp
+public sealed class ArquivoDeSaida : IDisposable
+{
+    private Stream? _stream;
+
+    public ArquivoDeSaida(string caminho) =>
+        _stream = File.Open(caminho, FileMode.Create, FileAccess.Write, FileShare.None);
+
+    public void Escrever(ReadOnlySpan<byte> dados)
+    {
+        ObjectDisposedException.ThrowIf(_stream is null, this);
+        _stream.Write(dados);
+    }
+
+    public void Dispose()
+    {
+        _stream?.Dispose();
+        _stream = null; // descarte idempotente
+    }
+}
+
+using var saida = new ArquivoDeSaida("dados.bin");
+saida.Escrever([1, 2, 3]);
+```
+
+Ownership responde “quem deve descartar?”. A API que cria ou recebe um recurso precisa documentar se transfere essa responsabilidade. Implemente `IDisposable` quando o tipo possui recursos descartáveis; use `IAsyncDisposable` quando a liberação precisa ser assíncrona. Finalizers são caros e só devem existir quando o tipo possui diretamente recurso nativo que exige fallback; prefira encapsular handles nativos com `SafeHandle`. Não chame `GC.Collect()` como otimização rotineira.
+
+Reduza alocações apenas depois de medir. Pooling, `Span<T>`, `ArrayPool<T>` e buffers reutilizáveis aumentam a complexidade de ownership, retenção e segurança dos dados. Devolva buffers ao pool em `finally`, não use o conteúdo depois da devolução e limpe dados sensíveis quando necessário.
+
+> **Referências oficiais:** [Fundamentals of garbage collection](https://learn.microsoft.com/en-us/dotnet/standard/garbage-collection/fundamentals), [Implement a Dispose method](https://learn.microsoft.com/en-us/dotnet/standard/garbage-collection/implementing-dispose), [Using objects that implement IDisposable](https://learn.microsoft.com/en-us/dotnet/standard/garbage-collection/using-objects), [SafeHandle](https://learn.microsoft.com/en-us/dotnet/api/system.runtime.interopservices.safehandle), [Memory and spans](https://learn.microsoft.com/en-us/dotnet/standard/memory-and-spans/)
 
 ---
 
@@ -4960,13 +5446,13 @@ Task tarefa = Task.Run(() => Console.WriteLine("Executando"));
 await tarefa;
 
 // Task com retorno
-Task<int> calculo = Task.Run(() =>
+Task<long> calculo = Task.Run(() =>
 {
-    int soma = 0;
+    long soma = 0;
     for (int i = 0; i < 1_000_000; i++) soma += i;
     return soma;
 });
-int resultado = await calculo;
+long resultado = await calculo;
 
 // Parallel.For e Parallel.ForEach
 Parallel.For(0, 10, i => Console.WriteLine($"Item {i}"));
@@ -5002,7 +5488,7 @@ public void Incrementar()
     }
 }
 
-// Interlocked — operações atômicas sem lock (mais eficiente)
+// Interlocked — operações atômicas específicas sem bloco de exclusão mútua
 private int _contadorAtomico = 0;
 Interlocked.Increment(ref _contadorAtomico);
 Interlocked.Add(ref _contadorAtomico, 5);
@@ -5010,9 +5496,9 @@ Interlocked.Add(ref _contadorAtomico, 5);
 // SemaphoreSlim — limita o número de acessos simultâneos
 private readonly SemaphoreSlim _semaforo = new SemaphoreSlim(3); // max 3 simultâneos
 
-public async Task AcessarRecursoAsync()
+public async Task AcessarRecursoAsync(CancellationToken ct = default)
 {
-    await _semaforo.WaitAsync();
+    await _semaforo.WaitAsync(ct);
     try
     {
         await OperacaoAsync();
@@ -5023,6 +5509,41 @@ public async Task AcessarRecursoAsync()
     }
 }
 ```
+
+---
+
+### 21.4 Memória compartilhada, coleções concorrentes e canais
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+Concorrência correta exige mais que impedir duas escritas simultâneas: threads precisam observar o estado numa ordem válida. `lock`, `Interlocked` e as primitivas de sincronização estabelecem garantias de ordenação e visibilidade. `volatile` tem uso limitado e não torna operações compostas, como `contador++`, atômicas.
+
+```csharp
+using System.Threading;
+using System.Threading.Channels;
+
+var gate = new Lock(); // C# 13 / .NET 9+
+var estado = new Dictionary<string, int>();
+
+void Atualizar(string chave, int valor)
+{
+    lock (gate)
+        estado[chave] = valor;
+}
+
+Channel<int> canal = Channel.CreateBounded<int>(capacity: 100);
+await canal.Writer.WriteAsync(42);
+canal.Writer.Complete();
+
+await foreach (int item in canal.Reader.ReadAllAsync())
+    Console.WriteLine(item);
+```
+
+`ConcurrentDictionary`, `ConcurrentQueue` e semelhantes oferecem operações individuais thread-safe. Para uma regra que envolve ler, decidir e escrever, use as operações atômicas da coleção (`GetOrAdd`, `AddOrUpdate`) ou sincronização externa; não componha chamadas independentes supondo atomicidade. `Channel<T>` modela produtor/consumidor assíncrono e, quando limitado, fornece backpressure.
+
+Deadlocks surgem quando fluxos aguardam recursos uns dos outros. Mantenha ordem global de aquisição, reduza a região crítica, não execute I/O nem callbacks arbitrários dentro de `lock` e nunca use `await` no corpo de um `lock`. Para exclusão assíncrona, `SemaphoreSlim` costuma ser a primitiva adequada. Imutabilidade e isolamento de estado frequentemente são melhores que adicionar mais locks.
+
+> **Referências oficiais:** [Managed threading best practices](https://learn.microsoft.com/en-us/dotnet/standard/threading/managed-threading-best-practices), [Thread-safe collections](https://learn.microsoft.com/en-us/dotnet/standard/collections/thread-safe/), [Channels](https://learn.microsoft.com/en-us/dotnet/core/extensions/channels), [`lock` statement](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/statements/lock), [`volatile`](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/volatile)
 
 ---
 
@@ -5052,11 +5573,11 @@ foreach (PropertyInfo prop in tipo.GetProperties())
     Console.WriteLine($"{prop.PropertyType.Name} {prop.Name}");
 
 // Criar instância dinamicamente
-object instancia = Activator.CreateInstance(tipo, "Ana", 1000.0)!;
+object instancia = Activator.CreateInstance(tipo, "Ana", 1000m)!;
 
 // Invocar método por nome
 MethodInfo metodo = tipo.GetMethod("Depositar")!;
-metodo.Invoke(instancia, new object[] { 500.0 });
+metodo.Invoke(instancia, new object[] { 500m });
 ```
 
 **Como interpretar o exemplo:** Reflection permite que o programa inspecione tipos e invoque membros dinamicamente em runtime, o que é poderoso para tooling, frameworks e integração genérica. O preço é perder parte da previsibilidade e da segurança do código fortemente tipado.
@@ -5134,7 +5655,7 @@ Essa é a ideia central:
 
 Distinção importante para carreira profissional:
 
-- **DI** é o princípio/padrão;
+- **DI** é uma técnica/padrão de composição;
 - **DI container** é a ferramenta que automatiza registro, criação e entrega dessas dependências.
 
 Nuance importante:
@@ -5169,7 +5690,7 @@ Conexão útil com `Abstract Factory`:
 
 [⬆️ Voltar ao Sumário](#sumário)
 
-Source Generators são compiladores que executam durante a build e geram código C# adicional automaticamente. Usados extensivamente em frameworks modernos (System.Text.Json, EF Core, Dapper, etc.) para eliminar Reflection em runtime.
+Source generators participam da compilação e adicionam código C# ao `Compilation`. Podem reduzir boilerplate, reflexão e trabalho em runtime. `System.Text.Json`, por exemplo, oferece geração de metadados e lógica de serialização.
 
 ```csharp
 // Exemplo: JsonSerializerContext gerado automaticamente
@@ -5177,11 +5698,11 @@ Source Generators são compiladores que executam durante a build e geram código
 [JsonSerializable(typeof(List<Usuario>))]
 public partial class MeuJsonContext : JsonSerializerContext { }
 
-// O compilador gera o código de serialização — sem Reflection em runtime
+// O contexto gerado fornece metadados conhecidos em compile-time.
 string json = JsonSerializer.Serialize(usuario, MeuJsonContext.Default.Usuario);
 ```
 
-**Como interpretar o exemplo:** Source Generators deslocam trabalho para a compilação, reduzindo reflexão e boilerplate em runtime. O exemplo do contexto JSON mostra justamente essa troca: em vez de descobrir tudo dinamicamente na execução, o compilador já produz o código especializado.
+**Como interpretar o exemplo:** Source generators deslocam parte do trabalho para a compilação. Eles só podem **adicionar** código; não reescrevem diretamente o fonte existente. Prefira incremental generators para pipelines eficientes e determinísticos, trate entradas como imutáveis e lembre que código gerado também faz parte da API, do diagnóstico e da compatibilidade do projeto.
 
 ---
 
@@ -5211,19 +5732,46 @@ unsafe
 
 ---
 
+### 22.5 Interoperabilidade nativa e marshalling
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+P/Invoke chama funções exportadas por bibliotecas nativas. **Marshalling** transforma a representação dos tipos ao cruzar a fronteira gerenciada/nativa. Assinatura, tamanho, alinhamento, ownership, encoding, calling convention e tempo de vida precisam coincidir com a API nativa.
+
+```csharp
+using System.Runtime.InteropServices;
+
+internal static partial class NativeMethods
+{
+    // Exemplo Windows; LibraryImport gera o stub em compile-time.
+    [LibraryImport("kernel32.dll", EntryPoint = "DeleteFileW", SetLastError = true,
+        StringMarshalling = StringMarshalling.Utf16)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    internal static partial bool DeleteFile(string fileName);
+}
+```
+
+Quando disponível, prefira `[LibraryImport]` a `[DllImport]` em .NET moderno: o source generator cria o código de marshalling em compilação, melhora diagnósticos e é mais adequado a trimming e Native AOT. O projeto precisa permitir unsafe blocks para o gerador. Nem todo tipo ou opção de `[DllImport]` tem tradução direta; leia as diferenças oficiais.
+
+Não use `string`, `bool`, arrays ou structs sem confirmar a ABI. Defina `StringMarshalling`, layouts e ownership explicitamente. Para handles, prefira `SafeHandle`; para memória nativa, garanta liberação em todos os caminhos. Interop é uma fronteira de segurança: valide comprimentos, evite ponteiros pendentes e teste em cada arquitetura e sistema operacional suportado.
+
+> **Referências oficiais:** [Native interoperability](https://learn.microsoft.com/en-us/dotnet/standard/native-interop/), [Native interop best practices](https://learn.microsoft.com/en-us/dotnet/standard/native-interop/best-practices), [P/Invoke source generation](https://learn.microsoft.com/en-us/dotnet/standard/native-interop/pinvoke-source-generation), [Type marshalling](https://learn.microsoft.com/en-us/dotnet/standard/native-interop/type-marshalling)
+
+---
+
 ## Resumo Geral — Conceitos Fundamentais
 
 [⬆️ Voltar ao Sumário](#sumário)
 
 | Conceito | Definição resumida |
 |---|---|
-| **CLR** | Runtime do .NET — executa IL/CIL sobre qualquer SO |
+| **CLR** | Runtime do .NET que carrega assemblies, gerencia execução e normalmente compila IL para código nativo nas plataformas suportadas |
 | **IL / CIL** | Código intermediário produzido pelo compilador Roslyn |
 | **Tipo de valor** | Armazena dado diretamente; cópia na atribuição: `int`, `struct`, `enum` |
-| **Tipo de referência** | Armazena endereço para objeto no heap: `class`, `string`, arrays |
+| **Tipo de referência** | A atribuição copia uma referência; variáveis podem alcançar a mesma instância: `class`, `string`, arrays |
 | **Assembly** | Unidade compilada do .NET, normalmente `.dll` ou `.exe`, com IL, metadados e referências |
-| **Nullable type** | `T?` — tipo de valor que aceita null via `Nullable<T>` |
-| **`const`** | Constante de compile-time; apenas primitivos e `string` |
+| **Nullable type** | `T?` representa `Nullable<T>` para valores ou uma anotação de nulabilidade para referências |
+| **`const`** | Constante de compile-time permitida para tipos numéricos internos, `bool`, `char`, `string`, enums e `null` de referência |
 | **`readonly`** | Campo atribuível somente na declaração ou construtor |
 | **`sealed`** | Classe não herdável; método não sobrescrevível além deste ponto |
 | **`abstract`** | Classe não instanciável; método sem corpo, subclasses devem implementar |
@@ -5244,17 +5792,17 @@ unsafe
 | **Interface** | Contrato de comportamento desacoplado da implementação concreta |
 | **Delegate** | Tipo que representa referência a método com assinatura específica |
 | **Event** | Delegate encapsulado para padrão publisher/subscriber |
-| **Lambda** | Implementação compacta inline de delegate / interface funcional |
+| **Lambda** | Função anônima convertível em delegate ou, quando compatível, em árvore de expressão |
 | **`IEnumerable<T>`** | Contrato básico de sequência enumerável, ideal para iteração |
 | **`IQueryable<T>`** | Contrato de query traduzível por um provider externo |
 | **LINQ** | Modelo de consulta integrada à linguagem sobre sequências e providers |
-| **`async`/`await`** | Programação assíncrona não-bloqueante nativa |
+| **`async`/`await`** | Sintaxe para compor operações assíncronas sem bloquear durante I/O assíncrono |
 | **`Task<T>`** | Representa operação assíncrona com resultado |
-| **Record** | Tipo imutável com igualdade por valor, `ToString` e `with` automáticos |
+| **Record** | Tipo orientado a dados com igualdade por valor e membros sintetizados; não é inerentemente imutável |
 | **Tuple** | Agrupamento de valores nomeados sem criar classe |
-| **Pattern Matching** | Inspeção e desestruturação de tipos em `is` e `switch` |
+| **Pattern Matching** | Inspeção e desconstrução de valores em `is` e `switch` |
 | **`lock`** | Exclusão mútua para um bloco de código (≈ `synchronized` do Java) |
-| **`Span<T>`** | Fatia de memória sem alocação |
+| **`Span<T>`** | `ref struct` que representa uma região contígua sem copiar seus elementos |
 | **Extension Method** | Método adicionado a tipo existente sem herança |
 | **Generics** | Tipos parametrizados com segurança em compile-time |
 | **Attribute** | Metadados declarativos processados por compilador, runtime ou framework |
@@ -5269,13 +5817,13 @@ unsafe
 
 ---
 
-### 23.1 C# e Unity — a combinação dominante
+### 23.1 C# e Unity
 
 [⬆️ Voltar ao Sumário](#sumário)
 
-**Unity** é o motor de jogos mais utilizado no mundo para jogos mobile, indie e AA. C# é a **única linguagem de scripting oficial** do Unity. Compreender C# bem é pré-requisito direto para trabalhar com Unity.
+O Unity oferece scripting em C# e integra o código gerenciado ao ciclo de vida, à serialização e às APIs da engine. Compreender bem a linguagem continua essencial, mas a versão de C#, o perfil de APIs .NET e o backend disponível dependem da versão do editor e da plataforma-alvo.
 
-Unity utiliza uma versão do runtime .NET chamada **Mono** (em builds legadas) e **IL2CPP** para builds de plataformas como iOS e consoles. IL2CPP converte o IL do .NET para C++ nativo antes da compilação, eliminando a necessidade da JIT no dispositivo alvo.
+Entre os backends usados pela Unity estão Mono e IL2CPP, conforme versão e destino. IL2CPP converte assemblies gerenciados em C++ e depois produz o binário nativo; essa rota AOT muda as restrições de reflection, geração dinâmica de código e stripping.
 
 ```
 Código C# → IL/CIL → IL2CPP → C++ → binário nativo da plataforma
@@ -5289,19 +5837,19 @@ Código C# → IL/CIL → IL2CPP → C++ → binário nativo da plataforma
 
 [⬆️ Voltar ao Sumário](#sumário)
 
-Todo script que você cria no Unity herda de `MonoBehaviour`, que fornece o ciclo de vida do game object.
+Um componente de script anexado a um `GameObject` normalmente deriva de `MonoBehaviour`, que participa do ciclo de vida da engine. Outros tipos Unity, como `ScriptableObject`, seguem modelos diferentes.
 
 ```csharp
 using UnityEngine;
 
-// Todo script Unity herda de MonoBehaviour
+// Componente de script anexável a um GameObject
 public class Jogador : MonoBehaviour
 {
     // ─── CAMPOS SERIALIZÁVEIS ─────────────────────────────────────────────
     // [SerializeField] expõe o campo privado no Inspector da Unity
     [SerializeField] private float _velocidade    = 5f;
     [SerializeField] private float _velocidadePulo = 8f;
-    [SerializeField] private Transform _ponto de chao; // referência a outro objeto
+    [SerializeField] private Transform _pontoDeChao; // referência a outro objeto
 
     // Campos públicos também aparecem no Inspector (mas prefira [SerializeField] private)
     public int    Vida    = 100;
@@ -5312,7 +5860,7 @@ public class Jogador : MonoBehaviour
     private Animator        _animator;
     private SpriteRenderer  _sprite;
 
-    // ─── AWAKE — chamado ao instanciar o objeto (mesmo se inativo) ────────
+    // ─── AWAKE — chamado quando a instância é carregada/ativada conforme o ciclo da engine ───
     private void Awake()
     {
         // Obtém componentes do mesmo GameObject — mais eficiente que GetComponent no Update
@@ -5321,7 +5869,7 @@ public class Jogador : MonoBehaviour
         _sprite   = GetComponent<SpriteRenderer>();
     }
 
-    // ─── START — chamado no primeiro frame, após todos os Awake ──────────
+    // ─── START — antes do primeiro Update, quando o componente está habilitado ──────────
     private void Start()
     {
         // Inicializações que dependem de outros objetos já inicializados
@@ -5362,12 +5910,12 @@ public class Jogador : MonoBehaviour
     private void Mover()
     {
         float horizontal = Input.GetAxisRaw("Horizontal");
-        _rb.velocity = new Vector2(horizontal * _velocidade, _rb.velocity.y);
+        _rb.linearVelocity = new Vector2(horizontal * _velocidade, _rb.linearVelocity.y);
     }
 
     private void AtualizarAnimacao()
     {
-        bool estaMovendo = Mathf.Abs(_rb.velocity.x) > 0.1f;
+        bool estaMovendo = Mathf.Abs(_rb.linearVelocity.x) > 0.1f;
         _animator.SetBool("EstaMovendo", estaMovendo);
     }
 
@@ -5405,6 +5953,8 @@ public class Jogador : MonoBehaviour
 
 **Como interpretar o exemplo:** O script evidencia que, no Unity, o modelo de programação é guiado pelo ciclo de vida da engine e pela serialização do Inspector, não por um `Main` tradicional. Ler `MonoBehaviour` corretamente significa entender o contrato entre seu código e o runtime do jogo.
 
+> O exemplo usa a API `Input` legada para manter o foco no ciclo de vida. Projetos novos também podem adotar o Input System; confirme a API e a versão de C# suportadas pela edição do Unity usada no projeto.
+
 ---
 
 ### 23.3 Ciclo de vida do MonoBehaviour
@@ -5415,7 +5965,7 @@ public class Jogador : MonoBehaviour
 Instanciação
     │
     ▼
-Awake()          — sempre chamado, mesmo se o componente estiver desabilitado
+Awake()          — chamado em componente carregado de GameObject ativo; pode ocorrer ao ativar o objeto
     │
     ▼
 OnEnable()       — chamado quando o componente é habilitado
@@ -5451,7 +6001,7 @@ OnDestroy()      — quando o objeto é destruído
 
 [⬆️ Voltar ao Sumário](#sumário)
 
-`ScriptableObject` é um asset de dados reutilizável que vive fora da hierarquia de cenas. Ideal para configurações, estatísticas de personagens, itens, etc.
+`ScriptableObject` é um tipo de objeto Unity que não precisa ser anexado a um `GameObject`. Instâncias podem ser salvas como assets reutilizáveis fora da hierarquia de cenas, o que é útil para configurações, estatísticas de personagens e itens; também podem ser criadas em runtime.
 
 ```csharp
 using UnityEngine;
@@ -5491,25 +6041,25 @@ public class EquipamentoJogador : MonoBehaviour
         Debug.Log($"Equipando {_espada.NomeItem} — Dano: {danoTotal}");
     }
 
-    private int CalcularBonus() => 0; // lógica de bonus
+    private int CalcularBonus() => 0; // lógica de bônus
 }
 ```
 
 **Vantagens do ScriptableObject:**
 - Dados compartilhados entre múltiplas instâncias sem duplicação
 - Editável no Inspector sem código adicional
-- Alterações em tempo de Play Mode **persistem** (ao contrário de campos de MonoBehaviour)
+- É um asset reutilizável; não presuma que mutações de runtime serão persistidas no build ou revertidas de forma idêntica no Editor
 - Facilita balanceamento de jogo sem recompilar o código
 
 **Como interpretar o exemplo:** O valor do `ScriptableObject` está em separar dados de configuração das instâncias de cena, reduzindo duplicação e acoplamento com `MonoBehaviour`. Em jogos, isso melhora reuso, balanceamento e o fluxo de trabalho entre programação e design.
 
 ---
 
-### 23.5 Coroutines — execução assíncrona sem async/await
+### 23.5 Coroutines — execução cooperativa ao longo de frames
 
 [⬆️ Voltar ao Sumário](#sumário)
 
-Coroutines são o mecanismo tradicional do Unity para execução temporizada e assíncrona **antes** do suporte completo a `async`/`await`.
+Coroutines são o mecanismo tradicional do Unity para suspender e retomar uma rotina ao longo de frames. Elas não tornam o trabalho paralelo, não criam uma thread e não são substitutas gerais de `Task`; servem bem para sequências integradas ao loop da engine.
 
 ```csharp
 using System.Collections;
@@ -5520,7 +6070,7 @@ public class EfeitosVisuais : MonoBehaviour
     [SerializeField] private SpriteRenderer _sprite;
 
     // Coroutine — retorna IEnumerator e usa 'yield return' para pausar
-    private IEnumerator PiscarAsync(int vezes, float intervalo)
+    private IEnumerator Piscar(int vezes, float intervalo)
     {
         for (int i = 0; i < vezes; i++)
         {
@@ -5550,7 +6100,7 @@ public class EfeitosVisuais : MonoBehaviour
     // Iniciando e parando coroutines
     public void AoTomarDano()
     {
-        StartCoroutine(PiscarAsync(3, 0.1f));
+        StartCoroutine(Piscar(3, 0.1f));
     }
 
     public void AoMorrer()
@@ -5587,10 +6137,10 @@ public class SistemaVida : MonoBehaviour
     private int _vidaAtual;
 
     // UnityEvent — configurável no Inspector (arrastar métodos de outros objetos)
-    [SerializeField] public UnityEvent             AoMorrer;
-    [SerializeField] public UnityEvent<int>        AoTomarDano; // parâmetro visível no Inspector
+    [SerializeField] private UnityEvent      _aoMorrer = new UnityEvent();
+    [SerializeField] private UnityEvent<int> _aoTomarDano = new UnityEvent<int>();
 
-    // C# event — mais performático, configurado via código
+    // C# event — configurado e assinado via código
     public event Action<int, int>? VidaAlterada; // (vidaAtual, vidaMaxima)
 
     private void Awake() => _vidaAtual = _vidaMaxima;
@@ -5600,11 +6150,11 @@ public class SistemaVida : MonoBehaviour
         _vidaAtual = Mathf.Max(0, _vidaAtual - dano);
 
         // Dispara ambos
-        AoTomarDano.Invoke(dano);
+        _aoTomarDano.Invoke(dano);
         VidaAlterada?.Invoke(_vidaAtual, _vidaMaxima);
 
         if (_vidaAtual == 0)
-            AoMorrer.Invoke();
+            _aoMorrer.Invoke();
     }
 }
 
@@ -5620,7 +6170,7 @@ public class HUD : MonoBehaviour
 
     private void OnDestroy()
     {
-        // Sempre cancele a assinatura ao destruir para evitar memory leaks
+        // Cancele a assinatura quando o assinante deixar de existir antes do publicador.
         _vidaJogador.VidaAlterada -= AtualizarBarraDeVida;
     }
 
@@ -5640,52 +6190,49 @@ public class HUD : MonoBehaviour
 
 [⬆️ Voltar ao Sumário](#sumário)
 
-Em Unity, otimização é crítica porque o jogo precisa rodar a 30–60+ FPS. C# oferece ferramentas específicas para isso.
+Em Unity, o código precisa respeitar o orçamento de tempo de cada frame, que varia conforme plataforma e meta de FPS. A engine e o ecossistema oferecem APIs de profiling, pooling, Jobs e Burst; meça no dispositivo-alvo antes de otimizar.
 
 **1. Caching de componentes:**
 
 ```csharp
-// ERRADO — GetComponent tem custo; chamado todo frame
+// EVITE EM CAMINHO QUENTE — repete o lookup todo frame
 private void Update()
 {
-    GetComponent<Rigidbody2D>().velocity = Vector2.zero; // alocação + lookup todo frame
+    GetComponent<Rigidbody2D>().linearVelocity = Vector2.zero; // lookup repetido; não implica alocação por si só
 }
 
 // CORRETO — cache no Awake
 private Rigidbody2D _rb;
 private void Awake() => _rb = GetComponent<Rigidbody2D>();
-private void Update() => _rb.velocity = Vector2.zero; // direto ao campo
+private void Update() => _rb.linearVelocity = Vector2.zero; // direto ao campo
 ```
 
 **2. Evitar alocações no loop de jogo:**
 
 ```csharp
-// ERRADO — 'new' no Update aloca memória; gera GC (Garbage Collection) = stuttering
+// Vector3 é struct: este new local não implica alocação no heap gerenciado.
+// Já criar strings repetidamente produz novos objetos.
 private void Update()
 {
-    Vector3 pos = new Vector3(x, y, z); // alocação todo frame
-    string texto = "Vida: " + vida;     // string concatenation alloca
+    Vector3 pos = new Vector3(x, y, z); // valor local
+    string texto = "Vida: " + vida;     // nova string
 }
 
-// CORRETO — reutilizar ou usar structs (tipos de valor)
-// Vector3 é um struct — não aloca no heap
-private Vector3 _posicaoTemp; // reutilizado
-
-private void Update()
+// Atualize texto de UI somente quando o valor mudar; interpolação também pode alocar.
+if (vida != _ultimaVida)
 {
-    _posicaoTemp.Set(x, y, z); // sem 'new'
-    texto = $"Vida: {vida}";   // interpolação é ligeiramente melhor, mas ainda aloca
-    // Para texto crítico, use StringBuilder com cache
+    _texto.text = $"Vida: {vida}";
+    _ultimaVida = vida;
 }
 ```
 
-**3. Comparação de tags sem alocação:**
+**3. Comparação de tags pela API específica:**
 
 ```csharp
-// ERRADO — gameObject.tag cria uma string (alocação)
+// Funciona, mas recupera a tag para então compará-la.
 if (colisao.gameObject.tag == "Inimigo") { }
 
-// CORRETO — CompareTag não aloca
+// Preferível: expressa a operação diretamente e valida a tag configurada.
 if (colisao.gameObject.CompareTag("Inimigo")) { }
 ```
 
@@ -5756,12 +6303,13 @@ public class AtirarProjeteis : MonoBehaviour
 using Unity.Jobs;
 using Unity.Collections;
 using Unity.Burst;
+using Unity.Mathematics;
 
 // [BurstCompile] — compila com LLVM para código nativo de alta performance
 [BurstCompile]
 public struct CalcularPosicaoJob : IJobParallelFor
 {
-    // NativeArray — arrays gerenciados fora do GC do C# (alocação explícita)
+    // NativeArray — contêiner de memória nativa com alocação e descarte explícitos
     public NativeArray<float3> Posicoes;
     public NativeArray<float3> Velocidades;
     public float DeltaTime;
@@ -5778,6 +6326,12 @@ public class SistemaParticulas : MonoBehaviour
     private NativeArray<float3> _posicoes;
     private NativeArray<float3> _velocidades;
 
+    private void Awake()
+    {
+        _posicoes = new NativeArray<float3>(1000, Allocator.Persistent);
+        _velocidades = new NativeArray<float3>(1000, Allocator.Persistent);
+    }
+
     private void Update()
     {
         var job = new CalcularPosicaoJob
@@ -5787,16 +6341,16 @@ public class SistemaParticulas : MonoBehaviour
             DeltaTime   = Time.deltaTime
         };
 
-        // Executa em múltiplas threads, 64 itens por thread
+        // 64 é o tamanho do batch usado pelo agendador, não "itens por thread".
         JobHandle handle = job.Schedule(_posicoes.Length, 64);
-        handle.Complete(); // aguarda conclusão
+        handle.Complete(); // ponto de sincronização; em código real, agende cedo e complete o mais tarde possível
     }
 
     private void OnDestroy()
     {
         // NativeArrays devem ser descartados explicitamente (não são gerenciados pelo GC)
-        _posicoes.Dispose();
-        _velocidades.Dispose();
+        if (_posicoes.IsCreated) _posicoes.Dispose();
+        if (_velocidades.IsCreated) _velocidades.Dispose();
     }
 }
 ```
@@ -5814,7 +6368,7 @@ public class SistemaParticulas : MonoBehaviour
 ```csharp
 public class GerenciadorDeJogo : MonoBehaviour
 {
-    public static GerenciadorDeJogo Instancia { get; private set; }
+    public static GerenciadorDeJogo Instancia { get; private set; } = null!;
 
     private void Awake()
     {
@@ -5889,7 +6443,7 @@ public class Jogador : MonoBehaviour
 **Observer com C# Events:**
 
 ```csharp
-// Sistema de eventos globalm desacoplado
+// Sistema de eventos global desacoplado
 public static class EventosCentral
 {
     public static event Action<int>?   PontosAlterados;
@@ -5919,7 +6473,7 @@ public class PainelPontuacao : MonoBehaviour
 
 [⬆️ Voltar ao Sumário](#sumário)
 
-O Godot 4 possui suporte oficial ao C# via .NET 6+. A estrutura é similar ao Unity, mas com suas particularidades:
+O Godot 4 oferece uma edição com suporte oficial a C# sobre o runtime .NET. O SDK mínimo e as plataformas de exportação mudam entre versões; confirme sempre a documentação da versão estável usada pelo projeto.
 
 ```csharp
 using Godot;
@@ -5930,20 +6484,20 @@ public partial class Jogador : CharacterBody2D
     [Export] public float Velocidade    = 200f; // [Export] = [SerializeField] do Unity
     [Export] public float VelocidadePulo = 400f;
 
-    private const float Gravidade = ProjectSettings
+    private static readonly float Gravidade = ProjectSettings
         .GetSetting("physics/2d/default_gravity").AsSingle();
 
-    public override void _Ready() // equivalente ao Start() do Unity
+    public override void _Ready() // papel aproximadamente análogo ao Start(), com ciclo próprio do Godot
     {
         GD.Print("Jogador pronto!"); // equivalente ao Debug.Log
     }
 
-    public override void _Process(double delta) // equivalente ao Update()
+    public override void _Process(double delta) // callback por frame, semelhante ao Update()
     {
         // lógica não-física
     }
 
-    public override void _PhysicsProcess(double delta) // equivalente ao FixedUpdate()
+    public override void _PhysicsProcess(double delta) // callback de física, semelhante ao FixedUpdate()
     {
         Vector2 velocidade = Velocity;
 
@@ -5982,18 +6536,19 @@ public partial class Inimigo : Node2D
 
 [⬆️ Voltar ao Sumário](#sumário)
 
-| Aspecto | C# Padrão (.NET) | C# no Unity |
+| Aspecto | Aplicação .NET geral | Projeto Unity |
 |---|---|---|
-| Runtime | .NET 8/9/10 | Mono ou IL2CPP |
-| `async`/`await` | Totalmente suportado | Suportado, mas prefira Coroutines para lógica de jogo |
-| Coleções genéricas | System.Collections.Generic | Mesmas + `NativeArray<T>` (Jobs) |
-| `Span<T>` | Totalmente suportado | Suportado em Mono; pleno no IL2CPP |
-| Reflection | Totalmente suportado | Parcialmente limitada com IL2CPP (AOT) |
-| Source Generators | Totalmente suportados | Suporte crescente (Unity 2022.2+) |
-| Garbage Collector | Generacional (GC moderno) | Boehm GC (Mono) — mais propenso a stuttering |
-| `float` vs `double` | Use conforme necessário | Prefira `float` — GPU e APIs Unity usam `float` |
-| `new` no Update | Não há restrição | **Evite** — cada `new` de objeto de referência gera GC |
-| Debug | `Console.WriteLine` | `Debug.Log` / `Debug.LogError` / `Debug.LogWarning` |
+| Linguagem e BCL | Definidas pelo SDK/TFM | Definidas pela versão do editor e pelo perfil de compatibilidade |
+| Execução | JIT e/ou AOT conforme publicação | Backend depende da versão e plataforma, com Mono e IL2CPP entre as opções |
+| Loop principal | Modelo da aplicação/framework | Muitas APIs e objetos da engine exigem acesso pela thread principal |
+| Espera ao longo de frames | `Task`, timers, streams assíncronos | Coroutines integram-se ao frame loop; `Task` atende outra semântica e exige cuidado com ciclo de vida |
+| Reflection e código dinâmico | Dependem do modelo de publicação | AOT e managed stripping exigem preservar metadados e evitar geração dinâmica incompatível |
+| Alocações | Devem ser medidas conforme o workload | Caminhos por frame amplificam alocações de referências, strings, boxing e closures; `new` de struct local não implica heap |
+| Diagnóstico | `Console`, logging e ferramentas .NET | `Debug.Log`, Profiler e ferramentas específicas da engine |
+
+As afirmações desta parte são específicas de engine e versão. Consulte as páginas oficiais do editor efetivamente instalado antes de decidir backend, perfil de APIs, suporte de plataforma ou otimizações.
+
+> **Referências oficiais da engine:** [Unity — .NET overview](https://docs.unity3d.com/Manual/overview-of-dot-net-in-unity.html), [Unity — Order of execution](https://docs.unity3d.com/Manual/ExecutionOrder.html), [Unity — Coroutines](https://docs.unity3d.com/Manual/Coroutines.html), [Unity — ScriptableObject](https://docs.unity3d.com/Manual/class-ScriptableObject.html), [Unity — Garbage collection best practices](https://docs.unity3d.com/Manual/performance-garbage-collection-best-practices.html), [Godot — C# basics](https://docs.godotengine.org/en/stable/tutorials/scripting/c_sharp/c_sharp_basics.html), [Godot — C# API differences](https://docs.godotengine.org/en/stable/tutorials/scripting/c_sharp/c_sharp_differences.html)
 
 ---
 
@@ -6128,10 +6683,11 @@ E a infraestrutura implementa:
 ```csharp
 public sealed class EfOrderRepository : IOrderRepository
 {
-    public Task<Order?> GetByIdAsync(OrderId id)
-    {
-        // implementação com EF Core
-    }
+    public Task<Order?> GetByIdAsync(OrderId id) =>
+        throw new NotImplementedException("Implemente a consulta com o mecanismo de persistência escolhido.");
+
+    public Task SaveAsync(Order order) =>
+        throw new NotImplementedException("Implemente a gravação com o mecanismo de persistência escolhido.");
 }
 ```
 
@@ -6161,15 +6717,21 @@ Em C#/.NET, DDD costuma aparecer com:
 Um exemplo de `Value Object` em C#:
 
 ```csharp
-public readonly record struct Money(decimal Amount, string Currency)
+public readonly record struct Money
 {
-    public Money
-    {
-        if (Amount < 0)
-            throw new ArgumentOutOfRangeException(nameof(Amount));
+    public decimal Amount { get; }
+    public string Currency { get; }
 
-        if (string.IsNullOrWhiteSpace(Currency))
-            throw new ArgumentException("Currency is required.", nameof(Currency));
+    public Money(decimal amount, string currency)
+    {
+        if (amount < 0)
+            throw new ArgumentOutOfRangeException(nameof(amount));
+
+        if (string.IsNullOrWhiteSpace(currency))
+            throw new ArgumentException("Currency is required.", nameof(currency));
+
+        Amount = amount;
+        Currency = currency;
     }
 }
 ```
@@ -6181,8 +6743,7 @@ Uma leitura importante:
 - se o sistema é CRUD simples, DDD completo pode ser peso desnecessário;
 - se o sistema tem regras de negócio ricas, vocabulário complexo e muitas exceções, DDD ajuda a organizar o modelo mental.
 
-**Fonte oficial Microsoft:** [Designing a DDD-oriented microservice](https://learn.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/ddd-oriented-microservice).  
-**Livro original:** Eric Evans — *Domain-Driven Design: Tackling Complexity in the Heart of Software*. Referência do autor: [Domain Language — DDD resources](https://www.domainlanguage.com/ddd/).
+**Fonte oficial Microsoft:** [Designing a DDD-oriented microservice](https://learn.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/ddd-oriented-microservice).
 
 ---
 
@@ -6303,7 +6864,7 @@ Evite microservices quando a aplicação ainda não tem fronteiras bem compreend
 
 [⬆️ Voltar ao Sumário](#sumário)
 
-Além dos padrões GoF, aplicações C#/.NET de negócio frequentemente usam padrões catalogados em *Patterns of Enterprise Application Architecture*, de Martin Fowler.
+Além dos padrões GoF, aplicações C#/.NET de negócio frequentemente usam padrões de arquitetura corporativa.
 
 Alguns que aparecem muito em projetos C#:
 
@@ -6333,29 +6894,606 @@ O critério é simples:
 - se o padrão dá nome a uma responsabilidade real, ele ajuda;
 - se só adiciona camada por hábito, ele atrapalha.
 
-**Livro original e catálogo:** Martin Fowler — [Patterns of Enterprise Application Architecture](https://martinfowler.com/books/eaa.html) e [catalog of PoEAA patterns](https://martinfowler.com/eaaCatalog/).
+> **Referências oficiais Microsoft:** [.NET application architecture guides](https://learn.microsoft.com/en-us/dotnet/architecture/), [Common web application architectures](https://learn.microsoft.com/en-us/dotnet/architecture/modern-web-apps-azure/common-web-application-architectures)
 
 ---
 
-## Anexo A — Plataformas de Prática Recomendadas
+## Parte 25 — SDK, Projetos, Dependências e Qualidade
 
 [⬆️ Voltar ao Sumário](#sumário)
 
+Saber C# profissionalmente inclui saber como o código vira um artefato reproduzível. Linguagem, compilador, SDK, runtime e bibliotecas têm papéis diferentes.
 
+### 25.1 SDK, runtime e CLI
 
-Plataformas externas para praticar C# e lógica de programação, cada uma com um foco pedagógico diferente:
+[⬆️ Voltar ao Sumário](#sumário)
 
-| Plataforma | Suporte a C# | Formato Estilo Exame | Foco Pedagógico e Conceitual |
-| --- | --- | --- | --- |
-| **Codility** | Sim | Altamente aderente | Complexidade algorítmica, corretude e desempenho sob estresse |
-| **CodeWars** | Sim | Altamente aderente | Complexidade algorítmica, corretude e desempenho sob estresse |
-| **Beecrowd** | Sim | Altamente aderente | Lógica de programação pura, matemática e estruturas de dados |
-| **Exercism** | Sim | Baixa aderência (foco em projetos) | Idiomatismo da linguagem, legibilidade e TDD local |
-| **CodeSignal Learn** | Sim | Média aderência (trilhas guiadas) | Código limpo, princípios SOLID e padrões de projeto aplicados |
-| **Coderbyte** | Sim | Altamente aderente | Desafios algorítmicos clássicos e projetos multi-arquivos de mercado |
-| **HackerRank** | Sim | Altamente aderente | Resolução de problemas, estruturas de dados e proficiência em sintaxe |
-| **DesignPatterns101** | Sim | Média aderência (exercícios práticos) | Padrões de projeto GoF aplicados exclusivamente em C# |
-| **Project Euler** | Sim | Altamente aderente (resposta única) | Raciocínio matemático-computacional profundo e otimização lógica |
+- **C#** define sintaxe e semântica da linguagem.
+- **Roslyn** compila e analisa C#.
+- **.NET SDK** contém CLI, compilador, MSBuild, templates e ferramentas para desenvolver.
+- **.NET runtime** executa a aplicação e fornece CLR, GC e bibliotecas compartilhadas.
+- **Target framework (TFM)** define o conjunto de APIs contra o qual o projeto compila.
+
+```powershell
+dotnet --info
+dotnet --list-sdks
+dotnet new console -n MinhaApp
+dotnet restore
+dotnet build
+dotnet run --project MinhaApp
+dotnet test
+dotnet publish -c Release
+```
+
+O SDK pode construir projetos para runtimes que não estão instalados como runtime compartilhado, desde que os targeting packs estejam disponíveis. Fixe a família de SDK para builds reproduzíveis com `global.json` quando o repositório exigir isso. Arquivos C# isolados também podem ser executados como file-based apps nos SDKs que oferecem esse recurso, mas projetos continuam sendo a unidade adequada para aplicações maiores.
+
+> **Referências oficiais:** [.NET CLI overview](https://learn.microsoft.com/en-us/dotnet/core/tools/), [`dotnet` command](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet), [Select the .NET version to use](https://learn.microsoft.com/en-us/dotnet/core/versions/selection)
+
+---
+
+### 25.2 `.csproj`, TFM e versão da linguagem
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+Projetos SDK-style usam MSBuild e deixam grande parte das convenções implícita: arquivos `.cs` da pasta entram no build, referências de framework vêm do SDK e propriedades controlam compilação e publicação.
+
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+</Project>
+```
+
+`TargetFramework` escolhe as APIs disponíveis e influencia a versão C# padrão. `RuntimeIdentifier`, como `linux-x64`, identifica um destino concreto de publicação; não é um TFM. `Nullable` e `ImplicitUsings` são independentes. Em bibliotecas que atendem vários consumidores, `TargetFrameworks` permite multi-targeting, mas cada alvo aumenta a matriz de build e teste.
+
+Prefira a versão de linguagem padrão associada ao TFM. Não use `latest` para “ter sempre o mais novo”: builds podem mudar conforme a máquina. `preview` deve ser uma escolha explícita, com seus riscos de suporte. Propriedades comuns a vários projetos pertencem frequentemente a `Directory.Build.props`; versões centralizadas de pacotes podem ficar em `Directory.Packages.props`.
+
+> **Referências oficiais:** [MSBuild properties for Microsoft.NET.Sdk](https://learn.microsoft.com/en-us/dotnet/core/project-sdk/msbuild-props), [Target frameworks](https://learn.microsoft.com/en-us/dotnet/standard/frameworks), [Configure C# language version](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/configure-language-version), [Customize builds by folder](https://learn.microsoft.com/en-us/visualstudio/msbuild/customize-by-directory)
+
+---
+
+### 25.3 Soluções, referências e NuGet
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+Uma **solution** organiza projetos para ferramentas e build, mas não cria dependência entre eles. `ProjectReference` expressa uma dependência de projeto e garante ordem de compilação. `PackageReference` consome um pacote NuGet e deixa o restore resolver o grafo transitivo.
+
+```powershell
+dotnet new sln -n MinhaSolucao
+dotnet sln add src/MinhaApp/MinhaApp.csproj
+dotnet add src/MinhaApp/MinhaApp.csproj reference src/MinhaLib/MinhaLib.csproj
+dotnet add src/MinhaApp/MinhaApp.csproj package Microsoft.Extensions.Hosting
+dotnet list src/MinhaApp/MinhaApp.csproj package --outdated
+```
+
+Os comandos também possuem formas noun-first nos SDKs atuais; consulte `dotnet help` da versão fixada pelo projeto. Não edite manualmente `obj/project.assets.json`. Faça restore a partir de fontes confiáveis, fixe versões de dependências de forma revisável e trate atualizações e advisories como trabalho contínuo. Uma referência transitiva não deve virar contrato acidental: declare diretamente o pacote cuja API seu projeto usa.
+
+Assemblies, namespaces, projetos e pacotes são eixos diferentes. Um pacote pode conter vários assemblies; um assembly pode expor vários namespaces; uma solution pode conter projetos que não se referenciam.
+
+> **Referências oficiais:** [Solutions and projects](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-sln), [Add project reference](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-add-reference), [Package references](https://learn.microsoft.com/en-us/nuget/consume-packages/package-references-in-project-files), [Central package management](https://learn.microsoft.com/en-us/nuget/consume-packages/central-package-management)
+
+---
+
+### 25.4 Build, testes, empacotamento e publicação
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+| Comando | Responsabilidade |
+|---|---|
+| `dotnet restore` | resolve e baixa dependências |
+| `dotnet build` | restaura quando necessário e compila |
+| `dotnet test` | constrói e executa testes pelo runner configurado |
+| `dotnet pack` | cria pacote NuGet de uma biblioteca |
+| `dotnet publish` | prepara aplicação e dependências para implantação |
+| `dotnet clean` | remove saídas conhecidas do build; não corrige causa de build não reproduzível |
+
+Use `Debug` para desenvolvimento e `Release` para validar performance e publicação. CI deve restaurar, compilar com avisos relevantes, testar e produzir o mesmo tipo de artefato que será implantado. Não confunda “compilou na IDE” com build reproduzível: o pipeline precisa declarar SDK, configuração, TFM, RID, fontes de pacote e variáveis necessárias.
+
+Bibliotecas devem definir metadados de pacote, documentação XML, símbolos e política de versionamento. Aplicações devem testar o artefato publicado, não apenas a saída de `dotnet build`.
+
+> **Referências oficiais:** [`dotnet build`](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-build), [`dotnet test`](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-test), [`dotnet pack`](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-pack), [`dotnet publish`](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-publish)
+
+---
+
+### 25.5 Analisadores, EditorConfig e documentação de API
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+Warnings de compilador, análise de nulabilidade e analisadores são parte do contrato de qualidade. Configure severidades no repositório em vez de depender das preferências individuais da IDE.
+
+```ini
+root = true
+
+[*.cs]
+indent_style = space
+indent_size = 4
+dotnet_diagnostic.CA2000.severity = warning
+dotnet_diagnostic.CA2016.severity = warning
+dotnet_style_require_accessibility_modifiers = always:suggestion
+```
+
+`.editorconfig` controla estilo e regras por diretório/arquivo. Propriedades MSBuild, como `AnalysisLevel`, controlam o conjunto de análise. Não transforme todo warning em erro sem uma política de baseline e atualização; também não suprima diagnósticos sem registrar a justificativa mais estreita possível.
+
+Em APIs públicas, use comentários XML (`///`) para propósito, parâmetros, retornos, nulabilidade, exceções e requisitos de thread safety relevantes. Documentação não compensa nomes ruins, mas preserva decisões que a assinatura sozinha não consegue expressar.
+
+```csharp
+/// <summary>Calcula o total após aplicar um desconto percentual.</summary>
+/// <param name="subtotal">Valor não negativo antes do desconto.</param>
+/// <param name="percentual">Número entre 0 e 1.</param>
+/// <returns>O total com a mesma unidade monetária do subtotal.</returns>
+/// <exception cref="ArgumentOutOfRangeException">
+/// Lançada quando um argumento está fora do intervalo documentado.
+/// </exception>
+public static decimal AplicarDesconto(decimal subtotal, decimal percentual) =>
+    subtotal >= 0m && percentual is >= 0m and <= 1m
+        ? subtotal * (1m - percentual)
+        : throw new ArgumentOutOfRangeException();
+```
+
+> **Referências oficiais:** [Code analysis configuration files](https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/configuration-files), [Code analysis configuration options](https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/configuration-options), [Recommended rules](https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/overview#recommended-rules), [XML documentation comments](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/)
+
+---
+
+### 25.6 Diretivas de pré-processador e compilação condicional
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+Diretivas começam com `#` e orientam o compilador; C# não possui o pré-processador textual e os macros do C/C++. Símbolos condicionais representam apenas definido/não definido.
+
+```csharp
+#nullable enable
+
+#if DEBUG
+Console.WriteLine("Diagnóstico de desenvolvimento");
+#endif
+
+#if NET10_0_OR_GREATER
+UsarApiDoNet10();
+#else
+UsarFallback();
+#endif
+
+#pragma warning disable CS0618 // supressão mínima e justificada
+ChamarApiLegada();
+#pragma warning restore CS0618
+```
+
+TFMs geram símbolos como `NET10_0` e `NET10_0_OR_GREATER`; TFMs específicos de plataforma geram símbolos adicionais. `#error` e `#warning` ajudam a impor condições de build; `#line` afeta informações de linha, sobretudo em código gerado; `#region` organiza visualmente, mas não corrige tipos grandes demais.
+
+C# 14 inclui diretivas como `#:package`, `#:project` e `#:property` para **file-based apps**. Elas pertencem a esse modelo de execução e não substituem `PackageReference`, `ProjectReference` e propriedades MSBuild de um projeto normal.
+
+> **Referências oficiais:** [C# preprocessor directives](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/preprocessor-directives), [Conditional compilation](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/preprocessor-directives#conditional-compilation), [File-based apps](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/program-structure/#file-based-apps)
+
+---
+
+## Parte 26 — I/O, Serialização, HTTP e Globalização
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+Essas APIs não são palavras-chave do C#, mas fazem parte da base profissional do ecossistema. O modelo comum é: delimitar ownership, propagar cancelamento, evitar carregar dados ilimitados em memória e tratar formatos externos como entradas não confiáveis.
+
+### 26.1 Arquivos, streams e buffers
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+`File`, `Directory`, `Path` e seus métodos assíncronos resolvem operações pequenas e pontuais. `Stream` representa um fluxo de bytes e permite processar dados progressivamente. `TextReader`/`TextWriter` adicionam encoding de caracteres; não confunda bytes com texto.
+
+```csharp
+static async Task CopiarAsync(
+    string origem,
+    string destino,
+    CancellationToken ct = default)
+{
+    await using var entrada = new FileStream(origem, new FileStreamOptions
+    {
+        Mode = FileMode.Open,
+        Access = FileAccess.Read,
+        Share = FileShare.Read,
+        Options = FileOptions.Asynchronous | FileOptions.SequentialScan
+    });
+
+    await using var saida = new FileStream(destino, new FileStreamOptions
+    {
+        Mode = FileMode.Create,
+        Access = FileAccess.Write,
+        Share = FileShare.None,
+        Options = FileOptions.Asynchronous
+    });
+
+    await entrada.CopyToAsync(saida, ct);
+}
+```
+
+Use `Path.Combine`/`Path.Join` em vez de concatenar separadores. Valide caminhos recebidos externamente e confirme que o caminho normalizado continua dentro da raiz permitida. `File.ReadAllText` é ótimo para arquivo pequeno; para conteúdo grande ou ilimitado, leia por stream/linha e estabeleça limites. Encodings precisam ser explícitos em protocolos e arquivos compartilhados; UTF-8 é um default comum, não uma licença para ignorar BOM, dados inválidos ou contrato externo.
+
+`System.IO.Pipelines` e pools de buffer são ferramentas de alto desempenho para parsing de streams; use-as quando perfis mostrarem necessidade. Todo buffer alugado deve ser devolvido e nenhum consumidor pode reter uma região depois do fim de seu ownership.
+
+> **Referências oficiais:** [File and stream I/O](https://learn.microsoft.com/en-us/dotnet/standard/io/), [Asynchronous file access](https://learn.microsoft.com/en-us/dotnet/csharp/asynchronous-programming/using-async-for-file-access), [`FileStream`](https://learn.microsoft.com/en-us/dotnet/api/system.io.filestream), [`System.IO.Pipelines`](https://learn.microsoft.com/en-us/dotnet/standard/io/pipelines)
+
+---
+
+### 26.2 JSON com System.Text.Json
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+`System.Text.Json` é a biblioteca integrada para JSON. Modele contratos explicitamente e decida nomenclatura, nulabilidade, enums, datas, campos desconhecidos e compatibilidade antes de publicar uma API.
+
+```csharp
+using System.Text.Json;
+using System.Text.Json.Serialization;
+
+public sealed record CriarPedidoDto(
+    [property: JsonPropertyName("customer_id")] Guid CustomerId,
+    [property: JsonPropertyName("total")] decimal Total);
+
+var opcoes = new JsonSerializerOptions(JsonSerializerDefaults.Web)
+{
+    WriteIndented = false
+};
+
+string json = JsonSerializer.Serialize(
+    new CriarPedidoDto(Guid.NewGuid(), 49.90m), opcoes);
+
+CriarPedidoDto? dto = JsonSerializer.Deserialize<CriarPedidoDto>(json, opcoes);
+```
+
+Não desserialize payload ilimitado sem cotas de transporte e profundidade. Serialização não substitui validação de negócio. Mudanças de nome/tipo podem quebrar consumidores; adicionar membro opcional costuma ser mais compatível que tornar um membro obrigatório. Para Native AOT, trimming, startup ou throughput crítico, use um `JsonSerializerContext` gerado e teste o contrato publicado.
+
+> **Referências oficiais:** [System.Text.Json overview](https://learn.microsoft.com/en-us/dotnet/standard/serialization/system-text-json/overview), [How to serialize and deserialize JSON](https://learn.microsoft.com/en-us/dotnet/standard/serialization/system-text-json/how-to), [Source generation](https://learn.microsoft.com/en-us/dotnet/standard/serialization/system-text-json/source-generation)
+
+---
+
+### 26.3 HTTP e tempo de vida do HttpClient
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+`HttpClient` mantém pools de conexões. Criar e descartar um cliente por requisição pode desperdiçar conexões e portas. Use um cliente de vida longa com `PooledConnectionLifetime` ou, em aplicações com `Microsoft.Extensions.*`, clientes gerenciados por `IHttpClientFactory`.
+
+```csharp
+private static readonly HttpClient Http = new(new SocketsHttpHandler
+{
+    PooledConnectionLifetime = TimeSpan.FromMinutes(5)
+})
+{
+    Timeout = TimeSpan.FromSeconds(30)
+};
+
+static async Task<T?> ObterJsonAsync<T>(Uri uri, CancellationToken ct)
+{
+    using HttpResponseMessage response = await Http.GetAsync(
+        uri, HttpCompletionOption.ResponseHeadersRead, ct);
+
+    response.EnsureSuccessStatusCode();
+    await using Stream body = await response.Content.ReadAsStreamAsync(ct);
+    return await JsonSerializer.DeserializeAsync<T>(body, cancellationToken: ct);
+}
+```
+
+Defina timeout, cancelamento, política de retry e idempotência conscientemente; retry cego pode duplicar efeitos e piorar uma falha. Descarte `HttpRequestMessage`, `HttpResponseMessage` e streams que você possui. Não registre tokens, cookies, corpos sensíveis ou URLs com segredos. Trate códigos de status antes de assumir um payload válido.
+
+> **Referências oficiais:** [Guidelines for using HttpClient](https://learn.microsoft.com/en-us/dotnet/fundamentals/networking/http/httpclient-guidelines), [Make HTTP requests](https://learn.microsoft.com/en-us/dotnet/fundamentals/networking/http/httpclient), [`IHttpClientFactory`](https://learn.microsoft.com/en-us/dotnet/core/extensions/httpclient-factory)
+
+---
+
+### 26.4 Cultura, parsing, datas e fusos horários
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+Formatação para pessoas usa cultura; formatos de persistência e protocolo devem ser estáveis e explícitos. Comparação de identificadores, chaves e tokens normalmente usa semântica ordinal. Texto exibido ao usuário usa a cultura apropriada.
+
+```csharp
+using System.Globalization;
+
+CultureInfo ptBr = CultureInfo.GetCultureInfo("pt-BR");
+bool valido = decimal.TryParse(
+    "1.234,56",
+    NumberStyles.Number,
+    ptBr,
+    out decimal valor);
+
+DateTimeOffset instante = DateTimeOffset.UtcNow;
+string persistido = instante.ToString("O", CultureInfo.InvariantCulture);
+DateTimeOffset restaurado = DateTimeOffset.ParseExact(
+    persistido, "O", CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
+
+TimeZoneInfo zona = TimeZoneInfo.FindSystemTimeZoneById("America/Sao_Paulo");
+DateTimeOffset local = TimeZoneInfo.ConvertTime(restaurado, zona);
+```
+
+Use `DateOnly` para data civil sem hora, `TimeOnly` para horário recorrente sem data, `TimeSpan` para duração e `DateTimeOffset` para um instante com offset. Um offset não é um fuso: regras de horário podem mudar ao longo do tempo. Converta com `TimeZoneInfo` e armazene o identificador do fuso quando a intenção do usuário depender dele. Não aplique `ToLower()` para comparação de segurança; escolha `StringComparison` explicitamente.
+
+> **Referências oficiais:** [Best practices for comparing strings](https://learn.microsoft.com/en-us/dotnet/standard/base-types/best-practices-strings), [Parsing numeric strings](https://learn.microsoft.com/en-us/dotnet/standard/base-types/parsing-numeric), [Choose between DateTime and DateTimeOffset](https://learn.microsoft.com/en-us/dotnet/standard/datetime/choosing-between-datetime), [Time zones](https://learn.microsoft.com/en-us/dotnet/standard/datetime/time-zone-overview), [Standard date and time formats](https://learn.microsoft.com/en-us/dotnet/standard/base-types/standard-date-and-time-format-strings)
+
+---
+
+### 26.5 Expressões regulares com limite de tempo
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+Regex é útil para padrões textuais, não para todo parsing. Em entrada não confiável, defina timeout para limitar backtracking excessivo; o default pode ser infinito. Não aceite um padrão regex arbitrário de usuário como se fosse texto comum.
+
+```csharp
+using System.Text.RegularExpressions;
+
+public static partial class Validadores
+{
+    // Exemplo didático; não é uma validação completa do padrão de e-mail.
+    [GeneratedRegex(
+        @"^[^@\s]+@[^@\s]+\.[^@\s]+$",
+        RegexOptions.CultureInvariant,
+        matchTimeoutMilliseconds: 500)]
+    private static partial Regex EmailSimplesRegex();
+
+    public static bool PareceEmail(string valor) => EmailSimplesRegex().IsMatch(valor);
+}
+```
+
+O source generator de regex produz código em compilação e bons diagnósticos. `RegexOptions.NonBacktracking` oferece tempo linear para padrões compatíveis, mas não substitui limites de tamanho, revisão do padrão e timeout. Para procurar texto literal, use APIs de `string` ou `Regex.Escape` quando incorporar entrada externa a um padrão confiável.
+
+> **Referências oficiais:** [Regular expression language](https://learn.microsoft.com/en-us/dotnet/standard/base-types/regular-expression-language-quick-reference), [Regex best practices](https://learn.microsoft.com/en-us/dotnet/standard/base-types/best-practices-regex), [Regular expression source generators](https://learn.microsoft.com/en-us/dotnet/standard/base-types/regular-expression-source-generators)
+
+---
+
+## Parte 27 — Engenharia para Produção
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+Código de produção precisa ser testável, observável, configurável, seguro, atualizável e publicável. Esses assuntos não pertencem exclusivamente à sintaxe do C#, mas são parte do trabalho cotidiano de um engenheiro .NET.
+
+### 27.1 Estratégia de testes
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+- **Teste unitário** isola uma unidade de comportamento e deve ser rápido e determinístico.
+- **Teste de integração** valida fronteiras reais, como banco, filesystem, HTTP ou container de DI.
+- **Teste de contrato** verifica compatibilidade entre produtor e consumidor.
+- **Teste de ponta a ponta** cobre um fluxo completo, com custo e fragilidade maiores.
+
+```csharp
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+[TestClass]
+public sealed class CalculadoraTests
+{
+    [TestMethod]
+    public void Somar_DoisInteiros_RetornaSoma()
+    {
+        // Arrange
+        var calculadora = new Calculadora();
+
+        // Act
+        int resultado = calculadora.Somar(2, 3);
+
+        // Assert
+        Assert.AreEqual(5, resultado);
+    }
+
+    [TestMethod]
+    public async Task BuscarAsync_IdInexistente_RetornaNull()
+    {
+        Pedido? pedido = await CriarRepositorioDeTeste().BuscarAsync(-1);
+        Assert.IsNull(pedido);
+    }
+}
+```
+
+Teste comportamento observável, não detalhes privados. Controle relógio, aleatoriedade e I/O por dependências explícitas. Não use `Thread.Sleep` para sincronizar teste assíncrono. Testes async retornam `Task`/`ValueTask` conforme o framework; evite `async void`. Nomeie o cenário e a expectativa, inclua casos-limite e execute `dotnet test` no CI. Cobertura indica código exercitado, não qualidade de assertions.
+
+No .NET 10, `dotnet test` pode operar com VSTest ou Microsoft.Testing.Platform conforme configuração; runner, framework de testes e adaptador são conceitos distintos.
+
+> **Referências oficiais:** [Testing in .NET](https://learn.microsoft.com/en-us/dotnet/core/testing/), [Testing with `dotnet test`](https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-with-dotnet-test), [Write tests with MSTest](https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-mstest-writing-tests), [Unit testing best practices](https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices)
+
+---
+
+### 27.2 Logging, configuração, opções e segredos
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+Use logging estruturado: a mensagem possui template estável e valores separados, permitindo consulta sem analisar texto montado. Escolha níveis com consistência e não use logs como substituto de tratamento de erro.
+
+```csharp
+public sealed class Importador(ILogger<Importador> logger)
+{
+    public async Task ImportarAsync(Guid loteId, CancellationToken ct)
+    {
+        logger.LogInformation("Iniciando importação do lote {LoteId}", loteId);
+        try
+        {
+            await ExecutarAsync(loteId, ct);
+        }
+        catch (OperationCanceledException) when (ct.IsCancellationRequested)
+        {
+            logger.LogInformation("Importação {LoteId} cancelada", loteId);
+            throw;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Falha ao importar o lote {LoteId}", loteId);
+            throw;
+        }
+    }
+}
+```
+
+Configuração vem de providers, como JSON, variáveis de ambiente e linha de comando. Providers posteriores podem sobrescrever anteriores. O Options pattern vincula uma seção a um tipo, centraliza validação e torna dependências de configuração explícitas.
+
+```csharp
+public sealed class ServicoOptions
+{
+    public const string SectionName = "Servico";
+    public required Uri Endpoint { get; init; }
+    public int Tentativas { get; init; } = 3;
+}
+
+builder.Services
+    .AddOptions<ServicoOptions>()
+    .Bind(builder.Configuration.GetSection(ServicoOptions.SectionName))
+    .Validate(o => o.Tentativas is >= 0 and <= 10, "Tentativas deve estar entre 0 e 10.")
+    .ValidateOnStart();
+```
+
+Não commite segredos em `appsettings.json`, fonte ou histórico Git. User Secrets serve para desenvolvimento e não é cofre de produção. Em produção, use a solução segura da plataforma, identidade gerenciada quando disponível e rotação. Nunca escreva credenciais, tokens ou dados pessoais desnecessários em logs.
+
+> **Referências oficiais:** [Logging in .NET](https://learn.microsoft.com/en-us/dotnet/core/extensions/logging/overview), [Configuration providers](https://learn.microsoft.com/en-us/dotnet/core/extensions/configuration-providers), [Options pattern](https://learn.microsoft.com/en-us/dotnet/core/extensions/options), [Safe storage of app secrets in development](https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets)
+
+---
+
+### 27.3 Diagnóstico, observabilidade e performance
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+Observabilidade combina **logs**, **métricas** e **traces distribuídos**. Em .NET, `ILogger` trata logs, `System.Diagnostics.Metrics` publica métricas e `ActivitySource` cria spans de tracing. Propague contexto e correlação através de fronteiras assíncronas e de rede.
+
+```csharp
+using System.Diagnostics;
+using System.Diagnostics.Metrics;
+
+private static readonly ActivitySource Activities = new("MinhaEmpresa.Pedidos");
+private static readonly Meter Meter = new("MinhaEmpresa.Pedidos");
+private static readonly Counter<long> PedidosCriados =
+    Meter.CreateCounter<long>("pedidos.criados");
+
+using Activity? activity = Activities.StartActivity("CriarPedido");
+activity?.SetTag("pedido.tipo", "normal");
+PedidosCriados.Add(1);
+```
+
+Investigue performance com dados representativos e build `Release`. Primeiro estabeleça objetivo e baseline; depois use profiler, traces e counters para localizar CPU, alocação, contenção, I/O ou GC. Otimizações especulativas frequentemente pioram legibilidade sem mudar o gargalo.
+
+Ferramentas oficiais importantes:
+
+- `dotnet-counters`: métricas e triagem ao vivo;
+- `dotnet-trace`: coleta de eventos e amostras de CPU;
+- `dotnet-gcdump`: análise do heap gerenciado;
+- `dotnet-dump`: coleta/análise de dumps;
+- `dotnet-monitor`: diagnóstico em ambientes automatizados;
+- profiler e debugger do Visual Studio.
+
+Não registre dados de alta cardinalidade como dimensões de métrica. Defina ownership e retenção de telemetria, proteja informações sensíveis e meça o overhead da própria instrumentação.
+
+> **Referências oficiais:** [Diagnostics in .NET](https://learn.microsoft.com/en-us/dotnet/core/diagnostics/), [Metrics](https://learn.microsoft.com/en-us/dotnet/core/diagnostics/metrics), [Distributed tracing](https://learn.microsoft.com/en-us/dotnet/core/diagnostics/distributed-tracing), [`dotnet-counters`](https://learn.microsoft.com/en-us/dotnet/core/diagnostics/dotnet-counters), [`dotnet-trace`](https://learn.microsoft.com/en-us/dotnet/core/diagnostics/dotnet-trace)
+
+---
+
+### 27.4 Segurança essencial
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+Segurança é propriedade do sistema, não uma biblioteca adicionada no fim:
+
+- valide tamanho, formato e faixa na fronteira, mas aplique autorização também no recurso/ação;
+- diferencie autenticação (quem é) de autorização (o que pode fazer); use os mecanismos do framework;
+- use queries parametrizadas; nunca monte SQL com concatenação de entrada;
+- não crie criptografia, hashing de senha, tokens ou comparação de segredo “caseiros”;
+- use `RandomNumberGenerator` para bytes aleatórios de segurança, não `Random`;
+- limite payload, profundidade, tempo de regex, concorrência e consumo de recursos;
+- normalize e confine caminhos antes de acessar arquivos;
+- encode a saída para o contexto correto; validação de entrada não substitui encoding contra injeção;
+- mantenha SDK, runtime e pacotes suportados e monitore vulnerabilidades;
+- aplique privilégio mínimo e não exponha detalhes internos em erros.
+
+```csharp
+using System.Security.Cryptography;
+
+byte[] token = RandomNumberGenerator.GetBytes(32);
+string tokenTexto = Convert.ToHexString(token);
+
+// Para comparar material secreto de mesmo tamanho sem early exit:
+bool iguais = CryptographicOperations.FixedTimeEquals(hashRecebido, hashEsperado);
+CryptographicOperations.ZeroMemory(token); // limpe buffers sensíveis quando fizer sentido
+```
+
+O exemplo não define um protocolo de token nem armazenamento de senha; esses problemas exigem bibliotecas e padrões próprios. Em aplicações web, siga as orientações oficiais de ASP.NET Core para HTTPS, antiforgery, CORS, Data Protection, autenticação e autorização.
+
+> **Referências oficiais:** [.NET security](https://learn.microsoft.com/en-us/dotnet/standard/security/), [Cryptographic services](https://learn.microsoft.com/en-us/dotnet/standard/security/cryptographic-services), [`RandomNumberGenerator`](https://learn.microsoft.com/en-us/dotnet/api/system.security.cryptography.randomnumbergenerator), [Secure coding guidelines](https://learn.microsoft.com/en-us/dotnet/standard/security/secure-coding-guidelines)
+
+---
+
+### 27.5 Publicação, trimming, single-file e Native AOT
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+| Modelo | Runtime no destino | Característica principal |
+|---|---|---|
+| Framework-dependent | necessário | artefato menor; runtime atualizado separadamente |
+| Self-contained | incluído | destino não precisa ter runtime compartilhado; artefato maior e específico por RID |
+| Single-file | depende da configuração | agrupa arquivos para distribuição; continua sujeito a SO/arquitetura e possíveis extrações/carregamentos internos |
+| Trimmed | código não usado removido | reduz tamanho, mas pode quebrar acesso dinâmico não visível à análise |
+| Native AOT | incluído, sem JIT no processo | startup e footprint podem melhorar; reflexão/código dinâmico e bibliotecas precisam ser compatíveis |
+
+```powershell
+# Framework-dependent
+dotnet publish -c Release
+
+# Self-contained para um destino específico
+dotnet publish -c Release -r linux-x64 --self-contained true
+```
+
+Habilite opções estruturais no `.csproj` para que analisadores rodem também durante desenvolvimento:
+
+```xml
+<PropertyGroup>
+  <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
+  <SelfContained>true</SelfContained>
+  <PublishSingleFile>true</PublishSingleFile>
+  <PublishTrimmed>true</PublishTrimmed>
+  <!-- Use PublishAot em um perfil/projeto que realmente será Native AOT. -->
+  <!-- <PublishAot>true</PublishAot> -->
+</PropertyGroup>
+```
+
+Trimming e AOT precisam enxergar estaticamente os membros usados. Reflection por string, assembly scanning, serializers dinâmicos e geração de código podem exigir anotações, descritores, source generation ou redesenho. Não suprima warnings de trim/AOT sem provar a preservação correta e testar o **artefato publicado** em cada RID suportado.
+
+Single-file não significa universal nem necessariamente “um único arquivo físico em todo instante”. Self-contained não elimina a obrigação de atualizar o runtime incluído: sua aplicação passa a carregar essa responsabilidade em cada nova publicação.
+
+> **Referências oficiais:** [.NET application publishing](https://learn.microsoft.com/en-us/dotnet/core/deploying/), [Single-file deployment](https://learn.microsoft.com/en-us/dotnet/core/deploying/single-file/overview), [Trim self-contained deployments](https://learn.microsoft.com/en-us/dotnet/core/deploying/trimming/trim-self-contained), [Native AOT deployment](https://learn.microsoft.com/en-us/dotnet/core/deploying/native-aot/)
+
+---
+
+### 27.6 APIs públicas, compatibilidade e evolução
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+Uma API pública vira dependência de código que você não controla. Compatibilidade possui dimensões diferentes: fonte, binária, comportamental, serializada e de dados. Uma alteração que compila pode ainda quebrar consumidores em runtime ou mudar resultados.
+
+- prefira a menor superfície pública possível;
+- não remova nem altere assinatura pública sem política de versão e migração;
+- adicionar overload pode tornar chamadas existentes ambíguas após recompilação;
+- valores de parâmetros opcionais e `const` públicos são incorporados no chamador;
+- preserve nulabilidade e semântica de exceções como parte do contrato;
+- para descontinuar, use `[Obsolete]`, documentação e janela de migração;
+- trate DTOs, JSON, eventos e mensagens como contratos versionados;
+- compare a API produzida no CI quando mantiver bibliotecas;
+- siga versionamento de pacote coerente com o impacto no consumidor.
+
+Use interfaces para contratos de capacidade, mas lembre que adicionar membro abstrato quebra implementadores. Default interface members podem reduzir algumas quebras binárias, porém introduzem regras de despacho e não substituem desenho cuidadoso. Records e igualdade também fazem parte do comportamento público: mudar os componentes de igualdade pode invalidar chaves, caches e testes.
+
+> **Referências oficiais:** [C# versioning](https://learn.microsoft.com/en-us/dotnet/csharp/versioning), [.NET library compatibility](https://learn.microsoft.com/en-us/dotnet/core/compatibility/library-change-rules), [.NET library guidance](https://learn.microsoft.com/en-us/dotnet/standard/library-guidance/), [`ObsoleteAttribute`](https://learn.microsoft.com/en-us/dotnet/api/system.obsoleteattribute)
+
+---
+
+## Anexo A — Trilhas Oficiais de Estudo e Prática
+
+[⬆️ Voltar ao Sumário](#sumário)
+Use materiais mantidos pela Microsoft para que a prática acompanhe a versão estável da linguagem:
+
+| Recurso oficial | Uso recomendado |
+|---|---|
+| [A tour of C#](https://learn.microsoft.com/en-us/dotnet/csharp/tour-of-csharp/) | primeira visão do sistema de tipos e dos recursos centrais |
+| [C# tutorials](https://learn.microsoft.com/en-us/dotnet/csharp/tour-of-csharp/tutorials/) | exercícios guiados por assunto |
+| [Microsoft Learn — Write your first code using C#](https://learn.microsoft.com/en-us/training/paths/get-started-c-sharp-part-1/) | trilha inicial com unidades práticas |
+| [.NET samples](https://learn.microsoft.com/en-us/dotnet/core/get-started) | criação e execução de projetos reais com a CLI |
+| [C# language reference](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/) | consulta precisa de palavras-chave, operadores e especificação |
+| [.NET fundamentals](https://learn.microsoft.com/en-us/dotnet/fundamentals/) | runtime, bibliotecas, GC, tooling e diagnósticos |
+
+Prática mínima sugerida: implemente uma biblioteca e uma aplicação de console, adicione testes, nulabilidade, analisadores, leitura de arquivo, chamada HTTP, JSON, cancelamento, logging e publicação. Isso exercita o caminho completo do código-fonte ao artefato, em vez de apenas problemas isolados de sintaxe.
 
 ---
 
@@ -6411,9 +7549,23 @@ As definições, distinções conceituais e atualizações de versão deste guia
 - [.NET Microservices: Architecture for Containerized .NET Applications](https://learn.microsoft.com/en-us/dotnet/architecture/microservices/)
 - [Designing a DDD-oriented microservice](https://learn.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/ddd-oriented-microservice)
 - [Domain events: Design and implementation](https://learn.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/domain-events-design-implementation)
-- [Martin Fowler — Patterns of Enterprise Application Architecture](https://martinfowler.com/books/eaa.html)
-- [Martin Fowler — Catalog of Patterns of Enterprise Application Architecture](https://martinfowler.com/eaaCatalog/)
-- [Domain Language — DDD resources](https://www.domainlanguage.com/ddd/)
+- [C# operators and expressions](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/)
+- [Methods](https://learn.microsoft.com/en-us/dotnet/csharp/methods)
+- [Records](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/types/records)
+- [Arrays](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/arrays)
+- [Asynchronous programming](https://learn.microsoft.com/en-us/dotnet/csharp/asynchronous-programming/)
+- [Generics in .NET](https://learn.microsoft.com/en-us/dotnet/standard/generics/)
+- [Memory and spans](https://learn.microsoft.com/en-us/dotnet/standard/memory-and-spans/)
+- [.NET CLI tools](https://learn.microsoft.com/en-us/dotnet/core/tools/)
+- [MSBuild properties for Microsoft.NET.Sdk](https://learn.microsoft.com/en-us/dotnet/core/project-sdk/msbuild-props)
+- [Testing in .NET](https://learn.microsoft.com/en-us/dotnet/core/testing/)
+- [System.Text.Json overview](https://learn.microsoft.com/en-us/dotnet/standard/serialization/system-text-json/overview)
+- [HttpClient guidelines](https://learn.microsoft.com/en-us/dotnet/fundamentals/networking/http/httpclient-guidelines)
+- [.NET diagnostics](https://learn.microsoft.com/en-us/dotnet/core/diagnostics/)
+- [.NET application publishing](https://learn.microsoft.com/en-us/dotnet/core/deploying/)
+- [Native AOT deployment](https://learn.microsoft.com/en-us/dotnet/core/deploying/native-aot/)
+
+Para as seções específicas de engines, foram consultadas também as documentações oficiais da [Unity](https://docs.unity3d.com/Manual/overview-of-dot-net-in-unity.html) e do [Godot](https://docs.godotengine.org/en/stable/tutorials/scripting/c_sharp/c_sharp_basics.html). Essas fontes não substituem a referência da linguagem; documentam as restrições de cada runtime e editor.
 
 Sugestão de estudo: use este guia para construir o modelo mental e a documentação oficial para validar detalhes de comportamento, APIs e mudanças de versão.
 
@@ -6426,20 +7578,20 @@ Sugestão de estudo: use este guia para construir o modelo mental e a documenta�
 > Termos-chave usados ao longo do guia, em ordem alfabética. Cada item linka direto para a seção onde o assunto é explicado em detalhe.
 
 - **`abstract`** — modificador que marca uma classe ou membro como incompleto, obrigando subclasses a fornecer a implementação. → [7.3 `abstract`](#73-abstract)
-- **`async` / `await`** — palavras-chave que permitem escrever código assíncrono em estilo sequencial, sem bloquear a thread. → [16.1 O modelo assíncrono do C#](#161-o-modelo-assíncrono-do-c)
+- **`async` / `await`** — palavras-chave para compor operações assíncronas em estilo sequencial; I/O assíncrono pode aguardar sem ocupar uma thread bloqueada. → [16.1 O modelo assíncrono do C#](#161-o-modelo-assíncrono-do-c)
 - **Assembly** — unidade compilada do .NET que agrupa IL, metadados, recursos e identidade, normalmente em `.dll` ou `.exe`. → [1.2 O que é um assembly?](#12-o-que-é-um-assembly)
 - **Attribute** — metadado anexado a um tipo ou membro, lido em tempo de compilação ou execução (ex: `[Obsolete]`). → [19.1 Attributes embutidos](#191-attributes-embutidos)
 - **Builder Pattern** — padrão de projeto para construir objetos complexos passo a passo, geralmente com sintaxe fluente. → [11.4 Padrão Builder](#114-padrão-builder)
 - **Burst Compiler** — compilador da Unity que converte código C# em código nativo de alta performance via LLVM. → [23.7 Boas práticas de performance no Unity](#237-boas-práticas-de-performance-no-unity)
 - **Clean Architecture** — estilo arquitetural que protege o núcleo de domínio/aplicação contra detalhes externos como banco, framework web e APIs externas. → [24.3 Clean Architecture, Onion e Ports and Adapters](#243-clean-architecture-onion-e-ports-and-adapters)
-- **CLR (Common Language Runtime)** — máquina virtual do .NET que executa o código compilado (IL), análoga à JVM do Java. → [1.1 O que é C#?](#11-o-que-é-c)
+- **CLR (Common Language Runtime)** — runtime que carrega assemblies, gerencia a execução e normalmente compila IL para código nativo. → [1.1 O que é C#?](#11-o-que-é-c)
 - **Constraints (restrições de generics)** — regras que limitam quais tipos podem ser usados num tipo genérico. → [17.2 Constraints (restrições)](#172-constraints-restrições)
 - **Conversão definida pelo usuário (`implicit` / `explicit`)** — mecanismo que permite a um tipo ensinar ao compilador como convertê-lo para outro tipo com ou sem cast explícito. → [7.9 Conversões definidas pelo usuário (`implicit` e `explicit`)](#79-conversões-definidas-pelo-usuário-implicit-e-explicit)
 - **Construtor** — método especial, sem tipo de retorno, executado na criação de uma instância (`new`), responsável por inicializar seu estado. → [11.2 Construtores em Profundidade](#112-construtores-em-profundidade)
-- **`const` / `readonly`** — modificadores para valores imutáveis; `const` é resolvido em tempo de compilação, `readonly` em tempo de execução. → [3.5 `const` e `readonly`](#35-const-e-readonly)
-- **Coroutine** — mecanismo do Unity para executar código ao longo de vários frames, sem usar `async`/`await`. → [23.5 Coroutines](#235-coroutines-execução-assíncrona-sem-asyncawait)
+- **`const` / `readonly`** — `const` declara constante de compilação; `readonly` impede reatribuir um campo fora da inicialização, mas não torna imutável o objeto referenciado. → [3.5 `const` e `readonly`](#35-const-e-readonly)
+- **Coroutine** — mecanismo cooperativo do Unity para suspender e retomar uma rotina ao longo de vários frames. → [23.5 Coroutines](#235-coroutines--execução-cooperativa-ao-longo-de-frames)
 - **CQRS** — separação entre comandos que alteram estado e consultas que apenas leem estado. → [24.5 CQRS e separação entre comandos e consultas](#245-cqrs-e-separação-entre-comandos-e-consultas)
-- **Delegate** — tipo que representa uma referência tipada a um método, base para eventos e lambdas. → [13.1 Delegates](#131-delegates-ponteiros-de-método-tipados)
+- **Delegate** — tipo que representa uma referência tipada a um método, base para eventos e lambdas. → [13.1 Delegates](#131-delegates--ponteiros-de-método-tipados)
 - **Dependency Injection (DI)** — padrão em que uma classe recebe suas dependências de fora, em vez de instanciá-las diretamente. → [22.2 Dependency Injection (DI)](#222-dependency-injection-di)
 - **Domain-Driven Design (DDD)** — abordagem de design que organiza o software em torno de um modelo de domínio e de uma linguagem compartilhada. → [24.4 Domain-Driven Design (DDD)](#244-domain-driven-design-ddd)
 - **Event-Driven Architecture** — arquitetura em que partes do sistema reagem a eventos que representam fatos já ocorridos. → [24.6 Event-Driven Architecture](#246-event-driven-architecture)
@@ -6449,36 +7601,36 @@ Sugestão de estudo: use este guia para construir o modelo mental e a documenta�
 - **Generics** — recurso que permite escrever tipos e métodos parametrizados por tipo, mantendo segurança de tipos. → [17.1 Tipos parametrizados](#171-tipos-parametrizados)
 - **Garbage Collector (GC)** — componente do runtime .NET que recupera memória de objetos não mais alcançáveis por referências fortes. → [20.2 `WeakReference<T>` e referências fracas no GC](#202-weakreferencet-e-referências-fracas-no-gc)
 - **IL / CIL (Intermediate Language)** — formato intermediário para o qual o C# é compilado antes de ser executado pelo CLR. → [1.1 O que é C#?](#11-o-que-é-c)
-- **Interface** — contrato que define quais membros uma classe deve implementar, sem fornecer implementação própria. → [12.2 Interfaces](#122-interfaces)
+- **Interface** — contrato de capacidades; interfaces modernas também podem conter implementação padrão e membros estáticos, inclusive abstratos. → [12.2 Interfaces](#122-interfaces)
 - **`IEnumerable<T>`** — contrato fundamental de sequência enumerável; diz que um tipo pode fornecer elementos em ordem de iteração, sem prometer índice ou materialização. → [14.3 `IEnumerable<T>`](#143-ienumerablet-e-o-contrato-fundamental-das-sequências)
 - **`IQueryable<T>`** — contrato de consulta traduzível por um provider, geralmente usado para fontes remotas como bancos de dados. → [14.4 `IQueryable<T>`](#144-iqueryablet-e-queries-traduzíveis-para-outra-fonte)
 - **Jobs System** — sistema da Unity para distribuir cálculos entre múltiplas threads de forma segura. → [23.7 Boas práticas de performance no Unity](#237-boas-práticas-de-performance-no-unity)
 - **Lambda (expressão lambda)** — função anônima e compacta, geralmente usada com delegates e LINQ. → [13.3 Expressões Lambda](#133-expressões-lambda)
 - **LINQ (Language Integrated Query)** — conjunto de recursos da linguagem e da biblioteca para consultar e transformar dados de forma tipada e declarativa. → [14.1 O que é LINQ?](#141-o-que-é-linq)
-- **MonoBehaviour** — classe base da qual todo script que vive numa GameObject do Unity deriva. → [23.2 MonoBehaviour](#232-monobehaviour-a-classe-base-dos-scripts-unity)
+- **MonoBehaviour** — classe base de componentes de script anexados a GameObjects no Unity. → [23.2 MonoBehaviour](#232-monobehaviour--a-classe-base-dos-scripts-unity)
 - **Microservices** — estilo arquitetural que organiza uma aplicação como serviços independentes com responsabilidades e deploys próprios. → [24.7 Microservices em .NET](#247-microservices-em-net)
 - **Namespace** — contêiner lógico que agrupa tipos relacionados, evitando colisão de nomes. → [2.1 Namespaces](#21-namespaces)
-- **Nullable Type** — tipo de valor que pode aceitar `null` além do seu valor normal (ex: `int?`). → [3.3 Nullable Types](#33-nullable-types-tipos-que-aceitam-null)
-- **Pattern Matching** — sintaxe para testar e desestruturar valores com base em forma/tipo (`is`, `switch` expressions). → [7.6 `is`, `as` e Pattern Matching](#76-is-as-e-pattern-matching)
+- **Nullable Type** — `T?` representa `Nullable<T>` para valores ou uma anotação de nulabilidade para referências. → [3.3 Nullable Types](#33-nullable-types--tipos-que-aceitam-null)
+- **Pattern Matching** — sintaxe para testar e desconstruir valores com base em forma ou tipo (`is`, `switch` expressions). → [7.6 `is`, `as` e Pattern Matching](#76-is-as-e-pattern-matching)
 - **Property accessor `get`** — método acessor de leitura de uma propriedade; pode devolver um campo, calcular um valor sob demanda ou montar uma visão derivada do estado atual. → [6.1 O que são Properties?](#61-o-que-são-properties)
 - **Properties** — membros que expõem um valor através de `get`/`set`, encapsulando acesso a um campo. → [6.1 O que são Properties?](#61-o-que-são-properties)
-- **Record** — tipo de referência (ou valor) focado em imutabilidade e igualdade por valor, introduzido no C# 9. → [11.3 Records (C# 9+)](#113-records-c-9)
+- **Record** — tipo orientado a dados com igualdade por valor e membros sintetizados; pode ser mutável ou imutável conforme seus membros. → [11.3 Records (C# 9+)](#113-records-c-9)
 - **Reflection** — capacidade de inspecionar tipos, métodos e atributos em tempo de execução. → [22.1 Reflection](#221-reflection)
 - **`ref` / `out` / `in`** — modificadores de parâmetro para passar argumentos por referência em vez de por valor. → [7.8 `ref`, `out` e `in`](#78-ref-out-e-in)
 - **Roslyn** — compilador open-source moderno do C#, também usado para análise estática e Source Generators. → [1.1 O que é C#?](#11-o-que-é-c)
 - **`sealed`** — modificador que impede uma classe de ser herdada (ou um método de ser sobrescrito novamente). → [7.2 `sealed`](#72-sealed)
-- **ScriptableObject** — tipo de asset da Unity para armazenar dados independentes de uma instância de GameObject. → [23.4 ScriptableObject](#234-scriptableobject-dados-desacoplados-do-gameobject)
-- **Singleton** — padrão de projeto que garante uma única instância acessível globalmente de uma classe. → [23.8 Padrões de design comuns em jogos com C#](#238-padrões-de-design-comuns-em-jogos-com-c)
+- **ScriptableObject** — tipo de asset da Unity para armazenar dados independentes de uma instância de GameObject. → [23.4 ScriptableObject](#234-scriptableobject--dados-desacoplados-do-gameobject)
+- **Singleton** — padrão que controla a criação para oferecer uma instância compartilhada dentro do escopo definido pela aplicação; não significa uma instância universal entre processos. → [23.8 Padrões de design comuns em jogos com C#](#238-padrões-de-design-comuns-em-jogos-com-c)
 - **Source Generator** — componente que gera código C# adicional em tempo de compilação. → [22.3 Source Generators](#223-source-generators-c-9)
-- **Span\<T\> / Memory\<T\>** — estruturas para trabalhar com "fatias" de memória contígua sem alocação extra. → [20.3 Span\<T\> e Memory\<T\> — zero-allocation slicing](#203-spant-e-memoryt-zero-allocation-slicing)
+- **Span\<T\> / Memory\<T\>** — visões de regiões contíguas que evitam copiar os elementos; operações posteriores ainda podem alocar. → [20.3 Span\<T\> e Memory\<T\> — fatias de memória](#203-spant-e-memoryt--fatias-de-memória)
 - **`static`** — modificador que faz um membro pertencer ao tipo, não a uma instância específica. → [7.1 `static`](#71-static)
 - **State Machine** — padrão que organiza o comportamento de um objeto em estados distintos com transições explícitas. → [23.8 Padrões de design comuns em jogos com C#](#238-padrões-de-design-comuns-em-jogos-com-c)
 - **StringBuilder** — classe mutável para concatenar strings repetidamente sem o custo de criar novas instâncias a cada operação. → [4.2 Imutabilidade e StringBuilder](#42-imutabilidade-e-stringbuilder)
-- **Task / ValueTask** — representações de uma operação assíncrona em andamento; `ValueTask` evita alocação em cenários de alta performance. → [16.3 Task vs ValueTask](#163-task-vs-valuetask)
+- **Task / ValueTask** — representações aguardáveis de operações; `ValueTask` pode reduzir a criação de `Task` em cenários específicos e medidos. → [16.3 Task vs ValueTask](#163-task-vs-valuetask)
 - **Unsafe code** — blocos de código que permitem manipulação direta de ponteiros, fora da supervisão normal do CLR. → [22.4 Unsafe code e ponteiros](#224-unsafe-code-e-ponteiros)
-- **`var`** — palavra-chave que permite ao compilador inferir o tipo de uma variável a partir do valor atribuído. → [3.4 `var` — inferência de tipo](#34-var-inferência-de-tipo)
+- **`var`** — palavra-chave que permite ao compilador inferir o tipo de uma variável a partir do valor atribuído. → [3.4 `var` — inferência de tipo](#34-var--inferência-de-tipo)
 - **`virtual` / `override`** — modificadores que permitem que um método seja redefinido por uma subclasse. → [7.4 `virtual` e `override`](#74-virtual-e-override)
 - **Handle** — objeto intermediário usado para alcançar outro objeto ou recurso por indireção; no projeto, `Ref<ITheme>` funciona como um handle mutável para o tema atual. → [20.2 `WeakReference<T>` e referências fracas no GC](#202-weakreferencet-e-referências-fracas-no-gc)
 - **WeakReference\<T\>** — referência fraca para um objeto que permite observá-lo sem impedir que o GC o colete quando não restarem referências fortes. → [20.2 `WeakReference<T>` e referências fracas no GC](#202-weakreferencet-e-referências-fracas-no-gc)
 
-**Como interpretar o exemplo:** A tabela lembra que saber C# não é exatamente o mesmo que saber C# dentro de uma engine específica. Em Unity, runtime, GC, AOT e APIs de jogo fazem alguns hábitos do C# padrão continuarem válidos e outros precisarem de adaptação consciente.
+**Como interpretar o glossário:** Use esta lista como índice de revisão, não como substituto dos capítulos. As definições curtas omitem detalhes de versão, runtime e contrato que aparecem nas seções vinculadas.
