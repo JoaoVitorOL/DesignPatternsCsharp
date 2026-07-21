@@ -55,6 +55,7 @@ Ao longo do texto, pense sempre nestas quatro perguntas:
 | Robustez e baixo nível | 18–22 | exceções, attributes, memória, concorrência, reflection, geração e interop | [Parte 18](#parte-18--tratamento-de-exceções) |
 | Aplicação e arquitetura | 23–24 | C# em engines e organização arquitetural de sistemas .NET | [Parte 23](#parte-23--c-no-contexto-de-game-development) |
 | Engenharia profissional | 25–27 | SDK, build, I/O, HTTP, testes, observabilidade, segurança e publicação | [Parte 25](#parte-25--sdk-projetos-dependências-e-qualidade) |
+| Catálogo e ecossistema | 28–29 | palavras-chave, BCL, APIs prontas, frameworks e pacotes externos | [Parte 28](#parte-28--catálogo-da-linguagem-e-da-biblioteca-padrão) |
 | Consulta e revisão | Anexos | trilhas oficiais, fontes primárias e glossário navegável | [Anexo A](#anexo-a--trilhas-oficiais-de-estudo-e-prática) |
 
 ### Índice detalhado
@@ -246,6 +247,30 @@ Ao longo do texto, pense sempre nestas quatro perguntas:
   - [27.4 Segurança essencial](#274-segurança-essencial)
   - [27.5 Publicação, trimming, single-file e Native AOT](#275-publicação-trimming-single-file-e-native-aot)
   - [27.6 APIs públicas, compatibilidade e evolução](#276-apis-públicas-compatibilidade-e-evolução)
+
+**Bloco 7 — Catálogo da plataforma e do ecossistema (Partes 28–29)**
+
+- **Parte 28 — Catálogo da Linguagem e da Biblioteca Padrão**
+  - [28.1 C#, CLR, BCL, framework e pacote não são sinônimos](#281-c-clr-bcl-framework-e-pacote-não-são-sinônimos)
+  - [28.2 Todas as palavras-chave reservadas](#282-todas-as-palavras-chave-reservadas)
+  - [28.3 Todas as palavras-chave contextuais](#283-todas-as-palavras-chave-contextuais)
+  - [28.4 Tipos internos, aliases e literais](#284-tipos-internos-aliases-e-literais)
+  - [28.5 Operações prontas por domínio](#285-operações-prontas-por-domínio)
+  - [28.6 Estruturas de dados e coleções prontas](#286-estruturas-de-dados-e-coleções-prontas)
+  - [28.7 Interfaces e delegates prontos](#287-interfaces-e-delegates-prontos)
+  - [28.8 Namespaces essenciais da biblioteca padrão](#288-namespaces-essenciais-da-biblioteca-padrão)
+  - [28.9 Algoritmos e utilitários que você não precisa reimplementar](#289-algoritmos-e-utilitários-que-você-não-precisa-reimplementar)
+  - [28.10 Como descobrir se a API já existe](#2810-como-descobrir-se-a-api-já-existe)
+- **Parte 29 — Ecossistema Externo: Frameworks, Bibliotecas e Ferramentas**
+  - [29.1 O que é externo ao padrão](#291-o-que-é-externo-ao-padrão)
+  - [29.2 Plataformas e frameworks mantidos pela Microsoft](#292-plataformas-e-frameworks-mantidos-pela-microsoft)
+  - [29.3 Dados, bancos e persistência](#293-dados-bancos-e-persistência)
+  - [29.4 HTTP, resiliência, mensageria e jobs](#294-http-resiliência-mensageria-e-jobs)
+  - [29.5 Serialização, mapeamento, validação e produtividade](#295-serialização-mapeamento-validação-e-produtividade)
+  - [29.6 Logging e observabilidade](#296-logging-e-observabilidade)
+  - [29.7 Testes, automação e medição](#297-testes-automação-e-medição)
+  - [29.8 UI, terminal e jogos](#298-ui-terminal-e-jogos)
+  - [29.9 Como avaliar e adotar uma dependência](#299-como-avaliar-e-adotar-uma-dependência)
 
 **Anexos e consulta rápida**
 
@@ -1901,6 +1926,8 @@ Perceba a ideia central: o `=>` não cria uma regra mágica nova; ele apenas sub
 [⬆️ Voltar ao Sumário](#sumário)
 
 Esta parte reúne palavras-chave que alteram ownership, despacho, herança, fluxo, tempo de vida, geração e inicialização. Em vez de decorar sintaxe isolada, leia cada recurso como um contrato entre autor, compilador e runtime. As seções indicam onde a palavra aparece, o que garante e qual uso excessivo costuma esconder problemas.
+
+Esta parte aprofunda as palavras de maior impacto no design. A lista completa de palavras reservadas e contextuais, incluindo as que pertencem a outros capítulos, está no [catálogo da Parte 28](#282-todas-as-palavras-chave-reservadas).
 
 ---
 
@@ -8378,6 +8405,692 @@ Use interfaces para contratos de capacidade, mas lembre que adicionar membro abs
 
 ---
 
+## Parte 28 — Catálogo da Linguagem e da Biblioteca Padrão
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+Este capítulo é um catálogo de consulta: ele reúne as palavras que o compilador reconhece e as famílias de APIs que já vêm com a plataforma. O objetivo não é decorar centenas de nomes, mas aprender a procurar antes de reimplementar. A biblioteca padrão contém milhares de tipos e membros; portanto, uma lista realmente exaustiva pertence ao [.NET API Browser](https://learn.microsoft.com/en-us/dotnet/api/), enquanto esta parte organiza o subconjunto que um engenheiro C# encontra com maior frequência.
+
+### 28.1 C#, CLR, BCL, framework e pacote não são sinônimos
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+É comum chamar tudo de “função do C#”, mas cada camada tem um papel diferente. Saber a origem de um recurso indica onde procurar sua documentação, como ele é versionado e se precisa ser instalado.
+
+| Camada | O que contém | Exemplos | Como chega ao projeto |
+|---|---|---|---|
+| **Linguagem C#** | sintaxe, palavras-chave, operadores e regras do compilador | `if`, `class`, `await`, pattern matching | pelo compilador e pela versão de linguagem |
+| **CLR/runtime .NET** | execução de IL, JIT/AOT, GC, carregamento de tipos e exceções | coleta de lixo, stack trace, metadados | pelo runtime escolhido pelo TFM/publicação |
+| **BCL e bibliotecas do runtime** | classes, structs, interfaces, delegates e métodos reutilizáveis | `String`, `List<T>`, `Math`, `File`, `HttpClient` | por assemblies de referência do .NET; algumas famílias também têm pacote próprio |
+| **Framework de aplicação** | modelo para construir uma categoria de aplicação | ASP.NET Core, .NET MAUI, WPF | workload, shared framework, SDK ou pacotes, conforme o framework |
+| **Pacote NuGet** | unidade versionada de código distribuída pública ou privadamente | Dapper, Serilog, Polly | `PackageReference` resolvido pelo NuGet |
+
+Assim, `List<int>` **não é palavra reservada**: é a classe genérica `System.Collections.Generic.List<T>`. `Console.WriteLine` também não é uma função global da linguagem: é um método estático da classe `System.Console`. Já `foreach` é sintaxe do C# que funciona sobre um padrão de enumeração, normalmente exposto por `IEnumerable<T>`.
+
+> **Regra de pesquisa:** para sintaxe, consulte a [referência do C#](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/); para tipos e membros, consulte o [.NET API Browser](https://learn.microsoft.com/en-us/dotnet/api/); para um pacote externo, consulte a documentação e o repositório mantidos pelo próprio projeto.
+
+> **Referências oficiais:** [C# language reference](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/), [Overview of core .NET libraries](https://learn.microsoft.com/en-us/dotnet/standard/class-library-overview), [.NET API Browser](https://learn.microsoft.com/en-us/dotnet/api/)
+
+---
+
+### 28.2 Todas as palavras-chave reservadas
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+Uma **palavra-chave reservada** é um identificador predefinido com significado especial para o compilador em qualquer parte do programa. Ela não pode ser usada diretamente como nome. Se uma integração externa obrigar um nome conflitante, o prefixo `@` o transforma em identificador, como `@class`; o `@` não faz parte do nome armazenado nos metadados.
+
+A tabela a seguir reproduz o conjunto da referência oficial atual, em ordem alfabética por linhas:
+
+|  |  |  |  |
+|---|---|---|---|
+| `abstract` | `as` | `base` | `bool` |
+| `break` | `byte` | `case` | `catch` |
+| `char` | `checked` | `class` | `const` |
+| `continue` | `decimal` | `default` | `delegate` |
+| `do` | `double` | `else` | `enum` |
+| `event` | `explicit` | `extern` | `false` |
+| `finally` | `fixed` | `float` | `for` |
+| `foreach` | `goto` | `if` | `implicit` |
+| `in` | `int` | `interface` | `internal` |
+| `is` | `lock` | `long` | `namespace` |
+| `new` | `null` | `object` | `operator` |
+| `out` | `override` | `params` | `private` |
+| `protected` | `public` | `readonly` | `ref` |
+| `return` | `sbyte` | `sealed` | `short` |
+| `sizeof` | `stackalloc` | `static` | `string` |
+| `struct` | `switch` | `this` | `throw` |
+| `true` | `try` | `typeof` | `uint` |
+| `ulong` | `unchecked` | `unsafe` | `ushort` |
+| `using` | `virtual` | `void` | `volatile` |
+| `while` |  |  |  |
+
+Para estudá-las com sentido, agrupe-as pela responsabilidade:
+
+| Intenção | Palavras principais | Onde este guia aprofunda |
+|---|---|---|
+| declarar tipos e contratos | `class`, `struct`, `interface`, `enum`, `delegate`, `event`, `namespace` | Partes [10](#parte-10--enums), [11](#parte-11--classes-e-objetos), [12](#parte-12--herança-e-polimorfismo) e [13](#parte-13--delegates-events-e-lambdas) |
+| controlar acesso e extensão | `public`, `private`, `protected`, `internal`, `abstract`, `sealed`, `virtual`, `override` | Partes [5](#parte-5--modificadores-de-acesso), [7](#parte-7--palavras-chave-especiais-do-c) e [12](#parte-12--herança-e-polimorfismo) |
+| controlar fluxo | `if`, `else`, `switch`, `case`, `for`, `foreach`, `while`, `do`, `break`, `continue`, `goto`, `return` | [Parte 8](#parte-8--controle-de-fluxo) |
+| tratar falhas | `try`, `catch`, `finally`, `throw` | [Parte 18](#parte-18--tratamento-de-exceções) |
+| trabalhar com tipos e conversões | `is`, `as`, `typeof`, `sizeof`, `implicit`, `explicit`, `operator`, `checked`, `unchecked` | [3.2.1](#321-conversões-implícitas-e-explícitas), [7.6](#76-is-as-e-pattern-matching), [7.9](#79-conversões-definidas-pelo-usuário-implicit-e-explicit) e [8.5](#85-operadores-definidos-pelo-usuário) |
+| controlar referências e parâmetros | `ref`, `in`, `out`, `params`, `this`, `base`, `new`, `readonly` | [7.5](#75-this-e-base), [7.8](#78-ref-out-e-in) e [9.1](#91-declaração-de-métodos) |
+| recursos e baixo nível | `using`, `lock`, `unsafe`, `fixed`, `stackalloc`, `volatile`, `extern` | [7.7](#77-using-para-gerenciamento-de-recursos), [7.13](#713-lock), [21.3](#213-sincronização) e [Parte 22](#parte-22--interoperabilidade-e-recursos-avançados) |
+
+```csharp
+// Evite nomes conflitantes quando você controla o modelo.
+string @class = "guerreiro";
+
+// O compilador entende @class como um identificador chamado "class".
+Console.WriteLine(@class);
+```
+
+**Leitura guiada:** `class` sozinho iniciaria uma declaração de classe e, por isso, é reservado. O prefixo `@` força sua leitura como nome de variável. Esse escape é útil ao mapear nomes vindos de JSON, COM ou código gerado, mas em código comum um nome como `categoria` comunica melhor e evita ruído.
+
+> **Referência oficial:** [C# keywords](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/)
+
+---
+
+### 28.3 Todas as palavras-chave contextuais
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+Uma **palavra-chave contextual** só possui significado especial em posições específicas. Fora delas, pode continuar sendo um identificador. Essa estratégia permite que a linguagem evolua sem quebrar todo programa antigo que já usava, por exemplo, `record` ou `field` como nome.
+
+|  |  |  |  |
+|---|---|---|---|
+| `add` | `allows` | `alias` | `and` |
+| `ascending` | `args` | `async` | `await` |
+| `by` | `closed` | `descending` | `dynamic` |
+| `equals` | `extension` | `field` | `file` |
+| `from` | `get` | `global` | `group` |
+| `init` | `into` | `join` | `let` |
+| `managed` | `nameof` | `nint` | `not` |
+| `notnull` | `nuint` | `on` | `or` |
+| `orderby` | `partial` | `record` | `remove` |
+| `required` | `safe` | `scoped` | `select` |
+| `set` | `unmanaged` | `value` | `var` |
+| `when` | `where` | `with` | `yield` |
+
+| Contexto | Palavras principais | Ideia central |
+|---|---|---|
+| propriedades e eventos | `get`, `set`, `init`, `field`, `value`, `add`, `remove`, `required` | leitura, escrita, inicialização, armazenamento e assinatura |
+| assincronismo e iteradores | `async`, `await`, `yield` | suspensão e retomada controladas pelo compilador |
+| tipos modernos | `record`, `with`, `file`, `partial`, `extension` | tipos orientados a dados, cópia não destrutiva, escopo de arquivo e extensão |
+| inferência e tipos especiais | `var`, `dynamic`, `nint`, `nuint`, `notnull`, `unmanaged`, `scoped`, `allows` | inferência, resolução dinâmica, inteiros nativos e constraints |
+| patterns e filtros | `and`, `or`, `not`, `when` | composição de padrões e condições adicionais |
+| query syntax LINQ | `from`, `where`, `select`, `join`, `on`, `equals`, `into`, `let`, `orderby`, `ascending`, `descending`, `group`, `by` | forma declarativa traduzida para chamadas de operadores LINQ |
+| nomes e aliases | `nameof`, `global`, `alias` | nome em compilação e desambiguação de namespaces |
+| interoperabilidade | `managed`, `unmanaged`, `safe` | constraints e convenções/garantias de código de baixo nível |
+
+> **Atenção à versão:** a página oficial mais recente também documenta recursos em prévia da próxima versão. Em julho de 2026, `closed` e `safe` pertencem ao C# 15 em prévia; `extension` e `field` foram introduzidos no C# 14. Um projeto configurado para C# 14 não deve usar recursos do C# 15. Confirme `<LangVersion>` e a documentação individual antes de adotar uma palavra recém-adicionada.
+
+As diretivas de pré-processador, como `#if`, `#nullable`, `#pragma` e `#region`, também são reconhecidas pelo compilador, mas **não são palavras-chave**; elas são tratadas em [25.6](#256-diretivas-de-pré-processador-e-compilação-condicional).
+
+> **Referências oficiais:** [C# keywords](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/), [C# language versioning](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/configure-language-version), [`extension`](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/extension), [`field`](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/field), [`closed`](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/closed), [`safe`](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/safe)
+
+---
+
+### 28.4 Tipos internos, aliases e literais
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+Os nomes curtos dos tipos internos são aliases definidos pelo C#. `int` e `System.Int32`, por exemplo, representam o mesmo tipo; não há uma versão “primitiva” separada sem métodos. Por convenção, código C# costuma preferir o alias na declaração e o nome CLR ao citar um membro estático específico, embora ambos compilem.
+
+| Alias C# | Tipo .NET | Representa |
+|---|---|---|
+| `bool` | `System.Boolean` | verdadeiro ou falso |
+| `byte` / `sbyte` | `System.Byte` / `System.SByte` | inteiro de 8 bits sem/com sinal |
+| `short` / `ushort` | `System.Int16` / `System.UInt16` | inteiro de 16 bits |
+| `int` / `uint` | `System.Int32` / `System.UInt32` | inteiro de 32 bits |
+| `long` / `ulong` | `System.Int64` / `System.UInt64` | inteiro de 64 bits |
+| `nint` / `nuint` | `System.IntPtr` / `System.UIntPtr` | inteiro cujo tamanho acompanha a arquitetura nativa |
+| `char` | `System.Char` | unidade de código UTF-16, não necessariamente um caractere visual completo |
+| `float` | `System.Single` | ponto flutuante binário de precisão simples |
+| `double` | `System.Double` | ponto flutuante binário de precisão dupla |
+| `decimal` | `System.Decimal` | número decimal, comum para valores monetários |
+| `string` | `System.String` | sequência imutável de unidades UTF-16 |
+| `object` | `System.Object` | raiz do sistema de tipos CTS |
+| `void` | `System.Void` | ausência de valor retornado |
+
+`true`, `false`, `null` e `default` são formas da linguagem, não métodos. Literais numéricos aceitam sufixos como `L`, `UL`, `F`, `D` e `M`; strings podem usar formas comuns, verbatim, interpoladas e raw. Esses assuntos são aprofundados nas [Partes 3](#parte-3--variáveis-e-tipos) e [4](#parte-4--string-e-suas-peculiaridades).
+
+```csharp
+int quantidade = 42;
+System.Int32 mesmaQuantidade = 42;
+
+Console.WriteLine($"{quantidade.GetType().FullName}: {mesmaQuantidade}"); // System.Int32: 42
+Console.WriteLine(int.MaxValue);                                         // 2147483647
+```
+
+**Leitura guiada:** as duas declarações produzem valores do mesmo tipo; `GetType().FullName` mostra o nome `System.Int32` em runtime. `MaxValue` confirma que o alias `int` também expõe os membros estáticos do tipo. O alias melhora a leitura em C#; o nome completo é útil ao explicar a correspondência com a plataforma ou resolver ambiguidades.
+
+> **Referências oficiais:** [Built-in types](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/built-in-types), [Built-in numeric conversions](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/numeric-conversions), [Integral numeric types](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/integral-numeric-types)
+
+---
+
+### 28.5 Operações prontas por domínio
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+A BCL agrupa operações em tipos e namespaces. Antes de criar um helper genérico chamado `Utils`, procure a família responsável pelo problema:
+
+| Domínio | APIs prontas frequentes | Exemplos de intenção |
+|---|---|---|
+| texto | `string`, `StringBuilder`, `Rune`, `StringInfo`, `Encoding`, `Regex` | comparar, localizar, dividir, substituir, normalizar, codificar e validar padrões |
+| números | métodos `Parse`/`TryParse`, `Math`, `MathF`, `BitOperations`, `BigInteger`, `Complex`, `Random` | converter, limitar, arredondar, calcular, operar bits e sortear |
+| matemática genérica | `INumber<T>`, `IFloatingPoint<T>`, `IMinMaxValue<T>` e outras interfaces estáticas | escrever algoritmos numéricos reutilizáveis sem perder tipagem |
+| datas e tempo | `DateOnly`, `TimeOnly`, `DateTime`, `DateTimeOffset`, `TimeSpan`, `TimeZoneInfo`, `Stopwatch`, `PeriodicTimer` | representar calendário, instante, duração, fuso e tempo decorrido |
+| identidade e endereços | `Guid`, `Uri`, `Version` | IDs técnicos, URIs e versões estruturadas |
+| conversão e formato | `Convert`, `IFormattable`, `IParsable<T>`, `CultureInfo`, `NumberStyles`, `DateTimeStyles` | converter com cultura e formato explícitos |
+| arquivos e streams | `Path`, `File`, `Directory`, `Stream`, `FileStream`, `StreamReader`, `StreamWriter`, `MemoryStream` | compor caminhos e fazer I/O síncrono ou assíncrono |
+| rede | `HttpClient`, `HttpRequestMessage`, `HttpResponseMessage`, `Uri`, `IPAddress`, `Dns` | HTTP e primitivas de endereçamento |
+| dados estruturados | `JsonSerializer`, `JsonDocument`, `JsonNode`, `XmlReader`, `XmlWriter`, LINQ to XML | serializar, desserializar e percorrer JSON/XML |
+| segurança | `RandomNumberGenerator`, `SHA256`, `HMACSHA256`, `Aes`, `CryptographicOperations` | aleatoriedade criptográfica, hash, MAC, criptografia e comparação segura |
+| ambiente e diagnóstico | `Environment`, `OperatingSystem`, `Process`, `Activity`, `Meter`, `Trace`, `Debug` | plataforma, processo, tracing, métricas e diagnóstico |
+| reflection | `Type`, `Assembly`, `MethodInfo`, `Activator`, attributes | inspecionar metadados e criar/invocar dinamicamente quando necessário |
+
+#### Exemplo: inverter uma string sem inventar um algoritmo de caracteres
+
+`string` não possui um método de instância `Reverse()`. O operador pronto é `Enumerable.Reverse`, do LINQ, e produz uma sequência que precisa ser materializada de volta como string:
+
+```csharp
+using System.Linq;
+
+string original = "CSharp";
+string invertida = new string(original.Reverse().ToArray());
+
+Console.WriteLine(invertida); // prahSC
+```
+
+**Leitura guiada:** `Reverse()` enumera os elementos na ordem inversa; para uma `string`, cada elemento é um `char`. `ToArray()` materializa os caracteres e o construtor de `string` cria o texto final. Essa receita é adequada para texto didático simples, mas um `char` é uma unidade UTF-16: emojis e marcas combinantes podem ocupar mais de uma unidade e ser quebrados pela inversão.
+
+Para preservar elementos de texto percebidos pelo usuário, use `StringInfo`:
+
+```csharp
+using System.Globalization;
+
+static string InverterElementosDeTexto(string texto)
+{
+    List<string> elementos = [];
+    TextElementEnumerator enumerador = StringInfo.GetTextElementEnumerator(texto);
+
+    while (enumerador.MoveNext())
+        elementos.Add(enumerador.GetTextElement());
+
+    elementos.Reverse();
+    return string.Concat(elementos);
+}
+
+Console.WriteLine(InverterElementosDeTexto("A👍🏽B")); // B👍🏽A
+```
+
+**Leitura guiada:** `StringInfo.GetTextElementEnumerator` percorre elementos de texto em vez de unidades `char`. Cada elemento é guardado em uma lista, `List<T>.Reverse` inverte a lista no lugar e `string.Concat` reúne o resultado. A função custa memória proporcional ao texto; ela é escolhida quando correção Unicode importa mais do que a receita curta baseada em `char`.
+
+#### O conjunto de métodos mais reutilizado
+
+| Quero... | Procure primeiro por... | Observação |
+|---|---|---|
+| verificar texto vazio | `string.IsNullOrWhiteSpace` | trata `null`, vazio e somente espaços |
+| comparar texto | `string.Equals` com `StringComparison` | escolha comparação ordinal ou cultural de forma explícita |
+| separar ou reunir texto | `Split`, `string.Join`, `string.Concat` | considere alocações em caminhos de alto volume |
+| montar texto repetidamente | `StringBuilder` | strings continuam sendo a melhor opção para poucas concatenações |
+| interpretar entrada | `T.TryParse` / `IParsable<T>` | falha esperada não precisa virar exceção |
+| limitar/arredondar | `Math.Clamp`, `Math.Round`, `Math.Ceiling`, `Math.Floor` | conheça o modo de arredondamento necessário |
+| medir duração | `Stopwatch` | não subtraia relógio civil para benchmark |
+| gerar ID | `Guid.NewGuid` | ID técnico não substitui uma chave de negócio |
+| gerar token seguro | `RandomNumberGenerator` | `Random` é para simulação, não para segredo |
+| compor caminho | `Path.Combine` / `Path.Join` | não concatene separadores manualmente |
+| ler/escrever pequeno arquivo | `File.ReadAllTextAsync` / `WriteAllTextAsync` | para arquivos grandes, prefira streams |
+| consumir JSON | `JsonSerializer` | configure contrato, nulabilidade e opções deliberadamente |
+| chamar HTTP | `HttpClient` | planeje reutilização e ciclo de vida do handler |
+
+> **Referências oficiais:** [String operations](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/strings/), [Character encoding in .NET](https://learn.microsoft.com/en-us/dotnet/standard/base-types/character-encoding-introduction), [Generic math](https://learn.microsoft.com/en-us/dotnet/standard/generics/math), [Date and time in .NET](https://learn.microsoft.com/en-us/dotnet/standard/datetime/), [System.IO](https://learn.microsoft.com/en-us/dotnet/api/system.io?view=net-10.0), [Cryptographic services](https://learn.microsoft.com/en-us/dotnet/standard/security/cryptographic-services)
+
+---
+
+### 28.6 Estruturas de dados e coleções prontas
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+Escolha uma coleção pelo contrato de acesso, mutabilidade, ordenação e concorrência. A maioria dos programas deve começar pelas coleções genéricas, que preservam segurança de tipo e evitam casts das coleções legadas não genéricas.
+
+#### Coleções mutáveis de uso geral
+
+| Necessidade | Tipo pronto | Característica principal |
+|---|---|---|
+| tamanho fixo e índice | `T[]` / `Array` | armazenamento contíguo e tamanho definido na criação |
+| lista redimensionável | `List<T>` | índice O(1), adição amortizada O(1) no fim |
+| inserção/remoção por nó conhecido | `LinkedList<T>` | lista duplamente encadeada; localizar posição continua O(n) |
+| chave → valor | `Dictionary<TKey,TValue>` | busca média O(1) por hash; ordem não é seu contrato semântico |
+| chave → valor ordenado | `SortedDictionary<TKey,TValue>` | árvore de busca binária, consulta e atualização O(log n) |
+| chave → valor ordenado e compacto | `SortedList<TKey,TValue>` | arrays ordenados; busca O(log n), inserção/remoção O(n) |
+| valores únicos | `HashSet<T>` | pertença e operações de conjunto por hash |
+| valores únicos ordenados | `SortedSet<T>` | conjunto ordenado com operações normalmente O(log n) |
+| primeiro a entrar, primeiro a sair | `Queue<T>` | fila FIFO com `Enqueue`, `Dequeue`, `Peek` |
+| último a entrar, primeiro a sair | `Stack<T>` | pilha LIFO com `Push`, `Pop`, `Peek` |
+| próximo item por prioridade | `PriorityQueue<TElement,TPriority>` | heap quaternário mínimo; menor prioridade sai primeiro pelo comparer padrão |
+| bits compactos | `BitArray` | coleção compacta de booleanos operável por bits |
+| notificação para binding | `ObservableCollection<T>` | eventos quando itens são adicionados, removidos ou redefinidos |
+| pares de strings legados/especiais | `NameValueCollection` | permite vários valores por chave; prefira genéricos em modelos novos |
+
+#### Leitura, imutabilidade e consultas otimizadas
+
+| Necessidade | Tipo/interface | Limite importante |
+|---|---|---|
+| expor somente leitura | `IReadOnlyCollection<T>`, `IReadOnlyList<T>`, `IReadOnlyDictionary<TKey,TValue>` | interface somente leitura não torna o objeto subjacente imutável |
+| wrapper somente leitura | `ReadOnlyCollection<T>`, `ReadOnlyDictionary<TKey,TValue>` | mudanças na coleção subjacente ainda podem aparecer |
+| valor persistentemente imutável | `ImmutableArray<T>`, `ImmutableList<T>`, `ImmutableDictionary<TKey,TValue>`, `ImmutableHashSet<T>` | operações retornam outra coleção; builders ajudam em lotes |
+| leitura repetida após construção | `FrozenDictionary<TKey,TValue>`, `FrozenSet<T>` | custo maior de construção em troca de consultas otimizadas; não é mutável |
+| memória contígua sem ownership | `Span<T>`, `ReadOnlySpan<T>`, `Memory<T>`, `ReadOnlyMemory<T>` | são visões de memória, não listas redimensionáveis |
+
+#### Concorrência e comunicação
+
+| Necessidade | Tipo pronto | Uso correto |
+|---|---|---|
+| dicionário compartilhado | `ConcurrentDictionary<TKey,TValue>` | operações atômicas como `GetOrAdd` e `AddOrUpdate` |
+| fila/pilha compartilhada | `ConcurrentQueue<T>`, `ConcurrentStack<T>` | produtores e consumidores concorrentes sem proteger uma `Queue<T>` comum |
+| coleção sem ordem compartilhada | `ConcurrentBag<T>` | cenários em que afinidade/reuso por thread pode ajudar |
+| fila bloqueante limitada | `BlockingCollection<T>` | código síncrono de produtor/consumidor; encerre com `CompleteAdding` |
+| pipeline assíncrono | `Channel<T>` | espera assíncrona, backpressure e múltiplos produtores/consumidores |
+
+`SortedDictionary<TKey,TValue>` e `SortedSet<T>` usam árvores internamente e cobrem muitos casos de mapa/conjunto ordenado. Porém, a BCL **não expõe uma classe genérica pública `BinaryTree<T>`**, nem uma árvore AVL, trie ou grafo de propósito geral. Se o problema exige acesso a nós, travessias específicas, pesos de arestas ou invariantes próprios, use uma biblioteca especializada ou implemente a estrutura com testes. Não escreva uma árvore apenas para manter chaves ordenadas: as coleções prontas já resolvem esse contrato.
+
+```csharp
+PriorityQueue<string, int> atendimentos = new();
+atendimentos.Enqueue("dúvida comum", 30);
+atendimentos.Enqueue("falha crítica", 1);
+atendimentos.Enqueue("erro importante", 10);
+
+while (atendimentos.TryDequeue(out string? chamado, out int prioridade))
+    Console.WriteLine($"{prioridade}: {chamado}");
+```
+
+**Leitura guiada:** o primeiro parâmetro genérico é o item e o segundo é o tipo usado para ordenar prioridades. Com o comparer padrão de `int`, valores menores saem primeiro, então a falha crítica de prioridade `1` é atendida antes. `TryDequeue` devolve `false` quando a fila termina e evita usar exceção como controle do loop. Prioridades iguais não possuem estabilidade FIFO garantida; acrescente um critério de desempate se a ordem for requisito.
+
+> **Referências oficiais:** [Collections and data structures](https://learn.microsoft.com/en-us/dotnet/standard/collections/), [Selecting a collection class](https://learn.microsoft.com/en-us/dotnet/standard/collections/selecting-a-collection-class), [`SortedDictionary<TKey,TValue>`](https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.sorteddictionary-2?view=net-10.0), [`PriorityQueue<TElement,TPriority>`](https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.priorityqueue-2?view=net-10.0), [Immutable collections](https://learn.microsoft.com/en-us/dotnet/api/system.collections.immutable?view=net-10.0), [Frozen collections](https://learn.microsoft.com/en-us/dotnet/api/system.collections.frozen?view=net-10.0), [Thread-safe collections](https://learn.microsoft.com/en-us/dotnet/standard/collections/thread-safe/), [`Channel<T>`](https://learn.microsoft.com/en-us/dotnet/api/system.threading.channels.channel-1?view=net-10.0)
+
+---
+
+### 28.7 Interfaces e delegates prontos
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+Interfaces da BCL dão nome a capacidades comuns. Receber o contrato mínimo torna o método reutilizável, mas não escolha uma interface mais fraca do que a operação exige: se precisa de índice, `IEnumerable<T>` não promete isso; se precisa adicionar, `IReadOnlyCollection<T>` não basta.
+
+| Contrato pronto | O que promete | Cenário comum |
+|---|---|---|
+| `IEnumerable<T>` | enumeração síncrona | entrada para LINQ e `foreach` |
+| `IAsyncEnumerable<T>` | enumeração assíncrona | stream de resultados com `await foreach` |
+| `ICollection<T>` | contagem e mutação básica | adicionar, remover e consultar pertença |
+| `IList<T>` | coleção mutável indexada | quando o consumidor realmente precisa de índice e escrita |
+| `IReadOnlyCollection<T>` / `IReadOnlyList<T>` | contagem e, no segundo caso, índice de leitura | expor consulta sem oferecer mutação pelo contrato |
+| `IDictionary<TKey,TValue>` / `IReadOnlyDictionary<TKey,TValue>` | acesso por chave mutável/somente leitura | tabelas de consulta e mapas |
+| `ISet<T>` / `IReadOnlySet<T>` | unicidade e álgebra de conjuntos | pertença, união, interseção e diferença |
+| `IComparable<T>` / `IComparer<T>` | ordem natural / estratégia externa de ordem | sorting e coleções ordenadas |
+| `IEquatable<T>` / `IEqualityComparer<T>` | igualdade do tipo / estratégia externa de igualdade | dicionários, sets, records e testes |
+| `IDisposable` / `IAsyncDisposable` | liberação síncrona/assíncrona de recurso | `using` e `await using` |
+| `IFormattable` / `ISpanFormattable` | formatação com formato e cultura | logs, UI, protocolos e caminhos de alta performance |
+| `IParsable<TSelf>` / `ISpanParsable<TSelf>` | parsing estático genérico | componentes que aceitam tipos parseáveis |
+| `INotifyPropertyChanged` / `INotifyCollectionChanged` | notificação de alteração | data binding em UI |
+| `IObservable<T>` / `IObserver<T>` | protocolo push de notificações | integração reativa básica; operadores avançados costumam vir de pacote |
+| `IServiceProvider` | resolução de serviço por tipo | infraestrutura de DI; código de domínio não deve virar service locator |
+
+Delegates genéricos evitam declarar um tipo novo para callbacks comuns:
+
+| Delegate | Assinatura mental | Uso comum |
+|---|---|---|
+| `Action` / `Action<T...>` | recebe valores e não retorna resultado | comando, callback, consumidor |
+| `Func<TResult>` / `Func<T...,TResult>` | recebe zero ou mais valores e retorna o último tipo | função, fábrica, projeção |
+| `Predicate<T>` | `T → bool` | teste de condição em APIs como `List<T>.Find` |
+| `Comparison<T>` | `(T, T) → int` | estratégia de ordenação pontual |
+| `Converter<TInput,TOutput>` | `TInput → TOutput` | conversão em APIs legadas/específicas |
+| `EventHandler` / `EventHandler<TEventArgs>` | remetente + dados do evento | padrão de eventos .NET |
+
+```csharp
+static T Maior<T>(IEnumerable<T> itens, IComparer<T> comparador)
+{
+    ArgumentNullException.ThrowIfNull(itens);
+    ArgumentNullException.ThrowIfNull(comparador);
+
+    using IEnumerator<T> enumerador = itens.GetEnumerator();
+    if (!enumerador.MoveNext())
+        throw new ArgumentException("A sequência não pode estar vazia.", nameof(itens));
+
+    T maior = enumerador.Current;
+    while (enumerador.MoveNext())
+        if (comparador.Compare(enumerador.Current, maior) > 0)
+            maior = enumerador.Current;
+
+    return maior;
+}
+```
+
+**Leitura guiada:** `IEnumerable<T>` exige apenas que a entrada possa ser percorrida; `IComparer<T>` injeta a regra de ordem sem amarrar o método a um tipo concreto. `ThrowIfNull` aplica a validação pronta da BCL antes de usar os argumentos, e o enumerador é descartado por `using`. A primeira chamada a `MoveNext` detecta sequência vazia e posiciona no primeiro valor; as seguintes comparam cada item ao maior atual. Para código cotidiano, prefira o operador pronto `Max`/`MaxBy`; o exemplo serve para mostrar como contratos da BCL compõem algoritmos genéricos.
+
+> **Referências oficiais:** [Interfaces](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/types/interfaces), [System.Collections.Generic](https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic?view=net-10.0), [Generic delegates](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/generics/generic-delegates), [Generic math](https://learn.microsoft.com/en-us/dotnet/standard/generics/math)
+
+---
+
+### 28.8 Namespaces essenciais da biblioteca padrão
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+Namespace é um endereço lógico, não uma biblioteca física. Um assembly pode conter vários namespaces, e o mesmo namespace pode ser repartido entre assemblies. Ainda assim, este mapa acelera a descoberta:
+
+| Namespace/família | O que procurar ali |
+|---|---|
+| `System` | tipos fundamentais, `Console`, `Math`, datas, `Guid`, `Uri`, exceções e delegates |
+| `System.Buffers` | pools, buffers, `ReadOnlySequence<T>` e operações de alto desempenho |
+| `System.Collections.Generic` | listas, filas, pilhas, sets, dicionários e contratos genéricos |
+| `System.Collections.Concurrent` | coleções para acesso concorrente |
+| `System.Collections.Immutable` | coleções persistentemente imutáveis |
+| `System.Collections.Frozen` | sets e dicionários construídos uma vez e otimizados para leitura |
+| `System.Collections.ObjectModel` | wrappers e coleções observáveis |
+| `System.Linq` | operadores de consulta, agregação, conjunto, ordenação e materialização |
+| `System.Linq.Expressions` | árvores de expressão inspecionáveis/traduzíveis |
+| `System.Text` | `StringBuilder`, codificações, `Rune` e utilitários de texto |
+| `System.Text.RegularExpressions` | regex e geração de regex em compilação |
+| `System.Globalization` | culturas, calendários, formatação e elementos de texto |
+| `System.IO` | arquivos, diretórios, caminhos e streams |
+| `System.IO.Compression` | ZIP, gzip, deflate e Brotli |
+| `System.Net` / `System.Net.Http` | endereços, DNS, HTTP, handlers e conteúdo HTTP |
+| `System.Net.Sockets` | TCP, UDP e sockets de baixo nível |
+| `System.Text.Json` | JSON fortemente tipado, DOM e source generation |
+| `System.Xml` / `System.Xml.Linq` | leitura, escrita e consulta de XML |
+| `System.Threading` | cancelamento, sincronização, timers e primitivas de thread |
+| `System.Threading.Tasks` | `Task`, paralelismo e composição assíncrona |
+| `System.Threading.Channels` | canais produtor/consumidor assíncronos |
+| `System.Diagnostics` | processos, tracing, activities, métricas e depuração |
+| `System.Reflection` | assemblies, tipos, membros e metadados em runtime |
+| `System.Numerics` | vetores SIMD, números grandes, complexos e contratos numéricos |
+| `System.Security.Cryptography` | hash, MAC, cifras, assinaturas e aleatoriedade segura |
+| `System.ComponentModel` | componentes, conversores e notificações usadas por binding |
+| `System.Runtime.CompilerServices` | serviços avançados do compilador/runtime; use apenas entendendo o contrato |
+| `Microsoft.Extensions.*` | hosting, DI, configuração, logging, options, caching e health checks da pilha .NET |
+
+Nem todo namespace acima é importado automaticamente. `using` só permite escrever um nome curto; ele não instala pacote, não carrega magicamente um assembly e não copia código. Se o compilador não encontrar o tipo, verifique o TFM, a referência de framework/pacote e, por último, a diretiva `using`.
+
+> **Referências oficiais:** [.NET API Browser](https://learn.microsoft.com/en-us/dotnet/api/), [Core .NET libraries](https://learn.microsoft.com/en-us/dotnet/standard/class-library-overview), [Framework libraries](https://learn.microsoft.com/en-us/dotnet/standard/framework-libraries)
+
+---
+
+### 28.9 Algoritmos e utilitários que você não precisa reimplementar
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+As APIs prontas já tratam muitos casos de borda, integram-se ao sistema de tipos e costumam receber otimizações do runtime. Ainda é preciso conhecer complexidade e semântica: “existe pronto” não significa “serve para toda escala”.
+
+| Problema | APIs candidatas | Pergunta antes de usar |
+|---|---|---|
+| ordenar | `Array.Sort`, `List<T>.Sort`, `Enumerable.OrderBy`/`ThenBy` | pode alterar a entrada ou precisa de nova sequência? |
+| busca binária | `Array.BinarySearch`, `List<T>.BinarySearch` | os dados estão ordenados com o mesmo comparer? |
+| procurar/validar | `Find`, `FindIndex`, `Contains`, `Any`, `All`, `FirstOrDefault`, `SingleOrDefault` | zero, um ou vários resultados são válidos? |
+| mínimo/máximo | `Min`, `Max`, `MinBy`, `MaxBy`, `Math.Min`, `Math.Max` | sequência vazia e empates foram definidos? |
+| agregar | `Sum`, `Average`, `Count`, `Aggregate` | há risco de overflow ou enumeração cara? |
+| agrupar/indexar | `GroupBy`, `ToLookup`, `ToDictionary` | chaves podem repetir? o resultado precisa ser imediato? |
+| operações de conjunto | `Distinct`, `Union`, `Intersect`, `Except`, `HashSet<T>` | qual regra de igualdade deve valer? |
+| paginar/fatiar | ranges, `Skip`, `Take`, `Chunk` | a fonte é indexável ou será percorrida repetidamente? |
+| combinar sequências | `Concat`, `Append`, `Prepend`, `Zip`, `Join` | quer concatenação, pareamento posicional ou junção por chave? |
+| comparar sequências | `SequenceEqual` | ordem importa e qual comparer representa igualdade? |
+| copiar/mover memória | `Array.Copy`, `Span<T>.CopyTo`, `Buffer.BlockCopy` | são elementos tipados ou bytes brutos? há sobreposição? |
+| base64/hex | `Convert.ToBase64String`, `Convert.FromBase64String`, `Convert.ToHexString` | isso é codificação, não criptografia |
+| URL/URI | `Uri`, `UriBuilder`, `WebUtility` | é endereço, componente de query ou texto HTML? |
+| timeout cooperativo | `CancellationTokenSource.CancelAfter`, `Task.WaitAsync` | a operação observa o token e diferencia timeout de cancelamento externo? |
+| retry e circuit breaker HTTP | pacote first-party `Microsoft.Extensions.Http.Resilience` | a operação é idempotente e a política evita amplificar uma falha? Veja [29.4](#294-http-resiliência-mensageria-e-jobs). |
+
+```csharp
+int[] notas = [7, 10, 4, 10, 8, 4];
+
+int[] ranking = notas
+    .Distinct()
+    .OrderDescending()
+    .ToArray();
+
+bool todasAprovadas = notas.All(nota => nota >= 6);
+double media = notas.Average();
+int melhor = notas.Max();
+```
+
+**Leitura guiada:** `Distinct` remove duplicatas usando igualdade, `OrderDescending` ordena a sequência resultante e `ToArray` executa/materializa a consulta. `All` verifica o predicado em cada nota e pode parar no primeiro `false`; `Average` e `Max` agregam a sequência. Como o array não é vazio, `Average` e `Max` têm resultado; em uma entrada possivelmente vazia, defina explicitamente a regra do domínio antes de chamar esses operadores.
+
+> **Referências oficiais:** [Standard query operators](https://learn.microsoft.com/en-us/dotnet/csharp/linq/standard-query-operators/), [`Array`](https://learn.microsoft.com/en-us/dotnet/api/system.array?view=net-10.0), [`List<T>`](https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.list-1?view=net-10.0)
+
+---
+
+### 28.10 Como descobrir se a API já existe
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+Use este fluxo antes de criar uma estrutura, helper ou abstração:
+
+1. **Nomeie a intenção**, não a implementação imaginada: “preciso retirar por prioridade”, não “preciso escrever um heap”.
+2. **Procure no IntelliSense** do tipo que já possui o dado e nos namespaces da seção anterior.
+3. **Pesquise o [.NET API Browser](https://learn.microsoft.com/en-us/dotnet/api/)** pelo verbo e pelo substantivo; filtre pela versão do .NET realmente usada pelo projeto.
+4. **Consulte o catálogo oficial de coleções** e os operadores LINQ quando o problema envolve sequência, índice, chave, ordem, conjunto ou concorrência.
+5. **Verifique o contrato**, não apenas o nome: mutabilidade, nulabilidade, exceções, cultura, thread safety, complexidade e disponibilidade por TFM.
+6. **Procure um pacote externo** somente quando a BCL/framework não cobre o requisito. Avalie manutenção, licença, segurança e dependências transitivas.
+7. **Implemente** quando o comportamento é específico do domínio, a dependência não se justifica ou medições provam que o contrato pronto é inadequado.
+
+Um método parecido no namespace errado pode representar outra abstração. `List<T>.Reverse` altera a lista; `Enumerable.Reverse` cria uma enumeração reversa; `Array.Reverse` altera o array ou um intervalo. Ler a assinatura e a seção **Remarks** evita escolher apenas pelo nome.
+
+> **Fontes de consulta oficiais:** [.NET API Browser](https://learn.microsoft.com/en-us/dotnet/api/), [.NET source browser](https://source.dot.net/), [Collections and data structures](https://learn.microsoft.com/en-us/dotnet/standard/collections/), [Standard query operators](https://learn.microsoft.com/en-us/dotnet/csharp/linq/standard-query-operators/)
+
+---
+
+## Parte 29 — Ecossistema Externo: Frameworks, Bibliotecas e Ferramentas
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+O ecossistema .NET é maior do que a linguagem e a BCL. Frameworks definem um modelo de aplicação; bibliotecas resolvem uma responsabilidade; ferramentas participam do build, teste ou diagnóstico; pacotes NuGet são o principal formato de distribuição. Esta parte oferece um **mapa curado, não um ranking nem uma lista exaustiva**. A inclusão de um projeto indica que ele é relevante para conhecer, não que deve ser instalado automaticamente.
+
+As afirmações sobre C# e .NET continuam apoiadas na Microsoft Learn. Para projetos comunitários ou de fornecedores, o link aponta para a documentação ou repositório mantido pelo próprio projeto, que é sua fonte primária. Versões, licenças, suporte e modelo comercial podem mudar; valide-os no momento da adoção.
+
+### 29.1 O que é externo ao padrão
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+NuGet é o mecanismo apoiado pela Microsoft para criar, hospedar e consumir pacotes .NET. Um `.nupkg` contém assemblies e um manifesto versionado; ao adicionar um pacote, o projeto registra uma `PackageReference` e o restore resolve também dependências transitivas compatíveis.
+
+| Categoria | Exemplo | Implicação |
+|---|---|---|
+| API do runtime/BCL | `List<T>`, `HttpClient`, `JsonSerializer` | normalmente disponível pelo framework de destino |
+| biblioteca first-party em pacote | EF Core, `Microsoft.Extensions.*`, ML.NET | mantida pela Microsoft, mas versionada/referenciada separadamente em muitos projetos |
+| framework de aplicação | ASP.NET Core, .NET MAUI, Avalonia | define ciclo de vida, componentes e convenções da aplicação |
+| biblioteca comunitária | Dapper, Serilog, Polly, CsvHelper | possui contrato, versão, licença e manutenção próprios |
+| driver de fornecedor | Npgsql, MongoDB Driver, RabbitMQ.Client | conecta a um protocolo ou produto externo específico |
+| ferramenta | BenchmarkDotNet, Playwright, Testcontainers | apoia medição, automação ou teste; pode exigir infraestrutura adicional |
+
+**Não instale um pacote para substituir sem necessidade o que a plataforma já oferece.** Antes de Newtonsoft.Json, verifique `System.Text.Json`; antes de um cliente REST, veja se `HttpClient` + serialização atendem; antes de uma biblioteca de coleções, consulte a Parte 28. A alternativa externa passa a fazer sentido quando oferece um contrato necessário, reduz risco real ou é o driver oficial do sistema integrado.
+
+> **Referências oficiais:** [An introduction to NuGet](https://learn.microsoft.com/en-us/nuget/what-is-nuget), [PackageReference](https://learn.microsoft.com/en-us/nuget/consume-packages/package-references-in-project-files), [NuGet package dependencies](https://learn.microsoft.com/en-us/nuget/concepts/dependency-resolution)
+
+---
+
+### 29.2 Plataformas e frameworks mantidos pela Microsoft
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+“Fora da BCL” não significa necessariamente “terceiro”. A Microsoft mantém modelos de aplicação e bibliotecas que ficam acima do runtime:
+
+| Tecnologia oficial | Serve para | Entrada/documentação |
+|---|---|---|
+| **ASP.NET Core** | APIs HTTP, MVC, Razor Pages, Blazor, SignalR e gRPC no servidor | [ASP.NET Core](https://learn.microsoft.com/en-us/aspnet/core/?view=aspnetcore-10.0) |
+| **Entity Framework Core** | ORM com modelo, consultas LINQ, change tracking e migrations | [EF Core](https://learn.microsoft.com/en-us/ef/core/) |
+| **.NET MAUI** | aplicações nativas multiplataforma para Android, iOS, macOS e Windows a partir de projeto compartilhado | [.NET MAUI](https://learn.microsoft.com/en-us/dotnet/maui/what-is-maui?view=net-maui-10.0) |
+| **WPF** | desktop Windows com XAML, binding, estilos e composição visual | [WPF overview](https://learn.microsoft.com/en-us/dotnet/desktop/wpf/overview/?view=netdesktop-10.0) |
+| **Windows Forms** | desktop Windows orientado a controles e eventos | [Windows Forms overview](https://learn.microsoft.com/en-us/dotnet/desktop/winforms/overview/?view=netdesktop-10.0) |
+| **Aspire** | composição, desenvolvimento local e observabilidade de aplicações distribuídas | [What is Aspire?](https://aspire.dev/get-started/what-is-aspire/) |
+| **Orleans** | sistemas distribuídos por virtual actors, grains e silos | [Orleans overview](https://learn.microsoft.com/en-us/dotnet/orleans/overview) |
+| **ML.NET** | treinamento e consumo de modelos de machine learning no ecossistema .NET | [ML.NET](https://dotnet.microsoft.com/en-us/apps/ai/ml-dotnet) |
+| **gRPC for .NET** | RPC tipado baseado em Protocol Buffers, normalmente transportado por HTTP/2 | [gRPC on .NET](https://learn.microsoft.com/en-us/aspnet/core/grpc/?view=aspnetcore-10.0) |
+| **Microsoft.Extensions** | hosting, DI, configuração, logging, options, caching, health checks e resiliência | [.NET extensions](https://learn.microsoft.com/en-us/dotnet/core/extensions/) |
+| **Microsoft.Data.SqlClient** | provider ADO.NET oficial para SQL Server/Azure SQL | [SqlClient](https://learn.microsoft.com/en-us/sql/connect/ado-net/introduction-microsoft-data-sqlclient-namespace) |
+| **Microsoft.Playwright for .NET** | automação de navegadores e testes end-to-end | [Playwright .NET](https://playwright.dev/dotnet/) |
+
+Alguns chegam por template/shared framework, outros por workload ou pacote. Por exemplo, um projeto `Microsoft.NET.Sdk.Web` referencia a pilha compartilhada do ASP.NET Core, enquanto EF Core exige pacotes do provider usado. Sempre siga a página de instalação da versão/TFM do projeto; não deduza o mecanismo apenas pelo nome da Microsoft.
+
+---
+
+### 29.3 Dados, bancos e persistência
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+ADO.NET (`DbConnection`, `DbCommand`, `DbDataReader`) é a base comum. Acima dele, ORMs e micro-ORMs automatizam partes diferentes; drivers implementam o protocolo de um banco. Nenhuma ferramenta elimina a necessidade de entender transações, índices, parametrização, concorrência e custo das consultas.
+
+| Projeto/pacote | Papel | Quando investigar | Fonte primária |
+|---|---|---|---|
+| `Microsoft.EntityFrameworkCore` | ORM first-party | modelo rico, LINQ traduzido, tracking e migrations | [EF Core](https://learn.microsoft.com/en-us/ef/core/) |
+| `Dapper` | micro-ORM sobre `DbConnection` | você quer escrever SQL e mapear resultados com pouca abstração | [Dapper](https://github.com/DapperLib/Dapper) |
+| `Microsoft.Data.SqlClient` | driver SQL Server/Azure SQL | acesso ADO.NET específico da família SQL Server | [SqlClient](https://learn.microsoft.com/en-us/sql/connect/ado-net/introduction-microsoft-data-sqlclient-namespace) |
+| `Npgsql` | provider ADO.NET para PostgreSQL | acesso PostgreSQL direto ou provider correspondente do EF Core | [Npgsql](https://www.npgsql.org/doc/) |
+| `MySqlConnector` | provider ADO.NET para MySQL | cliente assíncrono e integração ADO.NET com MySQL | [MySqlConnector](https://mysqlconnector.net/) |
+| `MongoDB.Driver` | driver oficial MongoDB para .NET/C# | documentos BSON, queries e operações do MongoDB | [MongoDB .NET/C# Driver](https://www.mongodb.com/docs/drivers/csharp/current/) |
+| `StackExchange.Redis` | cliente Redis | cache distribuído, estruturas Redis e pub/sub | [StackExchange.Redis](https://stackexchange.github.io/StackExchange.Redis/) |
+| `Microsoft.Data.Sqlite` | provider ADO.NET leve para SQLite | armazenamento local/embarcado e testes compatíveis com SQLite | [Microsoft.Data.Sqlite](https://learn.microsoft.com/en-us/dotnet/standard/data/sqlite/) |
+
+**Escolha pelo modelo de trabalho:** EF Core rastreia entidades e traduz árvores de expressão; Dapper executa SQL fornecido pelo desenvolvedor e mapeia linhas; um driver é a camada de comunicação. Chamar Dapper de “EF mais rápido” ou driver de “ORM” esconde contratos diferentes. Meça no cenário real e examine o SQL produzido/enviado.
+
+---
+
+### 29.4 HTTP, resiliência, mensageria e jobs
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+| Projeto/pacote | Resolve | Limite a entender | Fonte primária |
+|---|---|---|---|
+| `HttpClient` + `IHttpClientFactory` | cliente HTTP e gestão de handlers | já é a base oficial; não precisa de wrapper para toda chamada | [HttpClient guidelines](https://learn.microsoft.com/en-us/dotnet/fundamentals/networking/http/httpclient-guidelines) |
+| `Refit` | gera cliente REST tipado a partir de interfaces | atributos e geração não eliminam contratos HTTP, erros nem versionamento | [Refit](https://github.com/reactiveui/refit) |
+| `RestSharp` | API de alto nível para requisições REST | compare o ganho com `HttpClient` e não recrie seu ciclo de vida incorretamente | [RestSharp](https://restsharp.dev/docs/intro/) |
+| `Microsoft.Extensions.Http.Resilience` | pipelines de resiliência integrados ao `HttpClient` | retry só é seguro com política, idempotência, timeout e cancelamento | [HTTP resilience](https://learn.microsoft.com/en-us/dotnet/core/resilience/http-resilience) |
+| `Polly` | retry, circuit breaker, timeout, rate limiter e composição de resiliência | uma política errada amplifica carga e latência | [Polly](https://www.pollydocs.org/) |
+| `RabbitMQ.Client` | cliente oficial do RabbitMQ | canais, acknowledgements, reconexão e concorrência têm regras próprias | [RabbitMQ .NET client](https://www.rabbitmq.com/client-libraries/dotnet-api-guide) |
+| `MassTransit` | abstrações de mensageria, consumers, sagas e integração com transports | não substitui entender entrega, duplicidade e topologia do broker | [MassTransit](https://github.com/MassTransit/MassTransit) |
+| `MediatR` | mediator em processo para requests, notifications e behaviors | não é broker nem garante entrega durável; confira licença/termos atuais | [MediatR](https://github.com/LuckyPennySoftware/MediatR) |
+| `Hangfire` | jobs persistentes e processamento em background | armazenamento, retries e idempotência fazem parte do desenho | [Hangfire](https://www.hangfire.io/) |
+| `Quartz.NET` | agendamento por triggers e calendários | scheduler não torna automaticamente o trabalho distribuído ou idempotente | [Quartz.NET](https://www.quartz-scheduler.net/documentation/) |
+
+Retries não devem envolver cegamente qualquer `POST`, transação ou operação com efeito colateral. Mensagens podem chegar novamente; consumers precisam decidir idempotência, deduplicação e política de poison message. Jobs duráveis devem persistir estado suficiente para retomar com segurança. A biblioteca oferece mecanismos; a semântica continua sendo responsabilidade da aplicação.
+
+---
+
+### 29.5 Serialização, mapeamento, validação e produtividade
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+| Projeto/pacote | Papel | Antes de adotar | Fonte primária |
+|---|---|---|---|
+| `System.Text.Json` | JSON first-party e parte da plataforma | é a primeira opção para projetos novos; confira suporte ao contrato necessário | [System.Text.Json](https://learn.microsoft.com/en-us/dotnet/standard/serialization/system-text-json/overview) |
+| `Newtonsoft.Json` | biblioteca JSON madura e extensível | útil para contratos/recursos específicos e legado; não instale por hábito | [Json.NET](https://www.newtonsoft.com/json/help/html/Introduction.htm) |
+| `MessagePack` | serialização binária compacta | produtor e consumidor precisam concordar sobre contrato e compatibilidade | [MessagePack for C#](https://github.com/MessagePack-CSharp/MessagePack-CSharp) |
+| `protobuf-net` | implementação .NET de Protocol Buffers | modele evolução de campos e compatibilidade do schema | [protobuf-net](https://protobuf-net.github.io/protobuf-net/) |
+| `CsvHelper` | leitura e escrita de CSV | delimitador, cultura, cabeçalho, quoting e dados inválidos precisam de política | [CsvHelper](https://joshclose.github.io/CsvHelper/) |
+| `AutoMapper` | mapeamento configurável entre objetos | mapeamento explícito pode ser mais claro em domínios pequenos; confira licença atual | [AutoMapper](https://docs.automapper.io/en/stable/) |
+| `FluentValidation` | regras de validação expressivas | validação de entrada não substitui invariantes do domínio | [FluentValidation](https://docs.fluentvalidation.net/en/latest/) |
+| `Humanizer` | pluralização, datas relativas, enums e texto amigável | resultados linguísticos dependem de cultura e contexto de apresentação | [Humanizer](https://github.com/Humanizr/Humanizer) |
+| `Scrutor` | scanning e decoração sobre DI de `Microsoft.Extensions` | assembly scanning aumenta comportamento implícito; limite o escopo | [Scrutor](https://github.com/khellang/Scrutor) |
+
+Serialização não é cópia inocente de objetos: ela cria um contrato externo. Não exponha entidades internas diretamente, não habilite polimorfismo arbitrário em entrada não confiável e não suponha que trocar de serializador preservará nomes, nulabilidade, números, datas e tratamento de membros desconhecidos.
+
+---
+
+### 29.6 Logging e observabilidade
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+| Projeto/API | Papel | Observação | Fonte primária |
+|---|---|---|---|
+| `Microsoft.Extensions.Logging` | abstração first-party de logs e providers | use templates estruturados e níveis coerentes; evite interpolar segredos | [Logging in .NET](https://learn.microsoft.com/en-us/dotnet/core/extensions/logging) |
+| `Serilog` | logging estruturado com sinks | propriedades estruturadas permitem consulta; sinks têm configuração e custo próprios | [Serilog](https://serilog.net/) |
+| `NLog` | framework de logging com targets e regras | avalie integração, layout e pipeline necessários | [NLog](https://nlog-project.org/) |
+| OpenTelemetry .NET | traces, métricas e logs interoperáveis | instrumentação e exportação são separadas; defina cardinalidade e amostragem | [OpenTelemetry .NET](https://opentelemetry.io/docs/languages/dotnet/) |
+| `ActivitySource` / `Meter` | primitivas first-party de tracing e métricas | bibliotecas devem preferir instrumentação neutra a um backend específico | [.NET observability](https://learn.microsoft.com/en-us/dotnet/core/diagnostics/observability-with-otel) |
+
+Logs registram eventos; métricas agregam medidas; traces correlacionam a trajetória de uma operação distribuída. Instalar três pacotes sem definir perguntas operacionais produz custo e ruído, não observabilidade. Aprofunde o desenho em [27.2](#272-logging-configuração-opções-e-segredos) e [27.3](#273-diagnóstico-observabilidade-e-performance).
+
+---
+
+### 29.7 Testes, automação e medição
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+| Projeto/ferramenta | Serve para | Nota | Fonte primária |
+|---|---|---|---|
+| MSTest | framework de testes da Microsoft | integra-se ao ecossistema de testes .NET | [MSTest](https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-mstest-intro) |
+| xUnit.net | testes unitários e de integração | v2 e v3 têm pacotes/execução diferentes; siga a documentação da versão | [xUnit.net](https://xunit.net/) |
+| NUnit | testes unitários e runners/adapters | confirme framework, adapter e plataforma de execução | [NUnit](https://docs.nunit.org/) |
+| NSubstitute | test doubles baseados em interfaces/membros substituíveis | não simule detalhes que poderiam ser objetos reais simples | [NSubstitute](https://nsubstitute.github.io/) |
+| Testcontainers for .NET | dependências reais descartáveis em containers | exige runtime compatível com a API Docker e gestão de recursos | [Testcontainers](https://dotnet.testcontainers.org/) |
+| Microsoft Playwright | browser automation e E2E | teste E2E é mais caro e deve complementar camadas mais rápidas | [Playwright .NET](https://playwright.dev/dotnet/) |
+| BenchmarkDotNet | microbenchmarks com aquecimento, iterações e estatística | benchmark não substitui profiling de um sistema completo | [BenchmarkDotNet](https://benchmarkdotnet.org/) |
+| coverlet | coleta de cobertura para .NET | cobertura mede execução, não qualidade das asserções | [coverlet](https://github.com/coverlet-coverage/coverlet) |
+| FsCheck | testes baseados em propriedades | excelente para invariantes e geração de muitos casos | [FsCheck](https://fscheck.github.io/FsCheck/) |
+
+O template `dotnet new xunit`, `dotnet new nunit` ou `dotnet new mstest` já configura um ponto de partida compatível com o SDK instalado. Escolha um framework principal por projeto; misturar atributos e runners sem necessidade dificulta descoberta e CI.
+
+---
+
+### 29.8 UI, terminal e jogos
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+| Tecnologia | Categoria | Quando investigar | Fonte primária |
+|---|---|---|---|
+| .NET MAUI | UI first-party multiplataforma | apps nativos móveis/desktop no conjunto de plataformas suportadas | [.NET MAUI](https://learn.microsoft.com/en-us/dotnet/maui/what-is-maui?view=net-maui-10.0) |
+| WPF | UI first-party Windows | desktop Windows com XAML e ecossistema maduro | [WPF](https://learn.microsoft.com/en-us/dotnet/desktop/wpf/overview/?view=netdesktop-10.0) |
+| Windows Forms | UI first-party Windows | aplicações de controles/eventos e manutenção de legado | [Windows Forms](https://learn.microsoft.com/en-us/dotnet/desktop/winforms/overview/?view=netdesktop-10.0) |
+| Avalonia UI | framework comunitário multiplataforma | desktop multiplataforma e XAML próprio | [Avalonia](https://docs.avaloniaui.net/) |
+| Uno Platform | plataforma de UI multiplataforma | aplicações baseadas em WinUI/.NET para múltiplos destinos | [Uno Platform](https://platform.uno/docs/articles/intro.html) |
+| Spectre.Console | biblioteca de terminal | tabelas, prompts, progresso e CLI com apresentação rica | [Spectre.Console](https://spectreconsole.net/) |
+| System.CommandLine | parsing e infraestrutura de CLI | comandos, opções, argumentos e help | [System.CommandLine](https://learn.microsoft.com/en-us/dotnet/standard/commandline/) |
+| Unity | engine de jogos | ecossistema Unity e perfil C# suportado pela versão da engine | [Unity C#/.NET](https://docs.unity3d.com/Manual/overview-of-dot-net-in-unity.html) |
+| Godot .NET | engine de jogos | projetos Godot com suporte .NET/C# | [Godot C#](https://docs.godotengine.org/en/stable/tutorials/scripting/c_sharp/c_sharp_basics.html) |
+
+Frameworks de UI e engines controlam ciclo de vida, thread de UI/main thread, serialização, build e versões suportadas. Um recurso válido no C# 14/.NET 10 pode não estar disponível no runtime embutido por determinada versão da engine. Consulte sempre a matriz do framework além da referência da linguagem.
+
+---
+
+### 29.9 Como avaliar e adotar uma dependência
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+Antes da instalação, responda:
+
+1. **A BCL ou o framework já resolve?** Compare contrato e custo, não apenas quantidade de linhas.
+2. **Quem mantém?** Confirme repositório oficial, identidade do pacote e documentação; nomes parecidos podem ser typosquatting.
+3. **Qual é a licença e o modelo comercial?** Leia a versão atual e valide uso, redistribuição e requisitos organizacionais.
+4. **Há manutenção compatível com seu horizonte?** Observe releases, suporte ao TFM, issues de segurança e política de breaking changes.
+5. **Qual é o grafo transitivo?** Cada dependência aumenta superfície de atualização, vulnerabilidade e incompatibilidade.
+6. **Funciona com trimming/AOT?** Reflection e geração dinâmica podem limitar publicação; confira warnings e documentação.
+7. **O pacote será encapsulado?** Mantenha tipos externos fora do núcleo quando uma troca futura for plausível.
+8. **Como será atualizado?** Fixe uma versão aprovada, automatize alertas, teste upgrades e registre a decisão arquitetural quando relevante.
+
+No .NET 10, a CLI aceita a forma noun-first:
+
+```powershell
+dotnet package add Dapper --version <VERSAO_APROVADA>
+dotnet package list
+dotnet package list --outdated
+dotnet package list --vulnerable --include-transitive
+```
+
+**Leitura guiada:** o primeiro comando adiciona ou atualiza a `PackageReference` e executa restore; substitua o marcador por uma versão que a equipe avaliou. Os comandos seguintes mostram referências, atualizações disponíveis e vulnerabilidades conhecidas, inclusive transitivas. No .NET 9 ou anterior, use a ordem antiga `dotnet add package` e `dotnet list package`. Ausência de alerta não prova que uma dependência é segura; ela apenas informa o que as fontes de auditoria conhecem.
+
+O resultado aparece no projeto, direta ou centralmente:
+
+```xml
+<ItemGroup>
+  <PackageReference Include="Dapper" Version="VERSAO_APROVADA" />
+</ItemGroup>
+```
+
+**Leitura guiada:** `Include` é o identificador exato do pacote e `Version` fixa a versão direta. Em Central Package Management, a versão normalmente fica em `Directory.Packages.props` como `PackageVersion`, e o `.csproj` mantém apenas `PackageReference`. Arquivos gerados em `obj` não devem ser editados manualmente.
+
+Para builds reproduzíveis e cadeias de fornecimento mais controladas, conheça lock files, Central Package Management, Package Source Mapping e auditoria do NuGet. Use feeds confiáveis e não adicione uma fonte desconhecida apenas porque o restore falhou.
+
+> **Referências oficiais:** [`dotnet package add`](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-package-add), [`dotnet package list`](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-package-list), [Auditing package dependencies](https://learn.microsoft.com/en-us/nuget/concepts/auditing-packages), [Central Package Management](https://learn.microsoft.com/en-us/nuget/consume-packages/central-package-management), [Lock files](https://learn.microsoft.com/en-us/nuget/consume-packages/package-references-in-project-files#locking-dependencies), [Package Source Mapping](https://learn.microsoft.com/en-us/nuget/consume-packages/package-source-mapping)
+
+---
+
 ## Anexo A — Trilhas Oficiais de Estudo e Prática
 
 [⬆️ Voltar ao Sumário](#sumário)
@@ -8407,6 +9120,15 @@ As definições, distinções conceituais e atualizações de versão deste guia
 - [What's new in C# 14](https://learn.microsoft.com/en-us/dotnet/csharp/whats-new/csharp-14)
 - [.NET releases and support](https://learn.microsoft.com/en-us/dotnet/core/releases-and-support)
 - [Overview of core .NET libraries](https://learn.microsoft.com/en-us/dotnet/standard/class-library-overview)
+- [C# keywords and contextual keywords](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/)
+- [.NET API Browser](https://learn.microsoft.com/en-us/dotnet/api/)
+- [Collections and data structures](https://learn.microsoft.com/en-us/dotnet/standard/collections/)
+- [Selecting a collection class](https://learn.microsoft.com/en-us/dotnet/standard/collections/selecting-a-collection-class)
+- [Generic math](https://learn.microsoft.com/en-us/dotnet/standard/generics/math)
+- [Character encoding in .NET](https://learn.microsoft.com/en-us/dotnet/standard/base-types/character-encoding-introduction)
+- [An introduction to NuGet](https://learn.microsoft.com/en-us/nuget/what-is-nuget)
+- [`dotnet package add`](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-package-add)
+- [Auditing package dependencies](https://learn.microsoft.com/en-us/nuget/concepts/auditing-packages)
 - [Built-in types (C# reference)](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/built-in-types)
 - [Console Class (System)](https://learn.microsoft.com/en-us/dotnet/api/system.console?view=net-10.0)
 - [Math Class (System)](https://learn.microsoft.com/en-us/dotnet/api/system.math?view=net-10.0)
@@ -8464,6 +9186,8 @@ As definições, distinções conceituais e atualizações de versão deste guia
 - [.NET application publishing](https://learn.microsoft.com/en-us/dotnet/core/deploying/)
 - [Native AOT deployment](https://learn.microsoft.com/en-us/dotnet/core/deploying/native-aot/)
 
+Para o catálogo externo da Parte 29, cada item aponta para a fonte primária do mantenedor. Entre as fontes revisadas estão as documentações oficiais de [ASP.NET Core](https://learn.microsoft.com/en-us/aspnet/core/?view=aspnetcore-10.0), [EF Core](https://learn.microsoft.com/en-us/ef/core/), [Dapper](https://github.com/DapperLib/Dapper), [Npgsql](https://www.npgsql.org/doc/), [MongoDB .NET/C# Driver](https://www.mongodb.com/docs/drivers/csharp/current/), [Polly](https://www.pollydocs.org/), [RabbitMQ.Client](https://www.rabbitmq.com/client-libraries/dotnet-api-guide), [Serilog](https://serilog.net/), [OpenTelemetry .NET](https://opentelemetry.io/docs/languages/dotnet/), [xUnit.net](https://xunit.net/), [NUnit](https://docs.nunit.org/), [Testcontainers for .NET](https://dotnet.testcontainers.org/) e [BenchmarkDotNet](https://benchmarkdotnet.org/). A documentação do próprio projeto é necessária porque API, versão, licença e suporte de uma dependência externa não são definidos pela especificação do C#.
+
 Para as seções específicas de engines, foram consultadas também as documentações oficiais da [Unity](https://docs.unity3d.com/Manual/overview-of-dot-net-in-unity.html) e do [Godot](https://docs.godotengine.org/en/stable/tutorials/scripting/c_sharp/c_sharp_basics.html). Essas fontes não substituem a referência da linguagem; documentam as restrições de cada runtime e editor.
 
 Sugestão de estudo: use este guia para construir o modelo mental e a documentação oficial para validar detalhes de comportamento, APIs e mudanças de versão.
@@ -8480,9 +9204,11 @@ Sugestão de estudo: use este guia para construir o modelo mental e a documenta�
 |---|---|---|
 | **`abstract`** | Marca uma classe ou membro como incompleto e define o que tipos derivados precisam implementar. | [7.3 `abstract`](#73-abstract) |
 | **AOT / Native AOT** | Compilação do programa para código nativo antes da execução, sem JIT no processo publicado no caso de Native AOT. | [27.5 Publicação](#275-publicação-trimming-single-file-e-native-aot) |
+| **API** | Contrato exposto por tipos, membros, funções, protocolos ou endpoints para que outro código use uma capacidade. | [28.1 Camadas](#281-c-clr-bcl-framework-e-pacote-não-são-sinônimos) |
 | **Assembly** | Unidade compilada do .NET que reúne IL, metadados, recursos e identidade, normalmente em `.dll` ou `.exe`. | [1.2 Assembly](#12-o-que-é-um-assembly) |
 | **`async` / `await`** | Recursos para compor operações assíncronas; uma espera de I/O pode suspender a continuação sem bloquear uma thread. | [16.1 Modelo assíncrono](#161-o-modelo-assíncrono-do-c) |
 | **Attribute** | Metadado declarativo anexado a um alvo e interpretado pelo compilador, tooling ou alguma biblioteca. | [19.1 Attributes](#191-attributes-embutidos) |
+| **BCL (Base Class Library)** | Conjunto central de tipos e APIs reutilizáveis do .NET, como coleções, texto, I/O, rede e criptografia. | [28.1 Camadas](#281-c-clr-bcl-framework-e-pacote-não-são-sinônimos) |
 | **Boxing / unboxing** | Conversão que copia um valor para `object` ou interface e a recuperação explícita do valor compatível. | [3.7 `object`, `dynamic` e boxing](#37-object-dynamic-tipos-anônimos-e-boxing) |
 | **Builder** | Padrão que acumula opções e materializa um objeto final em uma etapa explícita de construção. | [11.4 Builder](#114-padrão-builder) |
 | **Burst Compiler** | Compilador da Unity que transforma código compatível em código nativo otimizado por LLVM. | [23.7 Performance no Unity](#237-boas-práticas-de-performance-no-unity) |
@@ -8508,6 +9234,7 @@ Sugestão de estudo: use este guia para construir o modelo mental e a documenta�
 | **Event-Driven Architecture** | Arquitetura em que componentes publicam fatos ocorridos e outros componentes reagem a eles. | [24.6 Event-Driven](#246-event-driven-architecture) |
 | **Expression tree** | Estrutura de dados que representa uma expressão de código para inspeção ou tradução por um provider. | [13.5 Árvores de expressão](#135-closures-e-árvores-de-expressão) |
 | **Extension method** | Método estático resolvido em compilação e chamado com sintaxe de membro sobre o primeiro argumento. | [9.2 Métodos de extensão](#92-métodos-de-extensão-extension-methods) |
+| **Framework de aplicação** | Conjunto integrado que define modelo, ciclo de vida e convenções para construir uma categoria de aplicação. | [29.1 Ecossistema externo](#291-o-que-é-externo-ao-padrão) |
 | **Garbage Collector (GC)** | Serviço do runtime que recupera memória gerenciada de objetos que deixaram de ser alcançáveis. | [20.5 Memória e GC](#205-memória-gerenciada-gc-e-ownership-de-recursos) |
 | **Generics** | Recurso para escrever tipos e métodos parametrizados por tipo com verificação estática. | [17.1 Tipos parametrizados](#171-tipos-parametrizados) |
 | **Handle** | Objeto ou valor intermediário que oferece acesso indireto a outro objeto ou recurso. | [3.6 Referências](#36-referências-diretas-indiretas-e-fracas) |
@@ -8524,9 +9251,14 @@ Sugestão de estudo: use este guia para construir o modelo mental e a documenta�
 | **Microservices** | Estilo que separa capacidades em serviços com fronteiras operacionais e deploy independente. | [24.7 Microservices](#247-microservices-em-net) |
 | **MonoBehaviour** | Classe-base de componentes Unity integrados ao ciclo de vida de um `GameObject`. | [23.2 MonoBehaviour](#232-monobehaviour--a-classe-base-dos-scripts-unity) |
 | **Namespace** | Agrupamento lógico de nomes de tipos; não é, por si só, assembly, pasta ou limite de acesso. | [2.1 Namespaces](#21-namespaces) |
+| **NuGet** | Mecanismo e ecossistema de empacotamento, hospedagem, resolução e restauração de dependências .NET. | [29.1 Ecossistema externo](#291-o-que-é-externo-ao-padrão) |
 | **Nullable (`T?`)** | Tipo de valor anulável ou anotação de nulabilidade de referência analisada pelo compilador. | [3.3 Nullable Types](#33-nullable-types--tipos-que-aceitam-null) |
 | **Operator overload** | Implementação da semântica de um operador para um tipo definido pelo usuário. | [8.5 Operadores definidos pelo usuário](#85-operadores-definidos-pelo-usuário) |
+| **PackageReference** | Entrada de projeto que registra uma dependência NuGet direta; restore resolve sua versão e o grafo transitivo. | [29.9 Adoção de dependências](#299-como-avaliar-e-adotar-uma-dependência) |
+| **Palavra-chave contextual** | Palavra com significado especial apenas em posições específicas, podendo ser identificador fora delas. | [28.3 Palavras contextuais](#283-todas-as-palavras-chave-contextuais) |
+| **Palavra-chave reservada** | Identificador predefinido que sempre possui significado especial para o compilador e exige `@` para ser usado como nome. | [28.2 Palavras reservadas](#282-todas-as-palavras-chave-reservadas) |
 | **Pattern matching** | Teste e extração declarativa de valores por tipo, forma, propriedade, posição ou relação. | [7.6 Pattern Matching](#76-is-as-e-pattern-matching) |
+| **`PriorityQueue<TElement,TPriority>`** | Fila que retira o item conforme a prioridade comparada, sem manter toda a coleção em ordem visível. | [28.6 Estruturas de dados](#286-estruturas-de-dados-e-coleções-prontas) |
 | **Property** | Membro com acessores `get`, `set` ou `init` que controla a exposição de um valor. | [6.1 Properties](#61-o-que-são-properties) |
 | **Record** | Classe ou estrutura orientada a dados com igualdade por valor e membros sintetizados. | [11.3 Records](#113-records-c-9) |
 | **Reflection** | Inspeção de metadados, tipos e membros em runtime, com possível invocação dinâmica. | [22.1 Reflection](#221-reflection) |
