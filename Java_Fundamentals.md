@@ -56,7 +56,7 @@ As 29 partes avançam do modelo de execução para sintaxe, modelagem, concorrê
 
 | Bloco | Partes | Assuntos centrais | Resultado esperado | Comece por |
 |---|---:|---|---|---|
-| 1. Base da linguagem e da JVM | 1–4 | compilação, bytecode, packages, módulos, tipos, nulidade e texto | compreender como o fonte se transforma em classes executáveis | [Parte 1](#parte-1--introdução-e-contextualização) |
+| 1. Base da linguagem e da JVM | 1–4 | compilação, tokens, terminal, carregamento, packages, módulos, tipos, nulidade e texto | compreender a sintaxe mínima e como o fonte se transforma em classes executáveis | [Parte 1](#parte-1--introdução-e-contextualização) |
 | 2. Sintaxe aplicada e modelagem | 5–12 | acesso, campos, modificadores, fluxo, métodos, enums, classes, records e interfaces | construir tipos com contratos e invariantes previsíveis | [Parte 5](#parte-5--modificadores-de-acesso) |
 | 3. Composição, consultas e dados | 13–17 | lambdas, interfaces funcionais, Stream API, coleções, tarefas e generics | compor comportamento e processar dados reutilizavelmente | [Parte 13](#parte-13--interfaces-funcionais-lambdas-e-method-references) |
 | 4. Robustez, memória e integração avançada | 18–22 | exceções, annotations, referências, memória, concorrência, reflection e código nativo | reconhecer garantias e riscos das APIs avançadas | [Parte 18](#parte-18--tratamento-de-exceções) |
@@ -71,7 +71,9 @@ Use estes atalhos quando a dúvida começa por uma tarefa concreta. Como muitos 
 
 | Se você quer saber... | Consulte primeiro |
 |---|---|
-| como Java, JDK, JVM, bytecode, classpath, módulo e JAR se relacionam | [Partes 1](#parte-1--introdução-e-contextualização), [2](#parte-2--packages-imports-e-módulos) e [25](#parte-25--jdk-projetos-dependências-e-qualidade) |
+| como Java, JDK, JVM, bytecode, class loaders, classpath, módulo e JAR se relacionam | [Partes 1](#parte-1--introdução-e-contextualização), [2](#parte-2--packages-imports-e-módulos) e [25](#parte-25--jdk-projetos-dependências-e-qualidade) |
+| qual é a sintaxe mínima e como ler/escrever no terminal | [Seções 1.5](#15-sintaxe-mínima-tokens-comentários-statements-e-blocos) e [1.6](#16-entrada-e-saída-no-terminal) |
+| o que todo iniciante precisa dominar e quais contratos distinguem Java | [Seção 1.7](#17-mapa-essencial-do-iniciante-e-características-distintivas-do-java) |
 | como escolher tipos, converter valores e entender referências | [Parte 3](#parte-3--variáveis-e-tipos) |
 | como modelar classes, records, igualdade, interfaces e extensibilidade | [Partes 5–12](#parte-5--modificadores-de-acesso) |
 | como armazenar, consultar e transformar dados em memória | [Partes 14](#parte-14--stream-api-e-processamento-de-sequências), [15](#parte-15--collections-framework) e [28.6](#286-estruturas-de-dados-e-coleções-prontas) |
@@ -95,6 +97,10 @@ Use estes atalhos quando a dúvida começa por uma tarefa concreta. Como muitos 
   - [1.2 JDK, JVM, bytecode, class files e JARs](#12-jdk-jvm-bytecode-class-files-e-jars)
   - [1.3 Java em 2026: LTS, versão corrente e preview](#13-java-em-2026-lts-versão-corrente-e-preview)
   - [1.4 Estrutura e ponto de entrada de um programa](#14-estrutura-e-ponto-de-entrada-de-um-programa)
+  - [1.5 Sintaxe mínima: tokens, comentários, statements e blocos](#15-sintaxe-mínima-tokens-comentários-statements-e-blocos)
+  - [1.6 Entrada e saída no terminal](#16-entrada-e-saída-no-terminal)
+  - [1.7 Mapa essencial do iniciante e características distintivas do Java](#17-mapa-essencial-do-iniciante-e-características-distintivas-do-java)
+  - [1.8 Carregamento, linking, inicialização e identidade de tipos](#18-carregamento-linking-inicialização-e-identidade-de-tipos)
 - **[Parte 2 — Packages, Imports e Módulos](#parte-2--packages-imports-e-módulos)**
   - [2.1 Packages](#21-packages)
   - [2.2 Imports, static imports e module imports](#22-imports-static-imports-e-module-imports)
@@ -475,6 +481,188 @@ void main() {
 Esse formato reduz cerimônia, mas não muda os fundamentos: o compilador ainda sintetiza uma classe e a execução continua na JVM. Projetos maiores devem mover regras para tipos nomeados, packages e módulos claros.
 
 > **Referências oficiais:** [JLS §12.1.4 — Invoke `main`](https://docs.oracle.com/javase/specs/jls/se25/html/jls-12.html#jls-12.1.4), [JEP 512 — Compact Source Files and Instance Main Methods](https://openjdk.org/jeps/512)
+
+---
+
+### 1.5 Sintaxe mínima: tokens, comentários, statements e blocos
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+Antes de estudar orientação a objetos, é preciso saber como o compilador enxerga um fonte. O texto Unicode é separado em espaços, comentários e **tokens**; os tokens são as unidades com significado sintático.
+
+| Categoria de token | O que representa | Exemplos |
+|---|---|---|
+| identificador | nome escolhido pelo programador | `nome`, `PedidoService` |
+| palavra-chave | palavra com papel definido pela linguagem | `class`, `if`, `return` |
+| literal | valor escrito diretamente no fonte | `42`, `true`, `"Java"` |
+| separador | pontuação que organiza a gramática | `(`, `)`, `{`, `}`, `;`, `,` |
+| operador | símbolo que calcula, compara ou atribui | `+`, `==`, `&&`, `=` |
+
+Java diferencia maiúsculas de minúsculas: `total`, `Total` e `TOTAL` são identificadores distintos. Espaços e quebras de linha normalmente separam tokens, enquanto chaves delimitam blocos e, com isso, muitos escopos.
+
+```java
+/** Representa uma saudação criada a partir de um nome. */
+public final class Saudacao {
+    // Este comentário termina no fim da linha.
+    public static String criar(String nome) {
+        /* Comentários tradicionais podem ocupar várias linhas,
+           mas não podem ser aninhados. */
+        String nomeLimpo = nome.strip();
+
+        if (nomeLimpo.isEmpty()) {
+            return "Olá!";
+        }
+
+        return "Olá, " + nomeLimpo + "!";
+    }
+}
+```
+
+**Leitura guiada:** a declaração de `nomeLimpo` e cada `return` terminam com `;`. O `if` não recebe ponto e vírgula depois de seu bloco; `{` e `}` agrupam os statements condicionais. `//` comenta até o fim da linha, `/* ... */` cria comentário tradicional e `/** ... */` é a forma tradicional de comentário de documentação processado por `javadoc`.
+
+Desde o JDK 23, `javadoc` também reconhece comentários de documentação orientados a linha, iniciados por `///`, cujo conteúdo pode usar Markdown. Eles não substituem comentários comuns: são documentação de API, assim como `/** ... */`.
+
+```java
+public final class Calculos {
+    /// Retorna o dobro de `valor`.
+    ///
+    /// @param valor número que será multiplicado
+    /// @return o resultado de `valor * 2`
+    public static int dobrar(int valor) {
+        return valor * 2;
+    }
+}
+```
+
+> **Armadilha:** um ponto e vírgula isolado é um statement vazio. Em `if (ativo); executar();`, o `if` controla apenas esse statement vazio e `executar()` roda sempre. Use blocos explícitos quando a leitura puder gerar dúvida.
+
+> **Referências oficiais:** [JLS §3 — Lexical Structure](https://docs.oracle.com/javase/specs/jls/se25/html/jls-3.html), [JLS §14 — Blocks, Statements, and Patterns](https://docs.oracle.com/javase/specs/jls/se25/html/jls-14.html), [Documentation Comment Specification](https://docs.oracle.com/en/java/javase/25/docs/specs/javadoc/doc-comment-spec.html)
+
+---
+
+### 1.6 Entrada e saída no terminal
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+Um processo normalmente recebe três fluxos padrão. Eles são APIs do JDK, não palavras-chave da linguagem.
+
+| API | Fluxo | Uso típico |
+|---|---|---|
+| `System.in` | entrada padrão de bytes | dados digitados ou redirecionados para o processo |
+| `System.out` | saída padrão | resultado normal do programa |
+| `System.err` | saída de erro | diagnóstico que deve permanecer separado do resultado |
+| `java.lang.IO` | fachada orientada a linhas sobre `System.in`/`System.out`, desde Java 25 | programas introdutórios e utilitários pequenos |
+| `Console` | console interativo, quando o ambiente oferece um | prompts e leitura de senha sem eco |
+
+```java
+public final class CadastroBasico {
+    public static void main(String[] args) {
+        String nome = IO.readln("Nome: ");
+
+        if (nome == null) {
+            System.err.println("A entrada terminou antes de um nome.");
+            return;
+        }
+
+        IO.println("Olá, " + nome.strip() + "!");
+    }
+}
+```
+
+**Leitura guiada:** `IO` pertence a `java.lang`, package importado implicitamente. `readln` escreve o prompt e devolve uma linha sem o separador; devolve `null` quando encontra o fim do fluxo sem ler caracteres. O teste ocorre antes de `strip()` para evitar `NullPointerException`. A mensagem normal vai para a saída padrão; a situação anormal vai para `System.err`.
+
+`Scanner` é conveniente quando a entrada precisa ser dividida em tokens como inteiros e palavras; `BufferedReader` oferece leitura de linhas com controle mais explícito. `System.console()` pode devolver `null` em IDEs, testes, pipes e outros ambientes sem console associado, portanto nunca pressuponha sua presença.
+
+> **Armadilha:** escolha uma única abstração para consumir a entrada. Depois da primeira chamada a `IO.readln`, misturar leituras diretas de `System.in`, `Scanner` ou outro wrapper tem comportamento não especificado pela API de `IO`. Fechar um wrapper também fecha o fluxo subjacente; uma biblioteca não deve fechar `System.in` se não é dona do ciclo de vida do processo.
+
+> **Referências oficiais:** [`java.lang.System`](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/System.html), [`java.lang.IO`](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/IO.html), [`java.io.Console`](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/Console.html), [`java.util.Scanner`](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Scanner.html)
+
+---
+
+### 1.7 Mapa essencial do iniciante e características distintivas do Java
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+Nenhum recurso precisa ser absolutamente exclusivo de uma única linguagem para ser importante. O que distingue Java é a **combinação** entre regras da linguagem, contratos da JVM e uma biblioteca padrão extensa. Chamar tudo isso de “exclusivo” seria impreciso; a tabela abaixo destaca o comportamento específico que um desenvolvedor Java precisa saber, sobretudo quando vem de C#, C++, Kotlin, JavaScript ou Python.
+
+#### O mínimo que um iniciante deve dominar
+
+| Competência | O que você deve conseguir explicar ou fazer | Onde estudar |
+|---|---|---|
+| executar código | distinguir fonte, `javac`, class file, JVM, JDK e ponto de entrada | Partes 1 e 25 |
+| ler a sintaxe | reconhecer tokens, blocos, statements, comentários e erros básicos do compilador | Seção 1.5 e Partes 7–9 |
+| representar dados | escolher primitivos, referências, arrays, `String`, `null` e conversões | Partes 3 e 4 |
+| controlar o programa | usar condições, laços, operadores, métodos, parâmetros e retorno | Partes 8 e 9 |
+| modelar objetos | criar classes, construtores, records, enums e interfaces com encapsulamento | Partes 5–12 |
+| armazenar dados | escolher collections, preservar igualdade/hash e usar generics sem casts frágeis | Partes 15 e 17 |
+| compor comportamento | reconhecer interfaces funcionais, lambdas e pipelines de stream | Partes 13 e 14 |
+| lidar com falhas e recursos | tratar exceções, validar entrada e fechar recursos com ownership claro | Partes 18, 20 e 26 |
+| trabalhar profissionalmente | organizar packages, compilar, testar, documentar, depurar e empacotar | Partes 2, 25 e 27 |
+
+#### Contratos especialmente característicos de Java/JVM
+
+| Característica | Semântica que não deve ser presumida a partir de outra linguagem | Aprofundamento |
+|---|---|---|
+| fonte, class file e JVM | o compilador gera formato binário verificável; carregamento, linking e inicialização são fases distintas | 1.1, 1.2 e 1.8 |
+| identidade de tipo por class loader | o mesmo nome binário definido por loaders diferentes representa tipos distintos em runtime | 1.8 |
+| primitivos e referências | os oito primitivos não são objetos; wrappers, boxing, unboxing e caches têm contratos próprios | 3.2 e 3.7 |
+| passagem por valor | Java sempre copia o valor do argumento; para um objeto, esse valor é uma referência | 9.2 |
+| `==` versus `equals` | em referências, `==` testa identidade; igualdade de valor depende de `equals` e deve combinar com `hashCode` | 4.4 e 11.5 |
+| arrays versus generics | arrays são reificados e covariantes; generics normalmente sofrem erasure e são invariantes | 3.8 e 17.3–17.4 |
+| checked exceptions | parte das exceções precisa ser capturada ou declarada pelo código chamador | 18.1 |
+| enum classes | cada constante é uma instância tipada e pode ter estado, métodos e corpo específico | Parte 10 |
+| records, sealed types e patterns | esses recursos combinam portadores transparentes de dados, hierarquias fechadas e análise exaustiva | 8.5, 11.4 e 12.3 |
+| interfaces modernas | há herança múltipla de tipos, mas uma só superclasse; interfaces podem ter métodos `default`, `static` e `private` | 12.1–12.2 |
+| fechamento com supressão | `try`-with-resources fecha em ordem inversa e preserva falhas secundárias como exceções suprimidas | 7.7 e Parte 18 |
+| annotations e processors | metadados podem orientar compilação, gerar código e ser retidos até o runtime | Parte 19 |
+| monitores e Java Memory Model | todo objeto pode participar de `synchronized`; visibilidade depende de relações happens-before | Parte 21 |
+| JPMS | módulos nomeados expressam dependências, exports, opens, serviços e encapsulamento forte | 2.3 |
+| virtual threads e scoped values | a JVM oferece concorrência bloqueante leve e contexto imutável delimitado dinamicamente | 16.3, 16.6 e 21.1 |
+
+Java também faz escolhas deliberadas por ausência. Não há herança múltipla de classes, parâmetros com valor padrão, propriedades como construção da linguagem, sobrecarga de operadores definida pelo usuário nem tipos de referência não nulos verificados pelo compilador padrão. Convenções, builders, métodos nomeados e ferramentas de análise cobrem parte desses casos, mas não alteram a semântica da linguagem.
+
+> **Referências oficiais:** [JLS §4 — Types, Values, and Variables](https://docs.oracle.com/javase/specs/jls/se25/html/jls-4.html), [JLS §8 — Classes](https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html), [JLS §9 — Interfaces](https://docs.oracle.com/javase/specs/jls/se25/html/jls-9.html), [JLS §11 — Exceptions](https://docs.oracle.com/javase/specs/jls/se25/html/jls-11.html), [JVMS §5 — Loading, Linking, and Initializing](https://docs.oracle.com/javase/specs/jvms/se25/html/jvms-5.html)
+
+---
+
+### 1.8 Carregamento, linking, inicialização e identidade de tipos
+
+[⬆️ Voltar ao Sumário](#sumário)
+
+A JVM não precisa carregar todas as classes ao iniciar. Tipos são localizados e ligados conforme a execução exige, e a inicialização tem gatilhos próprios. Essa separação explica muitos erros que parecem “a classe existe, mas a aplicação não a encontra”.
+
+```text
+nome binário + class loader solicitante
+                 ↓
+carregamento → linking (verificação → preparação → resolução) → inicialização
+```
+
+| Fase | Responsabilidade principal | Observação importante |
+|---|---|---|
+| carregamento | localizar uma representação binária e criar o `Class` correspondente | o loader solicitante pode delegar a outro loader |
+| verificação | conferir estrutura, bytecode e segurança de tipos do class file | falhas são `VerifyError` e outros `LinkageError` apropriados |
+| preparação | criar campos `static` e atribuir valores iniciais padrão | ainda não executa em geral os inicializadores escritos pelo programa; constantes com atributo `ConstantValue` são um caso especial |
+| resolução | transformar referências simbólicas em referências concretas | a JVM pode resolvê-las de forma lazy, dentro das regras da JVMS |
+| inicialização | executar inicializadores de campos `static` e blocos `static` na ordem definida | a JVM executa o método de inicialização de classe `<clinit>`, quando ele existe |
+
+```java
+public final class InspecaoDeTipo {
+    public static void main(String[] args) throws ClassNotFoundException {
+        ClassLoader solicitante = ClassLoader.getSystemClassLoader();
+        Class<?> tipo = Class.forName(
+                "java.util.ArrayList", false, solicitante);
+
+        System.out.println(tipo.getName());
+        System.out.println(tipo.getClassLoader());
+    }
+}
+```
+
+**Leitura guiada:** `Class.forName` recebe o nome binário, `false` para não solicitar inicialização e o loader que começa a procura. O loader de sistema normalmente delega classes da plataforma ao loader bootstrap; por isso `getClassLoader()` pode imprimir `null`, representação usada por essa API para o bootstrap loader. Obter o objeto `Class` não cria uma instância de `ArrayList`.
+
+Em runtime, identidade de tipo não é apenas o nome: ela inclui o **class loader definidor**. Duas definições chamadas `com.exemplo.Plugin`, carregadas por loaders definidores diferentes, são tipos diferentes; um cast entre elas falha mesmo que tenham vindo de bytes idênticos. Essa regra viabiliza isolamento de plugins e servidores de aplicação, mas também explica `ClassCastException`, conflitos de dependência e vazamentos de loaders.
+
+> **Referências oficiais:** [JVMS §5 — Loading, Linking, and Initializing](https://docs.oracle.com/javase/specs/jvms/se25/html/jvms-5.html), [JLS §12 — Execution](https://docs.oracle.com/javase/specs/jls/se25/html/jls-12.html), [`ClassLoader`](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/ClassLoader.html), [`Class.forName`](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Class.html#forName(java.lang.String,boolean,java.lang.ClassLoader))
 
 ---
 
@@ -4806,7 +4994,10 @@ Use a API Specification para contratos de classes e métodos; use as tool specif
 - [Java SE 25 API](https://docs.oracle.com/en/java/javase/25/docs/api/)
 - [JDK 25 Documentation](https://docs.oracle.com/en/java/javase/25/)
 - [JDK Tool Specifications](https://docs.oracle.com/en/java/javase/25/docs/specs/man/)
+- [Documentation Comment Specification for the Standard Doclet](https://docs.oracle.com/en/java/javase/25/docs/specs/javadoc/doc-comment-spec.html)
 - [Core Libraries Developer Guide](https://docs.oracle.com/en/java/javase/25/core/)
+- [`java.lang.IO` API](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/IO.html)
+- [`java.lang.ClassLoader` API](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/ClassLoader.html)
 - [Security Developer’s Guide](https://docs.oracle.com/en/java/javase/25/security/)
 - [Garbage Collection Tuning Guide](https://docs.oracle.com/en/java/javase/25/gctuning/)
 - [JDK Flight Recorder API Guide](https://docs.oracle.com/en/java/javase/25/jfapi/)
@@ -4842,6 +5033,7 @@ Para projetos externos da Parte 29, cada tabela aponta para o site, manual ou re
 | **builder** | objeto mutável de construção que acumula opções antes de produzir o resultado | [11.6](#116-builder-e-apis-fluentes) |
 | **bytecode** | instruções independentes de máquina armazenadas em class files | [1.2](#12-jdk-jvm-bytecode-class-files-e-jars) |
 | **checked exception** | exceção que o compilador exige capturar ou declarar | [18.1](#181-checked-e-unchecked-exceptions) |
+| **class loader** | componente que carrega classes; o loader definidor participa da identidade de um tipo em runtime | [1.8](#18-carregamento-linking-inicialização-e-identidade-de-tipos) |
 | **classpath** | sequência de diretórios/JARs usada para localizar classes do unnamed module | [25.2](#252-fonte-class-files-classpath-e-module-path) |
 | **closure** | função que captura valores do escopo envolvente | [13.5](#135-closures-callbacks-e-listeners) |
 | **collector** | estratégia mutável de acumulação usada por streams | [14.4](#144-collectors-redução-e-agrupamento) |
@@ -4855,6 +5047,7 @@ Para projetos externos da Parte 29, cada tabela aponta para o site, manual ou re
 | **heap pollution** | variável parametrizada referencia valor incompatível com seu tipo | [17.3](#173-type-erasure-e-restrições) |
 | **interface funcional** | interface com um único método abstrato relevante, target de lambda | [13.1](#131-interfaces-funcionais) |
 | **JAR** | arquivo ZIP padronizado com classes, recursos e metadados | [1.2](#12-jdk-jvm-bytecode-class-files-e-jars) |
+| **Javadoc** | ferramenta e formato de documentação de API baseados em comentários de documentação | [1.5](#15-sintaxe-mínima-tokens-comentários-statements-e-blocos) e [25.5](#255-javadoc-lint-e-análise-estática) |
 | **JDK** | conjunto de runtime, ferramentas e APIs para desenvolver Java | [1.2](#12-jdk-jvm-bytecode-class-files-e-jars) |
 | **JFR** | gravador de eventos de diagnóstico integrado ao JDK | [27.3](#273-jfr-jmx-profiling-e-observabilidade) |
 | **JNI** | interface nativa histórica entre JVM e C/C++ | [22.4](#224-jni) |
@@ -4872,9 +5065,11 @@ Para projetos externos da Parte 29, cada tabela aponta para o site, manual ou re
 | **reflection** | inspeção e invocação dinâmica de elementos em runtime | [22.1](#221-reflection) |
 | **scoped value** | ligação imutável, dinamicamente delimitada, compartilhada do chamador com seus callees | [16.6](#166-scoped-values) |
 | **sealed type** | tipo que restringe subtipos diretos permitidos | [12.3](#123-tipos-sealed-e-hierarquias-fechadas) |
+| **statement** | unidade sintática executável, como declaração local, atribuição, `return` ou estrutura de controle | [1.5](#15-sintaxe-mínima-tokens-comentários-statements-e-blocos) |
 | **String Pool** | conjunto canônico mantido por `String` para literais, constantes e valores internados | [4.1](#41-string-é-imutável) |
 | **stream** | pipeline consumível de operações sobre elementos | [14.1](#141-o-que-é-um-stream) |
 | **target type** | tipo esperado pelo contexto para lambda, method reference ou expressão | [13.1](#131-interfaces-funcionais) |
+| **token** | unidade lexical classificada como identificador, palavra-chave, literal, separador ou operador | [1.5](#15-sintaxe-mínima-tokens-comentários-statements-e-blocos) |
 | **try-with-resources** | construção que fecha `AutoCloseable` em ordem inversa | [7.7](#77-try-with-resources-e-autocloseable) |
 | **unchecked exception** | `RuntimeException` que não exige declaração/captura | [18.1](#181-checked-e-unchecked-exceptions) |
 | **unnamed module** | módulo que reúne código carregado pelo classpath | [2.3](#23-java-platform-module-system) |
