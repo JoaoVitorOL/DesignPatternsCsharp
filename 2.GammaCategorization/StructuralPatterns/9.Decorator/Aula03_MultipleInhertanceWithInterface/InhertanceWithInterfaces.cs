@@ -1,8 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DotNetDesignPatternDemos.Structural.Decorator
 {
@@ -10,100 +6,188 @@ namespace DotNetDesignPatternDemos.Structural.Decorator
   // Aula03 - Multiple Inheritance with Interfaces
   // ----------------------------------------------------------------------------
   // Ideia da aula:
-  // C# nao permite heranca multipla de CLASSES. Ou seja, uma classe nao pode
-  // nascer assim:
+  // C# nao permite heranca multipla de CLASSES:
   //
   //   public class Dragon : Bird, Lizard
   //
-  // Isso compilaria em linguagens com heranca multipla de classes, mas nao em C#.
+  // Mas C# permite que uma classe implemente varias INTERFACES:
   //
-  // O motivo conceitual e evitar ambiguidades e acoplamentos pesados:
-  // - e se Bird e Lizard tivessem metodos com o mesmo nome?
-  // - qual implementacao Dragon herdaria?
-  // - como resolver conflitos de estado interno entre as duas bases?
+  //   public class Dragon : IBird, ILizard
   //
-  // Entao esta aula mostra o caminho usado em C#:
-  // em vez de HERDAR implementacoes de duas classes, Dragon POSSUI objetos
-  // especializados e DELEGA chamadas para eles.
+  // Essa diferenca e a aula inteira:
+  // - heranca de classe traz implementacao e estado;
+  // - interface traz contrato;
+  // - composicao/delegacao reaproveita implementacoes concretas sem herdar delas.
   //
-  // Observacao importante:
-  // apesar do nome do arquivo falar "with interfaces", este trecho ainda nao
-  // declara interfaces como IFlyingCreature ou ICrawlingCreature. Ele mostra a
-  // versao por composicao direta com classes concretas. O passo seguinte seria
-  // trocar os campos Bird/Lizard por interfaces, deixando Dragon depender de
-  // capacidades abstratas em vez de classes concretas.
+  // Dragon, portanto, promete dois contratos publicos:
+  // - sabe voar e possui Weight, porque implementa IBird;
+  // - sabe rastejar e possui Weight, porque implementa ILizard.
+  //
+  // Por dentro, ele nao copia a logica de Bird nem de Lizard.
+  // Ele recebe colaboradores e delega cada capacidade para o colaborador certo.
+  // Para Weight, ele escolhe uma politica explicita: manter o peso de Bird e
+  // Lizard sincronizado.
 
-  // ===== Classe que representa a capacidade de voar =====
-  // Bird e uma implementacao concreta. Ela sabe executar Fly().
-  // No exemplo didatico, o metodo esta vazio porque o foco nao e a fisica do voo;
-  // o foco e mostrar como Dragon reaproveita essa capacidade sem herdar de Bird.
-  public class Bird
+  // ===== Interface: contrato de voo =====
+  // IBird define as partes que interessam ao exemplo:
+  // - Fly(), o comportamento;
+  // - Weight, um estado/propriedade que tambem faz parte do contrato.
+  //
+  // Importante:
+  // uma interface nao fornece, neste exemplo, a implementacao do voo nem o
+  // armazenamento do peso.
+  // Ela apenas diz:
+  // "qualquer tipo que se declare IBird precisa saber voar e expor Weight".
+  public interface IBird
   {
     // ===== Metodo =====
-    // Comportamento especifico de uma entidade que sabe voar.
+    // Contrato minimo de quem sabe voar.
+    void Fly();
+
+    // ===== Propriedade =====
+    // Tambem faz parte do contrato.
+    // Se uma classe diz que e IBird, ela precisa expor um Weight.
+    int Weight { get; set; }
+  }
+
+  // ===== Classe concreta que cumpre IBird =====
+  // Bird e uma implementacao real do contrato IBird.
+  //
+  // Agora o papel de Bird ficou mais claro:
+  // ela nao e uma classe base que Dragon tenta herdar.
+  // Ela e uma peca concreta que Dragon pode usar internamente para realizar Fly().
+  public class Bird : IBird
+  {
+    // ===== Propriedade =====
+    // Estado simples usado pelo contrato IBird.
+    public int Weight { get; set; }
+
+    // ===== Metodo =====
+    // Implementacao concreta do voo.
     public void Fly()
     {
-      
+      Console.WriteLine("Soaring in the sky");
     }
   }
 
-  // ===== Classe que representa a capacidade de rastejar =====
-  // Lizard e outra implementacao concreta. Ela sabe executar Crawl().
-  // O exemplo quer combinar "voar" e "rastejar" dentro de Dragon.
-  public class Lizard
+  // ===== Interface: contrato de rastejar =====
+  // ILizard define a segunda capacidade que Dragon tambem quer expor.
+  // Assim como IBird, ele tambem exige Weight.
+  //
+  // O nome ILizard vem do exemplo original, mas mentalmente voce pode ler como:
+  // "algo que sabe rastejar e tambem expoe Weight".
+  public interface ILizard
   {
     // ===== Metodo =====
-    // Comportamento especifico de uma entidade que sabe rastejar.
+    // Contrato minimo de quem sabe rastejar.
+    void Crawl();
+
+    // ===== Propriedade =====
+    // O mesmo nome aparece em ILizard.
+    // Isso obriga Dragon, que implementa IBird e ILizard, a decidir como esse
+    // Weight sera representado.
+    int Weight { get; set; }
+  }
+
+  // ===== Classe concreta que cumpre ILizard =====
+  // Lizard e uma implementacao real do contrato ILizard.
+  //
+  // Assim como Bird, ela nao precisa ser classe base de Dragon.
+  // Ela pode ser apenas um colaborador interno.
+  public class Lizard : ILizard
+  {
+    // ===== Propriedade =====
+    // Estado simples usado pelo contrato ILizard.
+    public int Weight { get; set; }
+
+    // ===== Metodo =====
+    // Implementacao concreta do rastejo.
     public void Crawl()
     {
-      
+      Console.WriteLine("Crawling through the land");
     }
   }
 
-  // ===== Classe que combina capacidades =====
-  // A tentacao inicial seria escrever:
+  // ===== Classe que combina os dois contratos =====
+  // Dragon implementa IBird e ILizard.
   //
-  //   public class Dragon : Bird, Lizard
+  // Isso NAO significa que Dragon herdou codigo de Bird e Lizard.
+  // Ele apenas prometeu ao compilador e ao cliente:
+  // - eu tenho Fly();
+  // - eu tenho Crawl().
+  // - eu tenho Weight.
   //
-  // Mas C# nao permite isso. Dragon so pode herdar de uma classe base.
+  // Fly() e Crawl() serao delegados para colaboradores.
+  // Weight sera tratado por Dragon e repassado aos dois colaboradores.
   //
-  // A solucao aqui e composicao:
-  // Dragon tem um Bird e tem um Lizard.
+  // Esse arranjo substitui a heranca multipla que C# nao permite:
   //
-  // Em termos de padroes estruturais, isso conversa com Decorator/Adapter porque
-  // Dragon cria uma fachada propria por cima de objetos internos e repassa as
-  // chamadas. O cliente chama Dragon.Fly(), mas quem faz o trabalho real e Bird.
-  public class Dragon // no multiple inheritance
+  //   errado em C#:
+  //     Dragon : Bird, Lizard
+  //
+  //   correto em C#:
+  //     Dragon : IBird, ILizard
+  //     Dragon possui objetos que implementam esses contratos
+  public class Dragon : IBird, ILizard // no multiple inheritance of classes
   {
     // ===== Campos =====
-    // Estes campos sao as partes internas que fornecem comportamento ao Dragon.
+    // Dragon depende de CONTRATOS, nao das classes concretas diretamente.
     //
-    // Importante para design:
-    // como os tipos sao concretos, Dragon fica acoplado diretamente a Bird e
-    // Lizard. Se quisermos deixar isso mais flexivel, podemos trocar por
-    // interfaces, por exemplo IFlyer e ICrawler.
-    private Bird bird;
-    private Lizard lizard;
+    // Essa e a melhoria importante em relacao a usar:
+    //
+    //   private Bird bird;
+    //   private Lizard lizard;
+    //
+    // Com IBird/ILizard, qualquer implementacao desses contratos poderia entrar
+    // aqui. O exemplo usa Bird e Lizard concretos por conveniencia, mas Dragon
+    // nao precisa saber disso.
+    private readonly IBird bird;
+    private readonly ILizard lizard;
 
     // ===== Construtor =====
-    // As dependencias entram prontas por fora.
-    // Isso deixa claro que Dragon nao cria sozinho seus colaboradores; ele recebe
-    // objetos capazes de realizar as partes do comportamento.
-    public Dragon(Bird bird, Lizard lizard)
+    // Construtor de conveniencia para a demo.
+    //
+    // Ele cria as implementacoes padrao:
+    // - Bird para Fly()
+    // - Lizard para Crawl()
+    //
+    // Assim, o Main pode escrever apenas:
+    //
+    //   var d = new Dragon();
+    //
+    // Em codigo de producao ou em testes, o construtor abaixo, que recebe
+    // interfaces, seria mais flexivel.
+    public Dragon()
+      : this(new Bird(), new Lizard())
+    {
+    }
+
+    // ===== Construtor principal =====
+    // Aqui esta o design mais importante:
+    // Dragon recebe capacidades abstratas.
+    //
+    // Ele nao exige especificamente uma instancia de Bird.
+    // Ele exige algo que cumpra IBird.
+    //
+    // Ele nao exige especificamente uma instancia de Lizard.
+    // Ele exige algo que cumpra ILizard.
+    public Dragon(IBird bird, ILizard lizard)
     {
       // Guard clauses:
       // impedem que Dragon nasca sem uma das capacidades necessarias.
-      // Se bird fosse null, Fly() quebraria depois com NullReferenceException.
+      // Se bird fosse null, Fly() e Weight quebrariam depois.
+      // Se lizard fosse null, Crawl() e Weight quebrariam depois.
+      //
       // Com a validacao no construtor, o erro aparece cedo e com nome claro.
       this.bird = bird ?? throw new ArgumentNullException(paramName: nameof(bird));
       this.lizard = lizard ?? throw new ArgumentNullException(paramName: nameof(lizard));
     }
 
     // ===== Metodo exposto por Dragon =====
-    // Para o cliente, Dragon sabe rastejar.
+    // Como Dragon implementa ILizard, ele precisa oferecer Crawl().
     //
-    // Mas Dragon nao implementa a logica de rastejar diretamente.
-    // Ele delega para o Lizard interno.
+    // Mas ele nao precisa conhecer a implementacao concreta do rastejo.
+    // Ele apenas delega para o colaborador ILizard recebido no construtor.
     //
     // Fluxo:
     // cliente -> Dragon.Crawl() -> lizard.Crawl()
@@ -113,9 +197,9 @@ namespace DotNetDesignPatternDemos.Structural.Decorator
     }
 
     // ===== Metodo exposto por Dragon =====
-    // Para o cliente, Dragon sabe voar.
+    // Como Dragon implementa IBird, ele precisa oferecer Fly().
     //
-    // Por dentro, a chamada e repassada para Bird.
+    // Por dentro, a chamada e repassada para o colaborador IBird.
     //
     // Fluxo:
     // cliente -> Dragon.Fly() -> bird.Fly()
@@ -123,20 +207,66 @@ namespace DotNetDesignPatternDemos.Structural.Decorator
     {
       bird.Fly();
     }
+
+    // ===== Propriedade compartilhada pelos contratos =====
+    // IBird e ILizard exigem uma propriedade chamada Weight.
+    //
+    // Como Dragon implementa as duas interfaces, uma unica propriedade publica
+    // chamada Weight satisfaz os dois contratos ao mesmo tempo.
+    //
+    // A escolha aqui e sincronizar os colaboradores internos:
+    // - ao ler Weight, usamos o valor guardado no colaborador IBird;
+    // - ao definir Weight, repassamos o valor para IBird e ILizard.
+    //
+    // Assim, d.Weight = 123 compila e mantem Bird/Lizard com o mesmo peso.
+    public int Weight
+    {
+      get
+      {
+        return bird.Weight;
+      }
+      set
+      {
+        bird.Weight = value;
+        lizard.Weight = value;
+      }
+    }
   }
 
   // Regra mental da aula:
   //
-  // Sem heranca multipla:
-  //   Dragon nao pode ser Bird e Lizard ao mesmo tempo por heranca de classes.
+  // Sem interfaces:
+  //   Dragon tentaria herdar de Bird e Lizard.
+  //   C# nao permite heranca multipla de classes.
+  //
+  // Com interfaces:
+  //   Dragon pode implementar IBird e ILizard.
+  //   Isso combina contratos, nao implementacoes.
   //
   // Com composicao:
-  //   Dragon possui um Bird para voar.
-  //   Dragon possui um Lizard para rastejar.
-  //   Dragon expoe Fly() e Crawl() e delega cada chamada ao objeto apropriado.
+  //   Dragon recebe colaboradores que cumprem esses contratos.
+  //   Dragon delega Fly() e Crawl() para eles.
+  //   Dragon tambem coordena o Weight comum aos dois contratos.
   //
-  // Com interfaces, que seria a evolucao natural:
-  //   Dragon dependeria de contratos pequenos, como IFlyer e ICrawler.
-  //   Assim, qualquer implementacao capaz de voar ou rastejar poderia ser usada,
-  //   sem prender Dragon especificamente a Bird e Lizard.
+  // Resultado:
+  //   Dragon parece ter as duas capacidades e um Weight unico, mas sem herdar
+  //   codigo de duas classes concretas.
+
+  // ===== Demo =====
+  static class Program
+  {
+    static void Main(string[] args)
+    {
+      // Usa o construtor de conveniencia, que cria Bird e Lizard por dentro.
+      var d = new Dragon();
+
+      // O cliente ve Dragon pelos comportamentos prometidos.
+      d.Fly();
+      d.Crawl();
+
+      // Weight tambem faz parte dos contratos IBird e ILizard.
+      // Sem a propriedade Weight em Dragon, esta linha nao compila.
+      d.Weight = 123;
+    }
+  }
 }
