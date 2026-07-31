@@ -5,39 +5,80 @@ using static System.Console;
 
 namespace DotNetDesignPatternDemos.Structural.Decorator.CodeBuilder
 {
-  // return builder.(.+)$
-  // builder.$1\nreturn this;
-  // format document
+  // ============================================================================
+  // Aula01 - Custom String Builder
+  // ----------------------------------------------------------------------------
+  // Ideia da aula:
+  // criar um wrapper em volta de System.Text.StringBuilder para manter quase toda
+  // a API original, mas com uma diferenca importante nos metodos que alteram o
+  // conteudo: eles retornam CodeBuilder em vez de StringBuilder.
+  //
+  // Isso permite escrever uma cadeia fluent como:
+  //
+  //   cb.AppendLine("class Foo")
+  //     .AppendLine("{")
+  //     .AppendLine("}");
+  //
+  // Relacao com Decorator:
+  // o objeto externo envolve outro objeto e delega trabalho para ele. Ainda assim,
+  // este exemplo e mais um wrapper didatico do que um Decorator GoF perfeito,
+  // porque StringBuilder nao aparece aqui atras de uma interface propria comum
+  // implementada tanto pelo componente real quanto pelo wrapper.
+  //
+  // As linhas originais abaixo eram lembretes para gerar wrappers mecanicamente:
+  // - procurar chamadas no formato: return builder.(.+)$
+  // - trocar por: builder.$1; return this;
+  // - depois formatar o documento
+
+  // ===== Classe Wrapper =====
   public class CodeBuilder
   {
+    // ===== Campos =====
+    // Composicao: CodeBuilder NAO reimplementa a montagem de texto.
+    // Ele guarda um StringBuilder real e repassa quase todas as operacoes para ele.
     private StringBuilder builder = new StringBuilder();
 
+    // ===== Metodos de leitura / conversao =====
+    // Exibe o texto acumulado pelo StringBuilder interno.
+    // Para quem usa CodeBuilder, o resultado final ainda e apenas uma string.
     public override string ToString()
     {
       return builder.ToString();
     }
 
+    // Repassa a serializacao para o objeto interno.
+    // Este metodo nao altera o conteudo; por isso nao participa da cadeia fluent.
     public void GetObjectData(SerializationInfo info, StreamingContext context)
     {
       ((ISerializable)builder).GetObjectData(info, context);
     }
 
+    // Mantem o retorno original do StringBuilder.
+    // Aqui o valor interessante e a capacidade garantida, nao o proprio wrapper.
     public int EnsureCapacity(int capacity)
     {
       return builder.EnsureCapacity(capacity);
     }
 
+    // Versao de ToString que extrai apenas um trecho do texto acumulado.
     public string ToString(int startIndex, int length)
     {
       return builder.ToString(startIndex, length);
     }
 
+    // ===== Metodos mutaveis com retorno fluent =====
+    // A partir daqui, o padrao se repete:
+    // 1. chama o mesmo metodo no StringBuilder interno;
+    // 2. devolve `this` para permitir a proxima chamada encadeada.
     public CodeBuilder Clear()
     {
       builder.Clear();
       return this;
     }
 
+    // ===== Append =====
+    // Os overloads de Append preservam a conveniencia do StringBuilder original,
+    // mas trocam o tipo de retorno para CodeBuilder.
     public CodeBuilder Append(char value, int repeatCount)
     {
       builder.Append(value, repeatCount);
@@ -74,11 +115,16 @@ namespace DotNetDesignPatternDemos.Structural.Decorator.CodeBuilder
       return this;
     }
 
+    // CopyTo apenas copia caracteres para um array externo.
+    // Como nao muda o builder nem precisa continuar cadeia, permanece void.
     public void CopyTo(int sourceIndex, char[] destination, int destinationIndex, int count)
     {
       builder.CopyTo(sourceIndex, destination, destinationIndex, count);
     }
 
+    // ===== Insert / Remove =====
+    // Insert e Remove tambem modificam o conteudo interno, entao seguem o mesmo
+    // contrato fluent: executam a operacao real e retornam o proprio wrapper.
     public CodeBuilder Insert(int index, string value, int count)
     {
       builder.Insert(index, value, count);
@@ -181,6 +227,10 @@ namespace DotNetDesignPatternDemos.Structural.Decorator.CodeBuilder
       return this;
     }
 
+    // Os varios overloads abaixo existem para o wrapper continuar parecido com
+    // a API familiar de StringBuilder. O custo desse estilo e a repeticao:
+    // quando o tipo original nao tem uma interface pequena, o wrapper precisa
+    // expor manualmente os membros que deseja suportar.
     public CodeBuilder Insert(int index, string value)
     {
       builder.Insert(index, value);
@@ -283,6 +333,10 @@ namespace DotNetDesignPatternDemos.Structural.Decorator.CodeBuilder
       return this;
     }
 
+    // ===== AppendFormat =====
+    // AppendFormat mistura formatacao de string com acumulacao de texto.
+    // O comportamento continua sendo do StringBuilder interno; CodeBuilder so
+    // adapta o retorno para manter o encadeamento.
     public CodeBuilder AppendFormat(string format, object arg0)
     {
       builder.AppendFormat(format, arg0);
@@ -313,6 +367,9 @@ namespace DotNetDesignPatternDemos.Structural.Decorator.CodeBuilder
       return this;
     }
 
+    // ===== Replace / Equals =====
+    // Replace altera o texto e por isso retorna CodeBuilder.
+    // Equals apenas responde uma pergunta booleana e nao deve entrar na cadeia fluent.
     public CodeBuilder Replace(string oldValue, string newValue)
     {
       builder.Replace(oldValue, newValue);
@@ -342,6 +399,9 @@ namespace DotNetDesignPatternDemos.Structural.Decorator.CodeBuilder
       return this;
     }
 
+    // ===== Propriedades delegadas =====
+    // Estas propriedades deixam o cliente controlar o mesmo estado operacional
+    // que controlaria em um StringBuilder comum.
     public int Capacity
     {
       get => builder.Capacity;
@@ -363,6 +423,9 @@ namespace DotNetDesignPatternDemos.Structural.Decorator.CodeBuilder
     }
   }
 
+  // ===== Client / Demo =====
+  // O cliente usa CodeBuilder como um StringBuilder mais conveniente para cadeia.
+  // No fim, WriteLine chama ToString() implicitamente e imprime o texto acumulado.
   public class Demo
   {
     static void Main(string[] args)
