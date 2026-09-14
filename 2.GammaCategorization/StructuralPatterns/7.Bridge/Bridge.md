@@ -1,4 +1,3 @@
-Com base nos arquivos fornecidos, aqui está a explicação detalhada do **Padrão Bridge**, organizada de forma estruturada e didática:
 
 ## 1. O que o Bridge representa?
 
