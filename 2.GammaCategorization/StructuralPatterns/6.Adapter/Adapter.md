@@ -1,5 +1,5 @@
 
-```markdown
+
 # Design Pattern: Adapter
 
 ## 1. O que o Adapter representa?
