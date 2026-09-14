@@ -1,4 +1,3 @@
-Para facilitar o seu download, você pode clicar no botão de copiar no canto superior direito do bloco de código abaixo e salvá-lo em um arquivo com o nome `adapter-pattern.md` no seu computador:
 
 ```markdown
 # Design Pattern: Adapter
