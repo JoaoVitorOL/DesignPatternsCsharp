@@ -1,3 +1,4 @@
+package projeto_mediator_corrigido;
 
 import java.util.ArrayList;
 import java.util.List;

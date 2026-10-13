@@ -52,7 +52,33 @@
 - Essas regras de negócio devem ficar dentro de um objeto central de comunicação entre o usuário individual e resto da sala de chat. Pois, isso centraliza a comunicação e permite que usuários interajam entre si sem precisarem se conhecer por referências gigantes no código de sua classe. O usuário fala com um mediador e este repassa o recado ao destinatário.
 
 
+4. Proponha uma refatoração com o padrão Observer, deixando explícitos:
+a interface de observador (Observador, com atualizar(...));
+o sujeito (Sujeito), que registra, remove e notifica;
+os observadores concretos (DisplayTemperatura, DisplayEstatisticas).
 
+5. Depois de refatorar, como adicionar um display novo fica mais simples? E como a estação fica reutilizável em outro painel, sem recompilar?
+
+
+Como adicionar um display novo fica mais simples?
+Antes do Mediator, se você quisesse adicionar um novo display (ex: um display gráfico, um painel LED ou um logger em arquivo), você provavelmente precisaria alterar as classes que enviavam os dados para que elas conhecessem o novo tipo, ou criar uma lista de observadores complexa em cada sensor.
+
+Com o padrão Mediator:
+
+Desacoplamento total: O novo display precisa conhecer apenas a interface do mediador (MediadorChat ou equivalente). Ele nem sabe quais sensores ou usuários existem.
+
+Inclusão transparente: Basta criar a nova classe de display implementando a interface de recepção e registrá-la no mediador existente (através do método de cadastro/adição).
+
+Zero impacto nos emissores: Os objetos que geram os dados (sensores/usuários) continuam enviando mensagens para o mediador da mesma forma, sem precisar de nenhuma linha de alteração em seu código.
+
+ Como a estação fica reutilizável em outro painel, sem recompilar?
+Quando falamos em reutilizar a estação (ou componente) em outro painel sem precisar recompilar, estamos falando de baixo acoplamento e injeção de dependências:
+
+Programação voltada a interfaces: Tanto a estação quanto os displays dependem exclusivamente de interfaces (como MediadorChat), e não de classes concretas (SalaChat).
+
+Injeção do Mediador: Como o mediador é passado via construtor para a estação, você pode injetar qualquer implementação de mediador em tempo de execução (ou via configuração/plugin, caso estivesse usando carregamento dinâmico de classes em Java).
+
+Independência de Contexto: A estação faz o seu trabalho básico de capturar/enviar dados e os joga no mediador. O painel de destino é apenas mais um "ouvinte" conectado àquele mediador. Se você trocar de painel, basta instanciar um novo mediador ou plugar a estação em uma nova sala/painel sem modificar ou recompilar o código-fonte da estação original.
 
 
 

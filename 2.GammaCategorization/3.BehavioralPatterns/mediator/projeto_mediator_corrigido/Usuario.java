@@ -1,3 +1,4 @@
+package projeto_mediator_corrigido;
 
 public class Usuario {
     private final String nome;

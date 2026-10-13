@@ -1,3 +1,5 @@
+package projeto_iterator_corrigido;
+
 import java.util.List;
 
 public class PlaylistIterator implements Iterator<Faixa> {

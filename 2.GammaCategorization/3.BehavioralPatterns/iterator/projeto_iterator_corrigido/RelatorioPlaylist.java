@@ -1,3 +1,5 @@
+
+package projeto_iterator_corrigido;
 public class RelatorioPlaylist {
 
     public void resumo(Playlist playlist) {

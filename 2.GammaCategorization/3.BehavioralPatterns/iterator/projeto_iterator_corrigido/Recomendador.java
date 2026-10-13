@@ -1,3 +1,5 @@
+package projeto_iterator_corrigido;
+
 public class Recomendador {
 
     public void sugerirFavoritas(Playlist playlist) {

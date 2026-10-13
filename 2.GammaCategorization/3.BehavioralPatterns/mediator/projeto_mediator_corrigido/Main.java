@@ -1,3 +1,5 @@
+package projeto_mediator_corrigido;
+
 public class Main {
     public static void main(String[] args) {
         MediadorChat sala = new SalaChat();
