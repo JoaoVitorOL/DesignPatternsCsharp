@@ -1,6 +1,16 @@
+<a id="inicio"></a>
 # Atividade 13: Iterator
 
+## Sumário
+[↑ Voltar ao início](#inicio)
+
+- [Exercício 1: Aplicações](#sec-001)
+
+
+<a id="sec-001"></a>
 ## Exercício 1: Aplicações
+
+[↑ Voltar ao início](#inicio)
 
 
 - Para cada cenário abaixo, indique se o padrão Iterator é apropriado ou não e justifique em 2–3 frases.
@@ -49,7 +59,7 @@ Clientes dependentes: Player, Recomendador e RelatorioPlaylist, que passam a dep
 2. Ao rodar o Main, observe a ordem da playlist antes e depois de tocarEmbaralhado. Explique por que a ordem original mudou.
 
 
-Porque o método tocarEmbaralhado aplicou Collections.shuffle diretamente sobre a referência da lista original devolvida por getFaixas(). Como não é feita uma cópia, o estado interno da Playlist fica permanentemente alterado.   
+Porque o método tocarEmbaralhado aplicou Collections.shuffle diretamente sobre a referência da lista original devolvida por getFaixas(). Como não é feita uma cópia, o estado interno da Playlist fica permanentemente alterado.
 
 
 3. A travessia por índice se repete em três clientes (Player, Recomendador, RelatorioPlaylist). O que acontece se a Playlist trocar sua estrutura interna (array, lista ligada, páginas)? Quantos pontos quebram?
@@ -65,7 +75,7 @@ o iterador concreto que guarda a posição;
 o agregado Playlist, que cria o iterador.
 
  <br> a) A interface de iterador: Define o contrato padronizado de travessia através dos métodos temProxima() e proxima().
- <br >b) O iterador concreto: A classe PlaylistIterator, que armazena internamente a posição atual do percurso sobre a coleção de faixas.  
+ <br >b) O iterador concreto: A classe PlaylistIterator, que armazena internamente a posição atual do percurso sobre a coleção de faixas.
  <br> c) O agregado Playlist: A classe Playlist, que oculta sua estrutura de dados interna (List<Faixa>) e expõe apenas o método de criação do iterador.
 
 5. Como a solução permite novas formas de travessia (embaralhada, só favoritas) sem duplicar laços e sem expor a estrutura interna?
@@ -73,3 +83,12 @@ o agregado Playlist, que cria o iterador.
 A solução permite criar novas formas de travessia (como percursos embaralhados ou filtrados apenas por favoritas) encapsulando essas regras dentro de iteradores concretos especializados (ou aplicando o padrão nos iteradores). Como o contrato exposto aos clientes é sempre o mesmo (temProxima() e proxima()), os clientes consomem os dados de forma idêntica, sem duplicar laços de repetição baseados em índices e sem que a estrutura interna da Playlist precise ser exposta ou modificada indevidamente.
 
 Entrega: um diagrama de classes (antes/depois), o código refatorado e um parágrafo justificando cada decisão de design.
+
+<a id="sec-glossario"></a>
+## Glossário
+[↑ Voltar ao início](#inicio)
+
+- **Agregado:** coleção que fornece acesso aos seus elementos.
+- **Iterador:** percorre uma coleção sem expor sua representação interna.
+- **Cursor:** posição atual do percurso.
+- **Percurso:** ordem em que os elementos são visitados.

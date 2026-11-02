@@ -1,26 +1,37 @@
+<a id="inicio"></a>
 # Atividade 14: Mediator
 
+## Sumário
+[↑ Voltar ao início](#inicio)
+
+- [Para cada cenário abaixo, indique se o padrão Mediator é apropriado ou não e justifique em 2–3 frases.](#sec-001)
+- [Exercício 2: Rastreando o anti-pattern em um projeto real](#sec-002)
+
+
+<a id="sec-001"></a>
 ## Para cada cenário abaixo, indique se o padrão Mediator é apropriado ou não e justifique em 2–3 frases.
+
+[↑ Voltar ao início](#inicio)
 
 1. Uma sala de chat em que dezenas de usuários trocam mensagens e as regras de conversa (quem fala com quem, sons, privacidade) mudam com frequência, sem que cada usuário conheça os demais.
 
- 
+
 -  O padrão Mediator faz sentido, já que ajudaria a resolver o problema de cada usuário precisar conhecer seu vizinho ou uma lista inteira de usuários para conversarem entre si.
 
 2. Uma tela de diálogo com muitos widgets que reagem uns aos outros: ao marcar um Checkbox, um Botão é habilitado e um Campo de texto é limpo, formando uma teia de dependências.
- 
+
 -  O uso do Mediator é jusitifcável. Pois, tratam-se de objetos diferentes que se comunicam entre si, gerando uma dependência de referência entre os elementos, caso não haja aplicação do padrão.
 
 
  3. Uma central de despacho de entregas que precisa coordenar motoristas, pedidos e entregas, decidindo qual pedido vai para qual motorista conforme as regras mudam.
 
-  
+
 -  O uso do Mediator faz sentido. Porque, nesse caso, há um objeto que precisa atuar como uma central de controle principal, como torres de comunicação entre aviãos. Apenas uma autoridade deve comandar os diferentes objetos, e estes, não precisam se conhecer, apenas se comunicam com a central.
 
 
  4. Uma biblioteca em que a classe Impressora se comunica com um único Spooler fixo, sempre pelo mesmo método simples, e essa interação nunca cresce nem ganha novos objetos.
 
- 
+
 -   Não é necessário um Mediator, já que a comunicação neste caso é simples e direta, tendo apenas uma instância de cada classe.
 
 
@@ -32,7 +43,10 @@
 
 
 
+<a id="sec-002"></a>
 ## Exercício 2: Rastreando o anti-pattern em um projeto real
+
+[↑ Voltar ao início](#inicio)
 
 
 1. Usuario guarda uma lista de contatos (outros Usuario). Para N usuários, quantas ligações podem existir? O que isso indica sobre o acoplamento?
@@ -87,3 +101,13 @@ Independência de Contexto: A estação faz o seu trabalho básico de capturar/e
 
 
 
+
+
+<a id="sec-glossario"></a>
+## Glossário
+[↑ Voltar ao início](#inicio)
+
+- **Mediator:** objeto que coordena a comunicação entre participantes.
+- **Colleague:** participante que comunica necessidades ao mediador.
+- **Acoplamento:** grau de dependência direta entre componentes.
+- **Event broker:** intermediário que distribui eventos aos inscritos.

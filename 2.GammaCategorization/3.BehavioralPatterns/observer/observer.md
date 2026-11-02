@@ -1,12 +1,27 @@
+<a id="inicio"></a>
 # Atividade 15: Observer
 
+## Sumário
+[↑ Voltar ao início](#inicio)
+
+- [Exercício 1: Aplicações](#sec-001)
+  - [Para cada cenário abaixo, indique se o padrão Observer é apropriado ou não e justifique em 2–3 frases.](#sec-002)
+- [Exercício 2: Rastreando o anti-pattern em um projeto real](#sec-003)
+
+
+<a id="sec-001"></a>
 ## Exercício 1: Aplicações
 
+[↑ Voltar ao início](#inicio)
+
+<a id="sec-002"></a>
 ### Para cada cenário abaixo, indique se o padrão Observer é apropriado ou não e justifique em 2–3 frases.
+
+[↑ Voltar ao início](#inicio)
 
 1. Uma estação meteorológica publica novas medições e vários displays (temperatura, estatísticas, previsão) precisam se atualizar automaticamente, sem que a estação conheça cada display.
 
-- O padrão Observer é adequado. Pois, lida com eventos espcíficos que devem ser notificados a outras partes do sistema e são algo que pode acontecer a qualquer momento. 
+- O padrão Observer é adequado. Pois, lida com eventos espcíficos que devem ser notificados a outras partes do sistema e são algo que pode acontecer a qualquer momento.
 
 2. Uma interface gráfica em que um botão pode ter vários listeners e o modelo precisa avisar as views quando muda, permitindo novos interessados sem alterar o modelo.
 
@@ -26,7 +41,10 @@
 - Observer não faz sentido. Não há um evento e nem algúem para notificar sobre algo.
 
 
+<a id="sec-003"></a>
 ## Exercício 2: Rastreando o anti-pattern em um projeto real
+
+[↑ Voltar ao início](#inicio)
 
 1. A EstacaoMeteorologica guarda referências a DisplayTemperatura e DisplayEstatisticas. Por que isso é um acoplamento forte entre sujeito e observadores?
 
@@ -64,3 +82,13 @@ Métodos de gerenciamento: Adicionar métodos como adicionarObservador(Observado
 a interface de observador (Observador, com atualizar(...));
 o sujeito (Sujeito), que registra, remove e notifica;
 os observadores concretos (DisplayTemperatura, DisplayEstatisticas).
+
+<a id="sec-glossario"></a>
+## Glossário
+[↑ Voltar ao início](#inicio)
+
+- **Subject:** objeto que mantém estado e notifica observadores sobre mudanças.
+- **Observer:** componente inscrito para receber notificações.
+- **Inscrição:** vínculo que registra o interesse do observador.
+- **Push:** notificação que já carrega os dados da mudança.
+- **Pull:** modelo em que o observador consulta o sujeito após a notificação.
