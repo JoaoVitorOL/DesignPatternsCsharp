@@ -9,6 +9,7 @@
 - [Relação com o projeto](#sec-003)
 - [Implementação mínima em C](#sec-004)
 - [Variação por etapas: lexer, parser e avaliador](#sec-005)
+- [Papéis técnicos no exemplo](#sec-006)
 
 
 **Família GoF:** comportamental. **Escopo predominante:** classes que representam regras e expressões de uma gramática.
@@ -103,6 +104,21 @@ Para 1 + 2 * 3, o parser deve construir Add(Number(1), Multiply(Number(2), Numbe
 
 Uma gramática pequena pode usar parser recursivo manual. ANTLR gera lexer e parser a partir de uma gramática declarativa e é útil quando há muitas regras. O padrão Interpreter não obriga usar ANTLR nem mesmo texto; sua essência é representar regras e significado em objetos. Para linguagem extensa, geração de classes por regra pode tornar o design pesado; use parser apropriado.
 
+<a id="sec-006"></a>
+## Papéis técnicos no exemplo
+
+Os nomes **Context**, **Strategy**, **Concrete Strategy** e semelhantes descrevem responsabilidades no desenho. O código não precisa usar esses nomes literalmente: o mapeamento abaixo identifica quem exerce cada papel no exemplo desta página.
+
+[↑ Voltar ao início](#inicio)
+
+| Papel no padrão | Classe do exemplo | O que representa no código |
+|---|---|---|
+| Abstract Expression | **IExpression** | Define a operação de avaliação comum aos nós da expressão. |
+| Terminal Expression | **NumberExpression** | Representa um literal e devolve seu valor. |
+| Nonterminal Expressions | **AddExpression**, **MultiplyExpression** | Mantêm expressões filhas e combinam recursivamente seus resultados. |
+| Cliente/parser simplificado | **Código que instancia os nós** | Constrói a árvore e solicita a avaliação da raiz. |
+
+**Leitura técnica:** valores e operações implementam a mesma interface, permitindo compor uma árvore recursiva. O exemplo demonstra uma gramática pequena; não é um parser completo para linguagens complexas.
 
 <a id="sec-glossario"></a>
 ## Glossário

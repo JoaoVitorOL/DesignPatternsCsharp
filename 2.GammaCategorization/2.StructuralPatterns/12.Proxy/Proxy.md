@@ -20,6 +20,7 @@
 - [83. ViewModel](#sec-014)
 - [Coding Exercise 11: Proxy Coding Exercise](#sec-015)
 - [84. Bit Fragging](#sec-016)
+- [Papéis técnicos no exemplo](#sec-017)
 
 
 **Família GoF:** estrutural. **Escopo predominante:** objetos; um representante controla ou media o acesso.
@@ -365,6 +366,22 @@ O cuidado é didático e prático: compactação melhora memória em certos cen�
 
 ---
 
+<a id="sec-017"></a>
+## Papéis técnicos no exemplo
+
+Os nomes **Context**, **Strategy**, **Concrete Strategy** e semelhantes descrevem responsabilidades no desenho. O código não precisa usar esses nomes literalmente: o mapeamento abaixo identifica quem exerce cada papel no exemplo desta página.
+
+[↑ Voltar ao início](#inicio)
+
+| Papel no padrão | Classe do exemplo | O que representa no código |
+|---|---|---|
+| Subject | **IArquivo** | Contrato comum usado pelo cliente para o proxy e o objeto real. |
+| Real Subject | **ArquivoReal** | Executa a operação real sobre o arquivo. |
+| Protection Proxy | **ArquivoProtegido** | Implementa IArquivo, verifica autorização e encaminha a chamada ao objeto real. |
+| Colaborador de autorização | **IAutorizacao**, **AutorizacaoPorUsuario** | Encapsula a decisão de acesso; não é o proxy em si. |
+| Cliente | **Código chamador** | Usa IArquivo sem precisar saber se recebeu o proxy ou o objeto real. |
+
+**Leitura técnica:** o proxy preserva a interface do objeto real e controla o acesso. A página também compara esse papel ao Decorator.
 
 <a id="sec-glossario"></a>
 ## Glossário

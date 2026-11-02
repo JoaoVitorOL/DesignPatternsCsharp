@@ -14,6 +14,7 @@
 - [72. Repeating User Names](#sec-008)
 - [73. Text Formatting](#sec-009)
 - [Coding Exercise 10: Flyweight Coding Exercise](#sec-010)
+- [Papéis técnicos no exemplo](#sec-011)
 
 
 **Família GoF:** estrutural. **Escopo predominante:** objetos com estado intrínseco compartilhado.
@@ -221,6 +222,21 @@ Checklist mental:
 
 ---
 
+<a id="sec-011"></a>
+## Papéis técnicos no exemplo
+
+Os nomes **Context**, **Strategy**, **Concrete Strategy** e semelhantes descrevem responsabilidades no desenho. O código não precisa usar esses nomes literalmente: o mapeamento abaixo identifica quem exerce cada papel no exemplo desta página.
+
+[↑ Voltar ao início](#inicio)
+
+| Papel no padrão | Classe do exemplo | O que representa no código |
+|---|---|---|
+| Flyweight | **TreeType** | Guarda características compartilháveis, como espécie, cor e textura. |
+| Fábrica/registro | **TreeTypeFactory** | Reutiliza instâncias de TreeType para dados intrínsecos iguais. |
+| Contexto/ocorrência | **Tree** | Guarda dados individuais, como posição, e referencia um TreeType compartilhado. |
+| Cliente | **Código que cria as árvores** | Pede tipos à fábrica e cria ocorrências com dados extrínsecos. |
+
+**Leitura técnica:** TreeType só economiza memória se não guardar a posição individual da árvore. Dados compartilhados pertencem ao flyweight; dados que variam por ocorrência ficam no contexto.
 
 <a id="sec-glossario"></a>
 ## Glossário

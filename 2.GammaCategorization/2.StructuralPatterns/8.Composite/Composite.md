@@ -48,6 +48,7 @@
   - [Como Sum() usa o contrato comum](#sec-044)
   - [O que costuma confundir aqui](#sec-045)
   - [Como validar mentalmente se a solução está correta](#sec-046)
+- [Papéis técnicos no exemplo](#sec-047)
 
 
 
@@ -2258,6 +2259,21 @@ A regra mental final:
 
 ---
 
+<a id="sec-047"></a>
+## Papéis técnicos no exemplo
+
+Os nomes **Context**, **Strategy**, **Concrete Strategy** e semelhantes descrevem responsabilidades no desenho. O código não precisa usar esses nomes literalmente: o mapeamento abaixo identifica quem exerce cada papel no exemplo desta página.
+
+[↑ Voltar ao início](#inicio)
+
+| Papel no padrão | Classe do exemplo | O que representa no código |
+|---|---|---|
+| Component | **ItemMenu** | Contrato comum para consultar ou calcular o valor de um item. |
+| Leaf (folha) | **Prato** | Item individual que executa a operação sem delegar a filhos. |
+| Composite (composto) | **Combo** | Guarda elementos ItemMenu, percorre-os e agrega seus resultados. |
+| Cliente | **Main** | Usa pratos e combos pelo mesmo contrato, sem ramificar pelo tipo concreto. |
+
+**Leitura técnica:** Combo contém elementos ItemMenu e folhas e grupos respondem à mesma operação. A coleção interna de Combo forma a hierarquia.
 
 <a id="sec-glossario"></a>
 ## Glossário

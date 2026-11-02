@@ -52,6 +52,7 @@
   - [O que o aluno precisa enxergar para conseguir reproduzir sozinho](#sec-046)
   - [O que costuma confundir aqui](#sec-047)
   - [Como validar mentalmente se a solução está correta](#sec-048)
+- [Papéis técnicos no exemplo](#sec-049)
 
 
 **Família GoF:** criacional. **Escopo predominante:** objetos; fábricas concretas produzem famílias compatíveis.
@@ -1377,6 +1378,23 @@ Se essas respostas forem "sim", então o exercício cumpriu seu objetivo pedagó
 
 ---
 
+<a id="sec-049"></a>
+## Papéis técnicos no exemplo
+
+Os nomes **Context**, **Strategy**, **Concrete Strategy** e semelhantes descrevem responsabilidades no desenho. O código não precisa usar esses nomes literalmente: o mapeamento abaixo identifica quem exerce cada papel no exemplo desta página.
+
+[↑ Voltar ao início](#inicio)
+
+| Papel no padrão | Classe do exemplo | O que representa no código |
+|---|---|---|
+| Fábrica abstrata | **FabricaMobilia** | Declara operações para criar cada tipo de produto da família de móveis. |
+| Fábricas concretas | **FabricaMobiliaModerna**, **FabricaMobiliaVitoriana** | Criam produtos que pertencem a uma família coerente. |
+| Produtos abstratos | **Cadeira**, **Sofa**, **MesaDeCentro** | Contratos para cada categoria de móvel. |
+| Produtos concretos | **CadeiraModerna**, **SofaModerno**, **MesaDeCentroModerna** e equivalentes vitorianos | Implementam cada categoria dentro de uma família específica. |
+| Cliente | **ConfiguradorDeSala** | Usa os contratos de produto e a fábrica recebida sem conhecer as classes concretas. |
+| Composição da aplicação | **Main** | Escolhe uma fábrica concreta e a entrega ao configurador. |
+
+**Leitura técnica:** uma fábrica concreta deve produzir um conjunto compatível. A fábrica vitoriana, por exemplo, não deve misturar uma cadeira vitoriana com um sofá moderno.
 
 <a id="sec-glossario"></a>
 ## Glossário

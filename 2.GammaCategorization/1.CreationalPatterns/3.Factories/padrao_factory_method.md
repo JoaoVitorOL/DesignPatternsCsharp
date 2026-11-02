@@ -67,6 +67,7 @@
   - [26.2.1 Comparação direta com a factory externa](#sec-061)
   - [26.3 Quando faz sentido](#sec-062)
   - [26.4 A nuance mais importante](#sec-063)
+- [Papéis técnicos no exemplo](#sec-064)
 
 
 **Família GoF:** criacional. **Escopo predominante:** classe; subclasses redefinem o produto criado.
@@ -1428,6 +1429,22 @@ Em linguagem bem direta:
 
 ---
 
+<a id="sec-064"></a>
+## Papéis técnicos no exemplo
+
+Os nomes **Context**, **Strategy**, **Concrete Strategy** e semelhantes descrevem responsabilidades no desenho. O código não precisa usar esses nomes literalmente: o mapeamento abaixo identifica quem exerce cada papel no exemplo desta página.
+
+[↑ Voltar ao início](#inicio)
+
+| Papel no padrão | Classe do exemplo | O que representa no código |
+|---|---|---|
+| Produto | **Notificador** | Contrato comum para enviar notificações. |
+| Produtos concretos | **EmailNotificador**, **SmsNotificador**, **PushNotificador** | Enviam a notificação por um canal específico. |
+| Criador | **NotificacaoService** | Mantém o fluxo comum e declara o método de fábrica que fornece um Notificador. |
+| Criadores concretos | **EmailService**, **SmsService**, **PushService** | Sobrescrevem o método de fábrica para criar o produto correspondente. |
+| Cliente | **Main** | Escolhe um serviço concreto e executa o fluxo sem instanciar diretamente o produto. |
+
+**Leitura técnica:** Factory Method é a criação polimórfica dentro do fluxo do criador. Uma classe estática que escolhe um produto pode ser uma Simple Factory, mas não exerce esse papel sozinha.
 
 <a id="sec-glossario"></a>
 ## Glossário

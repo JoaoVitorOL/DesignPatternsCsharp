@@ -71,6 +71,7 @@
   - [O que o aluno precisa enxergar para conseguir reproduzir sozinho](#sec-061)
   - [O que costuma confundir aqui](#sec-062)
   - [Como validar mentalmente se a solução está correta](#sec-063)
+- [Papéis técnicos no exemplo](#sec-064)
 
 
 <a id="sec-001"></a>
@@ -1756,6 +1757,22 @@ Se todas as respostas forem positivas, a implementação cumpre a intenção de 
 
 ---
 
+<a id="sec-064"></a>
+## Papéis técnicos no exemplo
+
+Os nomes **Context**, **Strategy**, **Concrete Strategy** e semelhantes descrevem responsabilidades no desenho. O código não precisa usar esses nomes literalmente: o mapeamento abaixo identifica quem exerce cada papel no exemplo desta página.
+
+[↑ Voltar ao início](#inicio)
+
+| Papel no padrão | Classe do exemplo | O que representa no código |
+|---|---|---|
+| Target (alvo) | **PrevisaoService** | Interface estável que o painel espera chamar. |
+| Adaptees | **OpenWeatherApi**, **AccuWeatherApi** | APIs com formatos e operações incompatíveis com o alvo. |
+| Adapters concretos | **OpenWeatherAdapter**, **AccuWeatherAdapter** | Implementam o alvo e traduzem chamadas e respostas das APIs. |
+| Cliente | **PainelClima** | Depende somente de PrevisaoService, podendo receber qualquer adapter compatível. |
+| Composição da aplicação | **Main** | Conecta o painel ao adapter escolhido. |
+
+**Outro mapeamento local:** no exemplo C#, **SquareToRectangleAdapter** adapta Square à interface IRectangle. Square é o adaptee, IRectangle é o alvo e o adapter traduz a forma de expor as dimensões.
 
 <a id="sec-glossario"></a>
 ## Glossário

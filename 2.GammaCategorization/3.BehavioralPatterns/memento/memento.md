@@ -9,6 +9,7 @@
 - [Por que o caretaker não deve ler os campos](#sec-003)
 - [Arquivos para acompanhar](#sec-004)
 - [Variações: undo/redo e snapshots persistidos](#sec-005)
+- [Papéis técnicos no exemplo](#sec-006)
 
 
 **Família GoF:** comportamental. **Escopo predominante:** objetos que criam, guardam e restauram snapshots.
@@ -65,6 +66,21 @@ Guardar um Memento em disco ou enviá-lo a outro processo muda sua natureza: pas
 
 Snapshots completos são simples de restaurar, mas podem ser caros. Sistemas de edição podem guardar deltas, snapshots periódicos ou combinar ambos. O originator continua sendo responsável por interpretar esses dados e preservar invariantes.
 
+<a id="sec-006"></a>
+## Papéis técnicos no exemplo
+
+Os nomes **Context**, **Strategy**, **Concrete Strategy** e semelhantes descrevem responsabilidades no desenho. O código não precisa usar esses nomes literalmente: o mapeamento abaixo identifica quem exerce cada papel no exemplo desta página.
+
+[↑ Voltar ao início](#inicio)
+
+| Papel no padrão | Classe do exemplo | O que representa no código |
+|---|---|---|
+| Originator | **Jogo** | É dono do estado; cria checkpoints e restaura-se a partir deles. |
+| Memento | **Jogo.Checkpoint**, implementado por **CheckpointImpl** | Captura os campos do jogo. A interface exposta é opaca e a implementação permanece privada. |
+| Caretaker | **GerenciadorSave** | Guarda checkpoints sem ler ou editar seus dados internos. |
+| Cliente | **Main** | Solicita um save, altera o estado e pede sua restauração. |
+
+**Leitura técnica:** somente Jogo interpreta CheckpointImpl. GerenciadorSave manipula Checkpoint como um registro opaco, preservando o encapsulamento do Originator.
 
 <a id="sec-glossario"></a>
 ## Glossário

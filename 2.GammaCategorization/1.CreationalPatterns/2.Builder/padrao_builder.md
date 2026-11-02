@@ -61,6 +61,7 @@
   - [O que o aluno precisa enxergar para conseguir reproduzir sozinho](#sec-055)
   - [O que costuma confundir aqui](#sec-056)
   - [Como validar mentalmente se a solução está correta](#sec-057)
+- [Papéis técnicos no exemplo](#sec-058)
 
 
 **Família GoF:** criacional. **Escopo predominante:** objetos e composição de etapas.
@@ -1374,6 +1375,21 @@ Se essas respostas forem "sim", então o exercício cumpriu seu objetivo pedagó
 
 ---
 
+<a id="sec-058"></a>
+## Papéis técnicos no exemplo
+
+Os nomes **Context**, **Strategy**, **Concrete Strategy** e semelhantes descrevem responsabilidades no desenho. O código não precisa usar esses nomes literalmente: o mapeamento abaixo identifica quem exerce cada papel no exemplo desta página.
+
+[↑ Voltar ao início](#inicio)
+
+| Papel no padrão | Classe do exemplo | O que representa no código |
+|---|---|---|
+| Produto | **Lanche** | Objeto final montado; concentra os dados do lanche pronto. |
+| Builder concreto | **Lanche.Builder** | Mantém os valores durante a montagem, oferece operações de configuração e cria o Lanche. Não há uma interface Builder separada neste exemplo. |
+| Director | **LancheDirector** | Define receitas reutilizáveis e chama as etapas do Builder na ordem adequada. |
+| Cliente | **Main** | Escolhe a montagem e solicita o produto, com ou sem Director. |
+
+**Leitura técnica:** o Director coordena chamadas ao Builder, mas não constrói o produto por conta própria. Nas variações fluent, faceted e step-wise, a API de construção muda e o Director pode ser dispensado.
 
 <a id="sec-glossario"></a>
 ## Glossário

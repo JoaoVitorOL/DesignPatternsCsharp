@@ -9,6 +9,7 @@
 - [Relação com o projeto](#sec-003)
 - [Implementação mínima em C#: área de figuras](#sec-004)
 - [Variações e seus custos](#sec-005)
+- [Papéis técnicos no exemplo](#sec-006)
 
 
 **Família GoF:** comportamental. **Escopo predominante:** objetos de elementos e operações visitor.
@@ -101,6 +102,22 @@ O cliente percorre uma lista de IShape e chama Accept(areaVisitor). Para adicion
 
 Reduções agregam resultados da árvore (contagem, área total); transforms constroem outra árvore (simplificação, conversão). Podem ser visitors ou recursões explícitas. Escolha conforme a quantidade de operações externas, a frequência de novos tipos e a clareza da estrutura.
 
+<a id="sec-006"></a>
+## Papéis técnicos no exemplo
+
+Os nomes **Context**, **Strategy**, **Concrete Strategy** e semelhantes descrevem responsabilidades no desenho. O código não precisa usar esses nomes literalmente: o mapeamento abaixo identifica quem exerce cada papel no exemplo desta página.
+
+[↑ Voltar ao início](#inicio)
+
+| Papel no padrão | Classe do exemplo | O que representa no código |
+|---|---|---|
+| Element | **IShape** | Declara a operação accept para receber um visitante. |
+| Concrete Elements | **Circle**, **Rectangle** | Implementam accept e chamam o método do visitante correspondente ao próprio tipo. |
+| Visitor | **IShapeVisitor** | Declara uma operação para cada tipo concreto de elemento conhecido. |
+| Concrete Visitor | **AreaVisitor** | Calcula a área de Circle e Rectangle. |
+| Cliente/estrutura percorrida | **Código que percorre a coleção de IShape** | Entrega o visitante a cada forma para executar a operação. |
+
+**Leitura técnica:** element.accept(visitor) seguido de visitor.visit(this) realiza double dispatch: a operação depende do tipo da forma e do visitante. Incluir novos tipos de forma exige atualizar os visitantes.
 
 <a id="sec-glossario"></a>
 ## Glossário

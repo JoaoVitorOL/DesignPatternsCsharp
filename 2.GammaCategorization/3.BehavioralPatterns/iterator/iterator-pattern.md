@@ -10,6 +10,7 @@
 - [Arquivos para acompanhar](#sec-004)
 - [Iterador próprio ou foreach da linguagem?](#sec-005)
 - [Variações de percurso](#sec-006)
+- [Papéis técnicos no exemplo](#sec-007)
 
 
 **Família GoF:** comportamental. **Escopo predominante:** objetos de coleção e percurso.
@@ -87,6 +88,22 @@ A ordem pode ser por índice, em profundidade numa árvore, filtrada ou calculad
 
 Defina o que acontece se a coleção mudar durante a iteração e quem descarta recursos quando o percurso lê arquivo, stream ou banco de dados.
 
+<a id="sec-007"></a>
+## Papéis técnicos no exemplo
+
+Os nomes **Context**, **Strategy**, **Concrete Strategy** e semelhantes descrevem responsabilidades no desenho. O código não precisa usar esses nomes literalmente: o mapeamento abaixo identifica quem exerce cada papel no exemplo desta página.
+
+[↑ Voltar ao início](#inicio)
+
+| Papel no padrão | Classe do exemplo | O que representa no código |
+|---|---|---|
+| Aggregate | **Playlist** | Mantém as faixas e cria um iterador sem expor a lista interna ao cliente. |
+| Iterator | **Iterator<Faixa>** | Declara o protocolo hasNext/next do percurso. |
+| Concrete Iterator | **PlaylistIterator** | Guarda a coleção e a posição atual, implementando o percurso sequencial. |
+| Elemento | **Faixa** | Objeto retornado pelo iterador. |
+| Clientes | **Player**, **RelatorioPlaylist**, **Recomendador** | Percorrem a playlist pelo protocolo, sem controlar os índices da lista. |
+
+**Leitura técnica:** o Aggregate cria o iterador concreto, que mantém seu próprio cursor. Assim, armazenamento e política de percurso ficam separados.
 
 <a id="sec-glossario"></a>
 ## Glossário

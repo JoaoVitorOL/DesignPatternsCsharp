@@ -29,6 +29,7 @@
   - [Anatomia da Implementação Prática](#sec-025)
   - [Participantes do Padrão no Exercício](#sec-026)
   - [O ganho real da refatoração](#sec-027)
+- [Papéis técnicos no exemplo](#sec-028)
 
 
 
@@ -730,6 +731,22 @@ Neste exercício, o contrato `IRenderer.WhatToRenderAs` é genérico o bastante 
 
 ---
 
+<a id="sec-028"></a>
+## Papéis técnicos no exemplo
+
+Os nomes **Context**, **Strategy**, **Concrete Strategy** e semelhantes descrevem responsabilidades no desenho. O código não precisa usar esses nomes literalmente: o mapeamento abaixo identifica quem exerce cada papel no exemplo desta página.
+
+[↑ Voltar ao início](#inicio)
+
+| Papel no padrão | Classe do exemplo | O que representa no código |
+|---|---|---|
+| Implementor | **Motor** | Contrato da dimensão variável de propulsão, separado da hierarquia de veículos. |
+| Implementações concretas | **MotorGasolina**, **MotorEletrico** | Realizam as operações de motor de modos diferentes. |
+| Abstração | **Veiculo** | Mantém uma referência a Motor e delega a ele parte do trabalho. |
+| Abstrações refinadas | **Sedan**, **Suv** | Especializam veículos sem fixar o tipo de motor. |
+| Cliente | **Main** | Combina tipos de veículo e motor em pares diferentes. |
+
+**Outro mapeamento local:** no exemplo de renderização, **Shape** é a abstração e **IRenderer** é o implementor; Circle/Triangle/Square variam independentemente de VectorRenderer e RasterRenderer.
 
 <a id="sec-glossario"></a>
 ## Glossário

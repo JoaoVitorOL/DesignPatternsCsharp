@@ -10,6 +10,7 @@
 - [Arquivos para acompanhar](#sec-004)
 - [Observer em aplicações reais: síncrono, assíncrono e ciclo de vida](#sec-005)
 - [Variações de inscrição e notificação](#sec-006)
+- [Papéis técnicos no exemplo](#sec-007)
 
 
 **Família GoF:** comportamental. **Escopo predominante:** objetos publicadores e observadores inscritos.
@@ -79,6 +80,21 @@ Weak Event evita que uma fonte de vida longa mantenha um assinante vivo apenas p
 
 Observer bidirecional e dependências de propriedade são casos mais delicados: uma atualização pode provocar outra e formar ciclo. Use uma fonte de verdade, teste igualdade antes de propagar e controle reentrância. Para sujeitos de longa duração, forneça desinscrição/token de assinatura e defina o tratamento de exceções para que um observador com falha não silencie os demais inadvertidamente.
 
+<a id="sec-007"></a>
+## Papéis técnicos no exemplo
+
+Os nomes **Context**, **Strategy**, **Concrete Strategy** e semelhantes descrevem responsabilidades no desenho. O código não precisa usar esses nomes literalmente: o mapeamento abaixo identifica quem exerce cada papel no exemplo desta página.
+
+[↑ Voltar ao início](#inicio)
+
+| Papel no padrão | Classe do exemplo | O que representa no código |
+|---|---|---|
+| Subject/Publisher | **EstacaoMeteorologica** | Mantém medições, registra assinantes e os notifica quando os valores mudam. |
+| Observer/Subscriber | **ISubscriber** | Define a operação de atualização solicitada pelo sujeito. |
+| Concrete Observers | **DisplayTemperatura**, **DisplayPressao**, **DisplayEstatisticas** | Reagem à atualização apresentando ou calculando uma visão das medições. |
+| Cliente/composição | **Main** | Registra os displays, altera medições e demonstra as notificações. |
+
+**Leitura técnica:** a estação depende de ISubscriber, não das classes de display concretas. Observadores podem ser inscritos ou removidos sem reescrever o Subject.
 
 <a id="sec-glossario"></a>
 ## Glossário

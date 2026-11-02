@@ -10,6 +10,7 @@
 - [Arquivos para acompanhar](#sec-004)
 - [Mediator versus Observer e chamadas diretas](#sec-005)
 - [Variações: sala de chat, Event Broker e MediatR](#sec-006)
+- [Papéis técnicos no exemplo](#sec-007)
 
 
 **Família GoF:** comportamental. **Escopo predominante:** objetos colaboradores coordenados por um mediador.
@@ -79,6 +80,21 @@ MediatR é uma biblioteca .NET que fornece contratos para requests, notification
 
 Escolha chamadas diretas quando houver poucos colaboradores e fluxo simples. Use mediator quando as referências cruzadas e regras de coordenação estiverem espalhadas. Se o mediador passar a implementar todo o negócio, decomponha-o em serviços coesos.
 
+<a id="sec-007"></a>
+## Papéis técnicos no exemplo
+
+Os nomes **Context**, **Strategy**, **Concrete Strategy** e semelhantes descrevem responsabilidades no desenho. O código não precisa usar esses nomes literalmente: o mapeamento abaixo identifica quem exerce cada papel no exemplo desta página.
+
+[↑ Voltar ao início](#inicio)
+
+| Papel no padrão | Classe do exemplo | O que representa no código |
+|---|---|---|
+| Mediator | **MediadorChat** | Declara como participantes entram na sala e encaminham mensagens. |
+| Concrete Mediator | **SalaChat** | Mantém os participantes e coordena a distribuição de mensagens. |
+| Colleague | **Usuario** | Envia mensagens ao mediador em vez de manter referências diretas para todos os usuários. |
+| Cliente/composição | **Main** | Cria a sala, registra usuários e inicia as interações. |
+
+**Leitura técnica:** SalaChat conhece os participantes para coordená-los; cada Usuario conhece o mediador. O padrão remove a malha de dependências diretas, mas não elimina toda comunicação.
 
 <a id="sec-glossario"></a>
 ## Glossário

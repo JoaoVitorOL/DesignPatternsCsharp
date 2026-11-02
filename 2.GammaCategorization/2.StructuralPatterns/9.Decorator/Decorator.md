@@ -62,6 +62,7 @@
 - [65. Static Decorator Composition](#sec-058)
 - [66. Decorator in Dependency Injection](#sec-059)
 - [Coding Exercise 8: Decorator Coding Exercise](#sec-060)
+- [Papéis técnicos no exemplo](#sec-061)
 
 
 
@@ -2650,6 +2651,22 @@ A frase para guardar:
 
 ---
 
+<a id="sec-061"></a>
+## Papéis técnicos no exemplo
+
+Os nomes **Context**, **Strategy**, **Concrete Strategy** e semelhantes descrevem responsabilidades no desenho. O código não precisa usar esses nomes literalmente: o mapeamento abaixo identifica quem exerce cada papel no exemplo desta página.
+
+[↑ Voltar ao início](#inicio)
+
+| Papel no padrão | Classe do exemplo | O que representa no código |
+|---|---|---|
+| Component | **Bebida** | Contrato que o cliente usa para obter descrição e custo. |
+| Concrete Component | **Cafe** | Bebida base sem complementos. |
+| Decorator abstrato | **Complemento** | Implementa Bebida e mantém outra Bebida envolvida, encaminhando chamadas. |
+| Decoradores concretos | **Leite**, **Chantilly** | Acrescentam descrição e custo ao componente envolvido. |
+| Cliente | **Main** | Combina complementos em torno de uma bebida e usa o resultado como Bebida. |
+
+**Leitura técnica:** Complemento também é uma Bebida e contém outra Bebida. Portanto, pode envolver tanto Cafe quanto outro decorador. O projeto apresenta outras variações de wrapping; consulte-as para comparar Decorator com Adapter.
 
 <a id="sec-glossario"></a>
 ## Glossário

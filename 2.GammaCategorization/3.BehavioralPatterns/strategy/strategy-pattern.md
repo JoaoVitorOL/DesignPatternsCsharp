@@ -10,6 +10,7 @@
 - [Arquivos para acompanhar](#sec-004)
 - [Strategy, switch e State: escolha pelo tipo de variação](#sec-005)
 - [Estratégia dinâmica, fixa e de comparação](#sec-006)
+- [Papéis técnicos no exemplo](#sec-007)
 
 
 **Família GoF:** comportamental. **Escopo predominante:** objetos de contexto e algoritmos intercambiáveis.
@@ -79,6 +80,22 @@ A seleção pode vir do usuário, de configuração ou de uma fábrica/DI. Não 
 
 Comparadores são um uso cotidiano da mesma ideia: IComparer<T> define uma regra de ordenação que pode mudar por tela ou relatório. Mantenha igualdade/comparação estáveis quando objetos estiverem em HashSet ou como chaves de Dictionary; mudar critérios após inserção pode quebrar a busca.
 
+<a id="sec-007"></a>
+## Papéis técnicos no exemplo
+
+Os nomes **Context**, **Strategy**, **Concrete Strategy** e semelhantes descrevem responsabilidades no desenho. O código não precisa usar esses nomes literalmente: o mapeamento abaixo identifica quem exerce cada papel no exemplo desta página.
+
+[↑ Voltar ao início](#inicio)
+
+| Papel no padrão | Classe do exemplo | O que representa no código |
+|---|---|---|
+| Strategy | **IUsuario** | Contrato para as regras variáveis de desconto, frete e identificação do perfil. |
+| Concrete Strategies | **UsuarioComum**, **UsuarioVIP**, **UsuarioCorporativo** | Implementam as políticas específicas de cada perfil. |
+| Context | **RelatorioPedido** | Recebe IUsuario, delega os cálculos variáveis e monta o resultado do pedido. |
+| Dados de domínio | **Pedido** | Guarda dados da compra; não é Strategy nem Context. |
+| Cliente/composição | **Main** | Escolhe a estratégia e a fornece ao RelatorioPedido. |
+
+**Leitura técnica:** o nome Context não aparece literalmente no código. RelatorioPedido exerce esse papel por manter o fluxo estável e delegar a parte variável a IUsuario. A estratégia pode ser substituída sem acrescentar um switch por perfil.
 
 <a id="sec-glossario"></a>
 ## Glossário

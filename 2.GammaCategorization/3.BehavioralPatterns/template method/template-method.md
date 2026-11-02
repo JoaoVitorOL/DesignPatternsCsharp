@@ -9,6 +9,7 @@
 - [Relação com o projeto](#sec-003)
 - [Implementação mínima em C#: importação de arquivos](#sec-004)
 - [Variação funcional sem subclasses](#sec-005)
+- [Papéis técnicos no exemplo](#sec-006)
 
 
 **Família GoF:** comportamental. **Escopo predominante:** classe, com etapas redefinidas por subclasses.
@@ -86,6 +87,21 @@ Functional Template Method preserva a sequência, mas recebe as etapas variávei
 
 Essa forma usa composição e pode facilitar testar cada etapa ou configurar pipelines em runtime. Ainda assim, o método coordenador deve definir ordem, tratamento de erro e invariantes. Se qualquer cliente puder fornecer etapas arbitrárias, a sequência talvez deixe de ter significado comum; não transforme um algoritmo fixo num callback framework sem necessidade.
 
+<a id="sec-006"></a>
+## Papéis técnicos no exemplo
+
+Os nomes **Context**, **Strategy**, **Concrete Strategy** e semelhantes descrevem responsabilidades no desenho. O código não precisa usar esses nomes literalmente: o mapeamento abaixo identifica quem exerce cada papel no exemplo desta página.
+
+[↑ Voltar ao início](#inicio)
+
+| Papel no padrão | Classe do exemplo | O que representa no código |
+|---|---|---|
+| Abstract Class | **DataImporter** | Define a sequência fixa de importação e declara etapas variáveis. |
+| Concrete Class | **CsvImporter** | Implementa as etapas específicas para ler e interpretar CSV. |
+| Template Method | **DataImporter.Import()** | Controla a ordem geral e chama os passos especializados. |
+| Cliente | **Código que cria CsvImporter e chama Import** | Inicia o algoritmo sem coordenar cada etapa interna. |
+
+**Leitura técnica:** a classe base controla o fluxo e chama operações implementadas pela subclasse. A alternativa funcional da página fornece etapas como funções, mas não usa a estrutura clássica de Template Method.
 
 <a id="sec-glossario"></a>
 ## Glossário

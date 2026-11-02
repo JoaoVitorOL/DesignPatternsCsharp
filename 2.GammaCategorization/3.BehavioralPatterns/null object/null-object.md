@@ -9,6 +9,7 @@
 - [Relação com o projeto](#sec-003)
 - [Implementação mínima em C](#sec-004)
 - [Variações: Singleton Null Object e objeto dinâmico](#sec-005)
+- [Papéis técnicos no exemplo](#sec-006)
 
 
 **Família:** padrão comportamental relacionado; Null Object não pertence ao catálogo GoF de 23 padrões.
@@ -88,6 +89,21 @@ Um proxy dinâmico pode criar implementações vazias em runtime para interfaces
 
 Defina a neutralidade método a método. Log pode não fazer nada; uma busca sem resultado pode retornar coleção vazia; uma operação de pagamento não deve retornar sucesso fictício só para evitar null.
 
+<a id="sec-006"></a>
+## Papéis técnicos no exemplo
+
+Os nomes **Context**, **Strategy**, **Concrete Strategy** e semelhantes descrevem responsabilidades no desenho. O código não precisa usar esses nomes literalmente: o mapeamento abaixo identifica quem exerce cada papel no exemplo desta página.
+
+[↑ Voltar ao início](#inicio)
+
+| Papel no padrão | Classe do exemplo | O que representa no código |
+|---|---|---|
+| Abstração | **ILogger** | Contrato de logging usado pelo serviço consumidor. |
+| Implementação real | **ConsoleLogger** | Escreve mensagens no console. |
+| Null Object | **NullLogger** | Implementa ILogger com operações neutras que não produzem saída. |
+| Cliente/consumidor | **ReportService** | Recebe ILogger e chama suas operações sem verificar null em cada uso. |
+
+**Leitura técnica:** NullLogger é um objeto válido do contrato, não uma referência nula. Representa a decisão explícita de não registrar logs; não deve esconder uma falha quando logging for obrigatório.
 
 <a id="sec-glossario"></a>
 ## Glossário

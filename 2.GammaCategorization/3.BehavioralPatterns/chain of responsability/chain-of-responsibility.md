@@ -9,6 +9,7 @@
 - [Aplicando a ideia ao fluxo de uma magia](#sec-003)
 - [Arquivos para acompanhar](#sec-004)
 - [Variações: cadeia ligada e broker](#sec-005)
+- [Papéis técnicos no exemplo](#sec-006)
 
 
 **Família GoF:** comportamental. **Escopo predominante:** objetos ligados em uma sequência de tratadores.
@@ -72,6 +73,22 @@ Uma variação com broker deixa cada handler se registrar num objeto central. O 
 
 CQS (Command Query Separation) é um princípio que ajuda a estruturar essas cadeias: validações consultam condições; mutações, como gastar mana, ocorrem depois que a decisão foi tomada. Evite handlers que alteram estado e depois passam a solicitação adiante sem um contrato de rollback.
 
+<a id="sec-006"></a>
+## Papéis técnicos no exemplo
+
+Os nomes **Context**, **Strategy**, **Concrete Strategy** e semelhantes descrevem responsabilidades no desenho. O código não precisa usar esses nomes literalmente: o mapeamento abaixo identifica quem exerce cada papel no exemplo desta página.
+
+[↑ Voltar ao início](#inicio)
+
+| Papel no padrão | Classe do exemplo | O que representa no código |
+|---|---|---|
+| Handler | **ValidadorMagia** | Declara validar(ContextoMagia) e a operação que liga o próximo manipulador. |
+| Concrete Handlers | **ValidadorStatus**, **ValidadorMana**, **ValidadorCooldown**, **ValidadorAlcance** | Verificam condições específicas e interrompem a cadeia quando a magia não pode prosseguir. |
+| Request/context | **ContextoMagia** | Carrega jogador, magia, custo e alcance usados pelas validações. |
+| Montagem e cliente | **Main** | Configura Status → Mana → Cooldown → Alcance e inicia a validação. |
+| Entidade de domínio | **Jogador** | Fornece dados do personagem; não é um Handler. |
+
+**Leitura técnica:** cada validador conhece o próximo pelo contrato, sem precisar conhecer todas as verificações posteriores. Main escolhe a ordem da política de validação.
 
 <a id="sec-glossario"></a>
 ## Glossário

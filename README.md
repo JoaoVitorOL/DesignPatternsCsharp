@@ -70,7 +70,7 @@ Uma sequência sugerida é:
 4. Compare as variações e padrões próximos. Observe também os custos e as situações em que o padrão não ajuda.
 5. Faça as atividades e, nos exercícios com anti-pattern, tente diagnosticar o problema antes de consultar a explicação.
 
-As páginas individuais foram organizadas para serem consultadas sem depender de um guia central. Cada uma inclui sumário, links para voltar ao início das seções e glossário. As explicações apresentam a intenção do padrão, sua aplicação prática, os exemplos relacionados no repositório e, quando pertinente, variações e critérios de escolha.
+As páginas individuais foram organizadas para serem consultadas sem depender de um guia central. Cada uma inclui sumário, links para voltar ao início das seções, glossário e um mapa técnico que associa papéis como Context, Strategy, Concrete Strategy, Subject ou Concrete Factory às classes reais do exemplo e explica a responsabilidade de cada uma. As explicações também apresentam a intenção do padrão, sua aplicação prática, variações e critérios de escolha.
 
 ## Exemplos e linguagens
 

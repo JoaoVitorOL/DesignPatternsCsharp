@@ -10,6 +10,7 @@
 - [Arquivos para acompanhar](#sec-004)
 - [Command para undo, filas e auditoria](#sec-005)
 - [Variações: histórico, fila e Composite Command](#sec-006)
+- [Papéis técnicos no exemplo](#sec-007)
 
 
 **Família GoF:** comportamental. **Escopo predominante:** objetos que representam solicitações.
@@ -79,6 +80,22 @@ Undo pode ser implementado por uma operação inversa (digitar → apagar) ou po
 
 Uma Macro é Composite Command: o cliente executa uma unidade que contém outras. Para desfazer, percorre os filhos em ordem inversa. Se a execução falhar no meio, deve-se definir se há rollback dos comandos concluídos ou se o estado parcial é registrado.
 
+<a id="sec-007"></a>
+## Papéis técnicos no exemplo
+
+Os nomes **Context**, **Strategy**, **Concrete Strategy** e semelhantes descrevem responsabilidades no desenho. O código não precisa usar esses nomes literalmente: o mapeamento abaixo identifica quem exerce cada papel no exemplo desta página.
+
+[↑ Voltar ao início](#inicio)
+
+| Papel no padrão | Classe do exemplo | O que representa no código |
+|---|---|---|
+| Command | **Comando** | Declara executar e desfazer uma ação. |
+| Concrete Commands | **DigitarComando**, **ApagarComando** | Guardam parâmetros, chamam o Editor e mantêm o necessário para desfazer. |
+| Receiver | **Editor** | Realiza as mudanças concretas no texto. |
+| Macro/Composite Command | **Macro** | Armazena vários Comando e executa ou desfaz a sequência. |
+| Cliente/invocador da demonstração | **Main** | Cria os objetos, monta a Macro e dispara sua execução. Não há um invocador separado. |
+
+**Leitura técnica:** cada comando encapsula a intenção e os dados da ação, permitindo histórico e undo sem colocar um switch de operações dentro do Editor.
 
 <a id="sec-glossario"></a>
 ## Glossário

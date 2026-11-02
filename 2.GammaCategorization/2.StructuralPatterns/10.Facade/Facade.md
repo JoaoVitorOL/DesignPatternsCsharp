@@ -12,6 +12,7 @@
 - [Variações e aprofundamentos](#sec-006)
 - [69. Facade](#sec-007)
 - [Coding Exercise 9: Facade Coding Exercise](#sec-008)
+- [Papéis técnicos no exemplo](#sec-009)
 
 
 **Família GoF:** estrutural. **Escopo predominante:** objetos de subsistema coordenados por uma API de alto nível.
@@ -168,6 +169,20 @@ Se o cliente continua precisando montar metade do subsistema antes de chamar a F
 
 ---
 
+<a id="sec-009"></a>
+## Papéis técnicos no exemplo
+
+Os nomes **Context**, **Strategy**, **Concrete Strategy** e semelhantes descrevem responsabilidades no desenho. O código não precisa usar esses nomes literalmente: o mapeamento abaixo identifica quem exerce cada papel no exemplo desta página.
+
+[↑ Voltar ao início](#inicio)
+
+| Papel no padrão | Classe do exemplo | O que representa no código |
+|---|---|---|
+| Facade | **PurchaseFacade** | Expõe a operação de finalizar compra e coordena as chamadas internas necessárias. |
+| Subsistemas | **Inventory**, **Payment**, **Shipping** | Executam responsabilidades específicas de estoque, pagamento e envio. |
+| Cliente | **Código chamador de PurchaseFacade** | Solicita a operação de alto nível sem coordenar os subsistemas diretamente. |
+
+**Leitura técnica:** a fachada organiza o fluxo, mas não deve absorver as regras internas dos subsistemas nem virar um objeto que acumula responsabilidades sem limite.
 
 <a id="sec-glossario"></a>
 ## Glossário

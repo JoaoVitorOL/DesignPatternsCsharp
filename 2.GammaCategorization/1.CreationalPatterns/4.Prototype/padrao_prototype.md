@@ -63,6 +63,7 @@
   - [Anatomia das referências e das alocações no exemplo](#sec-057)
   - [Participantes do Padrão no Exercício](#sec-058)
   - [Código-fonte guiado e resolvido](#sec-059)
+- [Papéis técnicos no exemplo](#sec-060)
 
 
 **Família GoF:** criacional. **Escopo predominante:** objetos; novas instâncias partem de protótipos.
@@ -1381,6 +1382,22 @@ namespace Coding.Exercise
 
 ```
 
+<a id="sec-060"></a>
+## Papéis técnicos no exemplo
+
+Os nomes **Context**, **Strategy**, **Concrete Strategy** e semelhantes descrevem responsabilidades no desenho. O código não precisa usar esses nomes literalmente: o mapeamento abaixo identifica quem exerce cada papel no exemplo desta página.
+
+[↑ Voltar ao início](#inicio)
+
+| Papel no padrão | Classe do exemplo | O que representa no código |
+|---|---|---|
+| Contrato de protótipo | **InimigoPrototype** | Expõe a operação de cópia sem exigir que o cliente conheça a classe concreta. |
+| Protótipo concreto | **Inimigo** | Guarda os dados do inimigo e cria uma nova instância baseada neles. |
+| Estado composto | **Arma** | Parte do estado do inimigo cuja referência deve ser copiada ou compartilhada conforme a semântica escolhida. |
+| Registro de protótipos | **RegistroDePrototipos** | Localiza modelos nomeados e devolve cópias ao cliente. |
+| Cliente | **Main** | Solicita uma cópia ao registro e personaliza a instância criada. |
+
+**Leitura técnica:** Prototype não exige Object.clone. Ao revisar a implementação, verifique se objetos mutáveis internos, como Arma, precisam ser copiados profundamente para evitar que original e cópia compartilhem alterações.
 
 <a id="sec-glossario"></a>
 ## Glossário

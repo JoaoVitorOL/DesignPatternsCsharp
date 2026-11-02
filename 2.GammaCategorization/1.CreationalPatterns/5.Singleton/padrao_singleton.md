@@ -65,6 +65,7 @@
   - [O objetivo do exercício](#sec-059)
   - [Recapitulação: o passo a passo da construção de um Singleton](#sec-060)
   - [O grande problema do Singleton tradicional: testabilidade](#sec-061)
+- [Papéis técnicos no exemplo](#sec-062)
 
 
 **Família GoF:** criacional. **Escopo predominante:** classe e ciclo de vida da instância.
@@ -1492,6 +1493,20 @@ Em muitos sistemas, a classe pode ser criada normalmente e seu ciclo de vida del
 
 ---
 
+<a id="sec-062"></a>
+## Papéis técnicos no exemplo
+
+Os nomes **Context**, **Strategy**, **Concrete Strategy** e semelhantes descrevem responsabilidades no desenho. O código não precisa usar esses nomes literalmente: o mapeamento abaixo identifica quem exerce cada papel no exemplo desta página.
+
+[↑ Voltar ao início](#inicio)
+
+| Papel no padrão | Classe do exemplo | O que representa no código |
+|---|---|---|
+| Singleton | **CentralDeAlertas** | Controla a própria instanciação e fornece acesso à instância compartilhada. |
+| Clientes | **POLICIA**, **BOMBEIRO**, **SAMU** | Usam a central compartilhada para publicar alertas. |
+| Composição da execução | **Main** | Aciona os clientes e permite observar o uso do mesmo serviço. |
+
+**Leitura técnica:** a identidade compartilhada é o aspecto estrutural; a classe ainda precisa oferecer operações úteis. Singleton não é sinônimo de uma classe com métodos estáticos, e os exemplos C# também discutem ciclo de vida e testabilidade.
 
 <a id="sec-glossario"></a>
 ## Glossário

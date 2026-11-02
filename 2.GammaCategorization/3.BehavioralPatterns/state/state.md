@@ -9,6 +9,7 @@
 - [Relação com o projeto](#sec-003)
 - [Implementação mínima em C#: catraca](#sec-004)
 - [Escolhas de implementação: classes, switch ou biblioteca](#sec-005)
+- [Papéis técnicos no exemplo](#sec-006)
 
 
 **Família GoF:** comportamental. **Escopo predominante:** objetos de contexto e estados concretos.
@@ -99,6 +100,21 @@ Uma máquina feita à mão pode declarar transições como estado + evento → g
 
 Classes de estado são adequadas quando estados têm comportamentos próprios ou muitas operações condicionais. Para dois estados com uma regra pequena, a hierarquia pode ser mais difícil de ler que um switch.
 
+<a id="sec-006"></a>
+## Papéis técnicos no exemplo
+
+Os nomes **Context**, **Strategy**, **Concrete Strategy** e semelhantes descrevem responsabilidades no desenho. O código não precisa usar esses nomes literalmente: o mapeamento abaixo identifica quem exerce cada papel no exemplo desta página.
+
+[↑ Voltar ao início](#inicio)
+
+| Papel no padrão | Classe do exemplo | O que representa no código |
+|---|---|---|
+| Context | **Turnstile** | Mantém o estado atual, encaminha eventos e recebe transições de estado. |
+| State | **ITurnstileState** | Declara operações cuja resposta depende da condição da catraca. |
+| Concrete States | **LockedState**, **UnlockedState** | Definem a resposta a moeda e passagem, incluindo transições válidas. |
+| Cliente | **Código que aciona Turnstile** | Envia eventos sem escolher manualmente a regra de cada estado. |
+
+**Leitura técnica:** o comportamento fica nos objetos de estado, e não apenas em um enum. A alternativa switch discutida na página pode ser adequada quando há poucos estados e pouca variação.
 
 <a id="sec-glossario"></a>
 ## Glossário
