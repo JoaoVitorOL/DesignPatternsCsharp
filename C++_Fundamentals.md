@@ -16,6 +16,7 @@ CodeBeauty
 
 
 Cursos no Youtube
+https://youtu.be/SfGuIVzE_Os?si=djWhKsR6cTEC7Cel
 https://youtu.be/ZzaPdXTrSb8?si=hHIo3YPmHCDKV1wC
 https://youtu.be/-TkoO8Z07hI?si=7TLhEgFYDngcxciM
 https://youtu.be/vLnPwxZdW4Y?si=H6spBn10u7eAscpa
