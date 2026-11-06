@@ -8,6 +8,18 @@
 
 ---
 
+
+Canais no Youtube baludos de C++:
+The Cherno (Série: C++)
+ason Turner / C++ Weekly
+CodeBeauty
+
+
+Cursos no Youtube
+https://youtu.be/ZzaPdXTrSb8?si=hHIo3YPmHCDKV1wC
+https://youtu.be/-TkoO8Z07hI?si=7TLhEgFYDngcxciM
+https://youtu.be/vLnPwxZdW4Y?si=H6spBn10u7eAscpa
+
 ## Prefácio
 
 C++ costuma ser ensinado como “C com classes” ou como uma lista de recursos isolados. As duas abordagens escondem o que realmente torna a linguagem difícil e poderosa: valores e objetos têm lifetime; destruição é determinística; expressões possuem categorias de valor; o programa é formado por unidades de tradução ligadas posteriormente; templates geram código; algumas violações são diagnosticadas e outras produzem comportamento indefinido.
